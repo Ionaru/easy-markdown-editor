@@ -1,0 +1,33 @@
+{
+    "compilerOptions": {
+        "baseUrl": "",
+        "declaration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noFallthroughCasesInSwitch": true,
+        "lib": [
+            "es5",
+            "es6",
+            "dom"
+        ],
+        "moduleResolution": "node",
+        "outDir": "./dist",
+        "target": "es5",
+        "typeRoots": [
+            "./node_modules/@types"
+        ]
+    },
+    "exclude": [
+        "node_modules",
+        "src/**/*.spec.ts"
+    ],
+    "include": [
+        "src/**/*.ts"
+    ]
+}
