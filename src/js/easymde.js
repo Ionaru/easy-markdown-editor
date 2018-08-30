@@ -23,6 +23,7 @@ var anchorToExternalRegex = new RegExp(/(<a.*?https?:\/\/.*?[^a]>)+?/g);
 var bindings = {
     'toggleBold': toggleBold,
     'toggleItalic': toggleItalic,
+    'toggleUnderline': toggleUnderline,
     'drawLink': drawLink,
     'toggleHeadingSmaller': toggleHeadingSmaller,
     'toggleHeadingBigger': toggleHeadingBigger,
@@ -48,6 +49,7 @@ var bindings = {
 var shortcuts = {
     'toggleBold': 'Cmd-B',
     'toggleItalic': 'Cmd-I',
+    'toggleUnderline': 'Cmd-U',
     'drawLink': 'Cmd-K',
     'toggleHeadingSmaller': 'Cmd-H',
     'toggleHeadingBigger': 'Shift-Cmd-H',
@@ -195,6 +197,8 @@ function getState(cm, pos) {
             ret.quote = true;
         } else if (data === 'em') {
             ret.italic = true;
+        } else if (data === 'u') {
+            ret.underline = true;
         } else if (data === 'quote') {
             ret.quote = true;
         } else if (data === 'strikethrough') {
@@ -280,6 +284,14 @@ function toggleBold(editor) {
  */
 function toggleItalic(editor) {
     _toggleBlock(editor, 'italic', editor.options.blockStyles.italic);
+}
+
+
+/**
+ * Action for toggling underline.
+ */
+function toggleUnderline(editor) {
+    _toggleBlock(editor, 'underline', editor.options.blockStyles.underline);
 }
 
 
@@ -1022,11 +1034,14 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
         start = text.slice(0, startPoint.ch);
         end = text.slice(startPoint.ch);
         if (type == 'bold') {
-            start = start.replace(/(\*\*|__)(?![\s\S]*(\*\*|__))/, '');
-            end = end.replace(/(\*\*|__)/, '');
+            start = start.replace(/\*\*(?![\s\S]*\*\*)/, '');
+            end = end.replace(/\*\*/, '');
         } else if (type == 'italic') {
             start = start.replace(/(\*|_)(?![\s\S]*(\*|_))/, '');
             end = end.replace(/(\*|_)/, '');
+        } else if (type == 'underline') {
+            start = start.replace(/__(?![\s\S]*__)/, '');
+            end = end.replace(/__/, '');
         } else if (type == 'strikethrough') {
             start = start.replace(/(\*\*|~~)(?![\s\S]*(\*\*|~~))/, '');
             end = end.replace(/(\*\*|~~)/, '');
@@ -1039,7 +1054,7 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
             ch: 99999999999999
         });
 
-        if (type == 'bold' || type == 'strikethrough') {
+        if (type == 'bold' || type == 'underline' || type == 'strikethrough') {
             startPoint.ch -= 2;
             if (startPoint !== endPoint) {
                 endPoint.ch -= 2;
@@ -1058,6 +1073,8 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
         } else if (type == 'italic') {
             text = text.split('*').join('');
             text = text.split('_').join('');
+        } else if (type == 'underline') {
+            text = text.split('__').join('');
         } else if (type == 'strikethrough') {
             text = text.split('~~').join('');
         }
@@ -1153,6 +1170,12 @@ var toolbarBuiltInButtons = {
         className: 'fa fa-italic',
         title: 'Italic',
         default: true
+    },
+    'underline': {
+        name: 'underline',
+        action: toggleUnderline,
+        className: 'fa fa-underline',
+        title: 'Underline'
     },
     'strikethrough': {
         name: 'strikethrough',
@@ -1336,7 +1359,8 @@ var promptTexts = {
 var blockStyles = {
     'bold': '**',
     'code': '```',
-    'italic': '*'
+    'italic': '*',
+    'underline': '__'
 };
 
 /**
@@ -1995,6 +2019,7 @@ EasyMDE.prototype.value = function (val) {
  */
 EasyMDE.toggleBold = toggleBold;
 EasyMDE.toggleItalic = toggleItalic;
+EasyMDE.toggleUnderline = toggleUnderline;
 EasyMDE.toggleStrikethrough = toggleStrikethrough;
 EasyMDE.toggleBlockquote = toggleBlockquote;
 EasyMDE.toggleHeadingSmaller = toggleHeadingSmaller;
@@ -2024,6 +2049,9 @@ EasyMDE.prototype.toggleBold = function () {
 };
 EasyMDE.prototype.toggleItalic = function () {
     toggleItalic(this);
+};
+EasyMDE.prototype.toggleUnderline = function () {
+    toggleUnderline(this);
 };
 EasyMDE.prototype.toggleStrikethrough = function () {
     toggleStrikethrough(this);
