@@ -31,7 +31,7 @@ Try [**the demo**](https://easymde.tk/)!
   - [Editor functions](#editor-functions)
 - [Configuration](#configuration)
   - [Options list](#options-list)
-  -[Options example](#options-example)
+  - [Options example](#options-example)
   - [Toolbar icons](#toolbar-icons)
   - [Toolbar customization](#toolbar-customization)
   - [Keyboard shortcuts](#keyboard-shortcuts)
@@ -40,7 +40,7 @@ Try [**the demo**](https://easymde.tk/)!
   - [Removing EasyMDE from text area](#removing-easymde-from-text-area)
   - [Useful methods](#useful-methods)
 - [How it works](#how-it-works)
-- [EasyMDE fork](#easymde-fork)
+- [SimpleMDE fork](#simplemde-fork)
 - [License](#license)
 
 ## Why not a WYSIWYG editor or pure Markdown?
@@ -480,7 +480,7 @@ bottom, respectively. Previews are rendered by
 [Marked](https://github.com/chjj/marked) using GFM.
 
 
-## EasyMDE fork
+## SimpleMDE fork
 
 I originally made this fork to implement FontAwesome 5 compatibility into
 EasyMDE. When that was done I submitted a
