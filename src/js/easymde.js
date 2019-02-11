@@ -115,7 +115,7 @@ function fixShortcut(name) {
 /**
  * Create icon element for toolbar.
  */
-function createIcon(options, enableTooltips, shortcuts) {
+function createIcon(options, enableTooltips, shortcuts, iconsSet) {
     options = options || {};
     var el = document.createElement('button');
     el.className = options.name;
@@ -143,7 +143,10 @@ function createIcon(options, enableTooltips, shortcuts) {
 
     // Create icon element and append as a child to the button
     var icon = document.createElement('i');
-    icon.className = options.className;
+    el.className = options.className[iconsSet || 'fa'];
+    if(options.textContent) {
+        el.textContent = options.textContent[iconsSet || 'fa'];
+    }
     el.appendChild(icon);
 
     return el;
@@ -263,7 +266,7 @@ function toggleFullScreen(editor) {
     if (/editor-preview-active-side/.test(sidebyside.className))
         toggleSideBySide(editor);
 
-	if (editor.options.onToggleFullScreen) {
+    if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
     }
 }
@@ -1145,58 +1148,112 @@ var toolbarBuiltInButtons = {
     'bold': {
         name: 'bold',
         action: toggleBold,
-        className: 'fa fa-bold',
+        className: {
+            fa: 'fa fa-bold',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_bold'
+        },
         title: 'Bold',
         default: true
     },
     'italic': {
         name: 'italic',
         action: toggleItalic,
-        className: 'fa fa-italic',
+        className: {
+            fa: 'fa fa-italic',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_italic'
+        },
         title: 'Italic',
         default: true
     },
     'strikethrough': {
         name: 'strikethrough',
         action: toggleStrikethrough,
-        className: 'fa fa-strikethrough',
+        className: {
+            fa: 'fa fa-strikethrough',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_strikethrough'
+        },
         title: 'Strikethrough'
     },
     'heading': {
         name: 'heading',
         action: toggleHeadingSmaller,
-        className: 'fa fa-header fa-heading',
+        className: {
+            fa: 'fa fa-header',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Heading',
         default: true
     },
     'heading-smaller': {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
-        className: 'fa fa-header fa-heading header-smaller',
+        className: {
+            fa: 'fa fa-header fa-header-x fa-header-smaller',
+            material: 'material-icons md-18'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Smaller Heading'
     },
     'heading-bigger': {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
-        className: 'fa fa-header fa-heading header-bigger',
+        className: {
+            fa: 'fa fa-header fa-header-x fa-header-bigger',
+            material: 'material-icons md-36'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Bigger Heading'
     },
     'heading-1': {
         name: 'heading-1',
         action: toggleHeading1,
-        className: 'fa fa-header fa-heading header-1',
+        className: {
+            fa: 'fa fa-header fa-header-x fa-header-1',
+            material: 'material-icons md-18'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Big Heading'
     },
     'heading-2': {
         name: 'heading-2',
         action: toggleHeading2,
-        className: 'fa fa-header fa-heading header-2',
+        className: {
+            fa: 'fa fa-header fa-header-x fa-header-2',
+            material: 'material-icons md-24'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Medium Heading'
     },
     'heading-3': {
         name: 'heading-3',
         action: toggleHeading3,
-        className: 'fa fa-header fa-heading header-3',
+        className: {
+            fa: 'fa fa-header fa-header-x fa-header-3',
+            material: 'material-icons md-36'
+        },
+        textContent: {
+            material: 'title'
+        },
         title: 'Small Heading'
     },
     'separator-1': {
@@ -1205,34 +1262,64 @@ var toolbarBuiltInButtons = {
     'code': {
         name: 'code',
         action: toggleCodeBlock,
-        className: 'fa fa-code',
+        className: {
+            fa: 'fa fa-code',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'code'
+        },
         title: 'Code'
     },
     'quote': {
         name: 'quote',
         action: toggleBlockquote,
-        className: 'fa fa-quote-left',
+        className: {
+            fa: 'fa fa-quote-left',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_quote'
+        },
         title: 'Quote',
         default: true
     },
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
-        className: 'fa fa-list-ul',
+        className: {
+            fa: 'fa fa-list-ul',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_list_bulleted'
+        },
         title: 'Generic List',
         default: true
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
-        className: 'fa fa-list-ol',
+        className: {
+            fa: 'fa fa-list-ol',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'format_list_numbered'
+        },
         title: 'Numbered List',
         default: true
     },
     'clean-block': {
         name: 'clean-block',
         action: cleanBlock,
-        className: 'fa fa-eraser',
+        className: {
+            fa: 'fa fa-eraser fa-clean-block',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'backspace'
+        },
         title: 'Clean block'
     },
     'separator-2': {
@@ -1241,27 +1328,51 @@ var toolbarBuiltInButtons = {
     'link': {
         name: 'link',
         action: drawLink,
-        className: 'fa fa-link',
+        className: {
+            fa: 'fa fa-link',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'insert_link'
+        },
         title: 'Create Link',
         default: true
     },
     'image': {
         name: 'image',
         action: drawImage,
-        className: 'fa fa-image',
+        className: {
+            fa: 'fa fa-picture-o',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'insert_photo'
+        },
         title: 'Insert Image',
         default: true
     },
     'table': {
         name: 'table',
         action: drawTable,
-        className: 'fa fa-table',
+        className: {
+            fa: 'fa fa-table',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'table_chart'
+        },
         title: 'Insert Table'
     },
     'horizontal-rule': {
         name: 'horizontal-rule',
         action: drawHorizontalRule,
-        className: 'fa fa-minus',
+        className: {
+            fa: 'fa fa-minus',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'power_input'
+        },
         title: 'Insert Horizontal Line'
     },
     'separator-3': {
@@ -1270,7 +1381,13 @@ var toolbarBuiltInButtons = {
     'preview': {
         name: 'preview',
         action: togglePreview,
-        className: 'fa fa-eye',
+        className: {
+            fa: 'fa fa-eye no-disable',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'remove_red_eye'
+        },
         noDisable: true,
         title: 'Toggle Preview',
         default: true
@@ -1278,7 +1395,13 @@ var toolbarBuiltInButtons = {
     'side-by-side': {
         name: 'side-by-side',
         action: toggleSideBySide,
-        className: 'fa fa-columns',
+        className: {
+            fa: 'fa fa-columns no-disable no-mobile',
+            material: 'material-icons no-disable no-mobile'
+        },
+        textContent: {
+            material: 'vertical_split'
+        },
         noDisable: true,
         noMobile: true,
         title: 'Toggle Side by Side',
@@ -1287,7 +1410,13 @@ var toolbarBuiltInButtons = {
     'fullscreen': {
         name: 'fullscreen',
         action: toggleFullScreen,
-        className: 'fa fa-arrows-alt',
+        className: {
+            fa: 'fa fa-arrows-alt no-disable no-mobile',
+            material: 'material-icons no-disable no-mobile'
+        },
+        textContent: {
+            material: 'fullscreen'
+        },
         noDisable: true,
         noMobile: true,
         title: 'Toggle Fullscreen',
@@ -1299,7 +1428,13 @@ var toolbarBuiltInButtons = {
     'guide': {
         name: 'guide',
         action: 'https://simplemde.com/markdown-guide',
-        className: 'fa fa-question-circle',
+        className: {
+            fa: 'fa fa-question-circle',
+            material: 'material-icons'
+        },
+        textContent: {
+            material: 'help'
+        },
         noDisable: true,
         title: 'Markdown Guide',
         default: true
@@ -1310,14 +1445,26 @@ var toolbarBuiltInButtons = {
     'undo': {
         name: 'undo',
         action: undo,
-        className: 'fa fa-undo',
+        className: {
+            fa: 'fa fa-undo no-disable',
+            material: 'material-icons no-disable'
+        },
+        textContent: {
+            material: 'undo'
+        },
         noDisable: true,
         title: 'Undo'
     },
     'redo': {
         name: 'redo',
         action: redo,
-        className: 'fa fa-repeat fa-redo',
+        className: {
+            fa: 'fa fa-repeat no-disable',
+            material: 'material-icons no-disable'
+        },
+        textContent: {
+            material: 'redo'
+        },
         noDisable: true,
         title: 'Redo'
     }
@@ -1657,23 +1804,23 @@ EasyMDE.prototype.autosave = function () {
             console.log('EasyMDE: You must set a uniqueId to use the autosave feature');
             return;
         }
-        
+
         if(this.options.autosave.binded !== true) {
-          if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
-              easyMDE.element.form.addEventListener('submit', function () {
-                  clearTimeout(easyMDE.autosaveTimeoutId);
-                  easyMDE.autosaveTimeoutId = undefined;
-                
-                  localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
-                  
-                  // Restart autosaving in case the submit will be cancelled down the line
-                  setTimeout(function() {
-                    easyMDE.autosave();
-                  }, easyMDE.options.autosave.delay || 10000);
-              });
-          }
-          
-          this.options.autosave.binded = true;
+            if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
+                easyMDE.element.form.addEventListener('submit', function () {
+                    clearTimeout(easyMDE.autosaveTimeoutId);
+                    easyMDE.autosaveTimeoutId = undefined;
+
+                    localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
+
+                    // Restart autosaving in case the submit will be cancelled down the line
+                    setTimeout(function() {
+                        easyMDE.autosave();
+                    }, easyMDE.options.autosave.delay || 10000);
+                });
+            }
+
+            this.options.autosave.binded = true;
         }
 
         if (this.options.autosave.loaded !== true) {
@@ -1824,7 +1971,7 @@ EasyMDE.prototype.createToolbar = function (items) {
             if (item === '|') {
                 el = createSep();
             } else {
-                el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
+                el = createIcon(item, self.options.toolbarTips, self.options.shortcuts, self.options.iconsSet);
             }
 
             // bind events, special for info
