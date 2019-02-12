@@ -1187,7 +1187,7 @@ var toolbarBuiltInButtons = {
         name: 'heading',
         action: toggleHeadingSmaller,
         className: {
-            fa: 'fa fa-header',
+            fa: 'fa fa-header fa-heading',
             material: 'material-icons'
         },
         textContent: {
@@ -1200,8 +1200,8 @@ var toolbarBuiltInButtons = {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
         className: {
-            fa: 'fa fa-header fa-header-x fa-header-smaller',
-            material: 'material-icons md-18'
+            fa: 'fa fa-header fa-heading header-smaller',
+            material: 'material-icons header-smaller'
         },
         textContent: {
             material: 'title'
@@ -1212,8 +1212,8 @@ var toolbarBuiltInButtons = {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
         className: {
-            fa: 'fa fa-header fa-header-x fa-header-bigger',
-            material: 'material-icons md-36'
+            fa: 'fa fa-header fa-heading header-bigger',
+            material: 'material-icons header-bigger'
         },
         textContent: {
             material: 'title'
@@ -1224,8 +1224,8 @@ var toolbarBuiltInButtons = {
         name: 'heading-1',
         action: toggleHeading1,
         className: {
-            fa: 'fa fa-header fa-header-x fa-header-1',
-            material: 'material-icons md-18'
+            fa: 'fa fa-header fa-heading header-1',
+            material: 'material-icons header-1'
         },
         textContent: {
             material: 'title'
@@ -1236,8 +1236,8 @@ var toolbarBuiltInButtons = {
         name: 'heading-2',
         action: toggleHeading2,
         className: {
-            fa: 'fa fa-header fa-header-x fa-header-2',
-            material: 'material-icons md-24'
+            fa: 'fa fa-header fa-heading header-2',
+            material: 'material-icons header-2'
         },
         textContent: {
             material: 'title'
@@ -1248,8 +1248,8 @@ var toolbarBuiltInButtons = {
         name: 'heading-3',
         action: toggleHeading3,
         className: {
-            fa: 'fa fa-header fa-header-x fa-header-3',
-            material: 'material-icons md-36'
+            fa: 'fa fa-header fa-heading header-3',
+            material: 'material-icons header-3'
         },
         textContent: {
             material: 'title'
@@ -1314,7 +1314,7 @@ var toolbarBuiltInButtons = {
         name: 'clean-block',
         action: cleanBlock,
         className: {
-            fa: 'fa fa-eraser fa-clean-block',
+            fa: 'fa fa-eraser',
             material: 'material-icons'
         },
         textContent: {
@@ -1342,7 +1342,7 @@ var toolbarBuiltInButtons = {
         name: 'image',
         action: drawImage,
         className: {
-            fa: 'fa fa-picture-o',
+            fa: 'fa fa-image',
             material: 'material-icons'
         },
         textContent: {
@@ -1382,7 +1382,7 @@ var toolbarBuiltInButtons = {
         name: 'preview',
         action: togglePreview,
         className: {
-            fa: 'fa fa-eye no-disable',
+            fa: 'fa fa-eye',
             material: 'material-icons'
         },
         textContent: {
@@ -1396,7 +1396,7 @@ var toolbarBuiltInButtons = {
         name: 'side-by-side',
         action: toggleSideBySide,
         className: {
-            fa: 'fa fa-columns no-disable no-mobile',
+            fa: 'fa fa-columns',
             material: 'material-icons no-disable no-mobile'
         },
         textContent: {
@@ -1411,7 +1411,7 @@ var toolbarBuiltInButtons = {
         name: 'fullscreen',
         action: toggleFullScreen,
         className: {
-            fa: 'fa fa-arrows-alt no-disable no-mobile',
+            fa: 'fa fa-arrows-alt',
             material: 'material-icons no-disable no-mobile'
         },
         textContent: {
@@ -1446,7 +1446,7 @@ var toolbarBuiltInButtons = {
         name: 'undo',
         action: undo,
         className: {
-            fa: 'fa fa-undo no-disable',
+            fa: 'fa fa-undo',
             material: 'material-icons no-disable'
         },
         textContent: {
@@ -1459,7 +1459,7 @@ var toolbarBuiltInButtons = {
         name: 'redo',
         action: redo,
         className: {
-            fa: 'fa fa-repeat no-disable',
+            fa: 'fa fa-repeat fa-redo',
             material: 'material-icons no-disable'
         },
         textContent: {
