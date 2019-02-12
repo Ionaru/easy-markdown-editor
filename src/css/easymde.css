@@ -161,19 +161,19 @@
     content: "1";
 }
 
-.editor-toolbar button.heading-2:after {
+.editor-toolbar button.header-2:after {
     content: "2";
 }
 
-.editor-toolbar button.heading-3:after {
+.editor-toolbar button.header-3:after {
     content: "3";
 }
 
-.editor-toolbar button.heading-bigger:after {
+.editor-toolbar button.header-bigger:after {
     content: "▲";
 }
 
-.editor-toolbar button.heading-smaller:after {
+.editor-toolbar button.header-smaller:after {
     content: "▼";
 }
 

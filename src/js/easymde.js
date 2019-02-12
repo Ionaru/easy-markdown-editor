@@ -1187,6 +1187,8 @@ var toolbarBuiltInButtons = {
         name: 'heading',
         action: toggleHeadingSmaller,
         className: {
+            // We use both fa-header and fa-heading to keep compatibility with FontAwesome 4
+            // See https://fontawesome.com/how-to-use/on-the-web/setup/upgrading-from-version-4#name-changes
             fa: 'fa fa-header fa-heading',
             material: 'material-icons'
         },
