@@ -113,9 +113,9 @@ function fixShortcut(name) {
 
 
 /**
- * Create icon element for toolbar.
+ * Create button element for toolbar.
  */
-function createIcon(options, enableTooltips, shortcuts) {
+function createToolbarButton(options, enableTooltips, shortcuts) {
     options = options || {};
     var el = document.createElement('button');
     el.className = options.name;
@@ -131,11 +131,11 @@ function createIcon(options, enableTooltips, shortcuts) {
         }
     }
 
-    if (options.noDisable || options.className.indexOf('no-disable') !== -1) {
+    if (options.noDisable) {
         el.classList.add('no-disable');
     }
 
-    if (options.noMobile || options.className.indexOf('no-mobile') !== -1) {
+    if (options.noMobile) {
         el.classList.add('no-mobile');
     }
 
@@ -159,7 +159,7 @@ function createIcon(options, enableTooltips, shortcuts) {
     var icon = document.createElement('i');
     for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
         var iconClass = iconClasses[iconClassIndex];
-        icon.classList.add(iconClass)
+        icon.classList.add(iconClass);
     }
     el.appendChild(icon);
 
@@ -1841,7 +1841,7 @@ EasyMDE.prototype.createToolbar = function (items) {
             if (item === '|') {
                 el = createSep();
             } else {
-                el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
+                el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts);
             }
 
             // bind events, special for info
