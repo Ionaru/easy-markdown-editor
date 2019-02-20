@@ -81,8 +81,8 @@ declare namespace EasyMDE {
         action: string|((editor: EasyMDE) => void);
         className: string;
         title: string;
-        noDisable: boolean;
-        noMobile: boolean;
+        noDisable?: boolean;
+        noMobile?: boolean;
     }
 
     interface Options {
