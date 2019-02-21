@@ -311,7 +311,7 @@ module.exports = class NewMDE {
     //     cm.refresh();
     // }
 
-    private static toggleBold(_editor: NewMDE) {
+    public static toggleBold(_editor: NewMDE) {
         console.log('Bold!');
         // _toggleBlock(editor, 'bold', editor.options.blockStyles.bold);
     }
@@ -347,6 +347,8 @@ module.exports = class NewMDE {
     private redo(editor: NewMDE) {
         editor.codemirror.execCommand('redo');
     }
+
+    // IconsSet ?
 
     private createToolBar(): HTMLDivElement {
         const defaultToolBarLayout: IToolBarButtonOptions[][] = [
