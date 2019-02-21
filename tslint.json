@@ -8,6 +8,8 @@
             true,
             140
         ],
+        "no-console": false,
+        "no-null-keyword": true,
         "no-unused-expression": [
             true,
             "allow-new"
@@ -28,10 +30,6 @@
             "ban-keywords",
             "check-format",
             "allow-leading-underscore"
-        ],
-        "no-submodule-imports": [
-            true,
-            "codemirror/addon"
         ]
     }
 }

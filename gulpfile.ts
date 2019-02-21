@@ -1,26 +1,17 @@
-// import * as fs from 'fs';
+/* tslint:disable:no-implicit-dependencies no-var-requires */
 import * as gulp from 'gulp';
 import * as ts from 'gulp-typescript';
 import * as uglify from 'gulp-uglify';
 import * as typescript from 'typescript';
-// import SimpleMDE from './src2/simplemde2';
-// import * as browserify from 'gulp'
-// import * as cleanCSS from 'gulp-clean-css';
-// import * as header from 'gulp-header';
-// import * as rename from 'gulp-rename';
-// import * as browserify from 'browserify';
-
-// var gulp = require('gulp'),
 const cleanCSS = require('gulp-clean-css');
-// uglify = require('gulp-uglify'),
-const concat = require('gulp-concat'),
-    header = require('gulp-header'),
-    buffer = require('vinyl-buffer'),
-    pkg = require('./package.json'),
-    eslint = require('gulp-eslint'),
-    browserify = require('browserify'),
-    source = require('vinyl-source-stream'),
-    rename = require('gulp-rename');
+const concat = require('gulp-concat');
+const header = require('gulp-header');
+const buffer = require('vinyl-buffer');
+const pkg = require('./package.json');
+const eslint = require('gulp-eslint');
+const browserify = require('browserify');
+const source = require('vinyl-source-stream');
+const rename = require('gulp-rename');
 
 const banner = ['/**',
     ' * <%= pkg.name %> v<%= pkg.version %>',
@@ -39,17 +30,6 @@ function lintJavascript() {
 
 gulp.task('lint', lintJavascript);
 
-function buildJavascript() {
-    return browserify({entries: './src/js/easymde.js', standalone: 'EasyMDE'}).bundle()
-        .pipe(source('easymde.min.js'))
-        .pipe(buffer())
-        .pipe(uglify())
-        .pipe(header(banner, {pkg}))
-        .pipe(gulp.dest('dist'));
-}
-
-gulp.task('scripts', gulp.series(lintJavascript, buildJavascript));
-
 function buildStyles() {
     const cssFiles = [
         './node_modules/codemirror/lib/codemirror.css',
@@ -65,10 +45,6 @@ function buildStyles() {
         .pipe(header(banner, {pkg}))
         .pipe(gulp.dest('dist'));
 }
-
-gulp.task('styles', buildStyles);
-
-gulp.task('default', gulp.parallel(buildStyles, buildJavascript));
 
 function compileTypescript() {
     let failed = false;
@@ -86,11 +62,8 @@ function compileTypescript() {
         .pipe(gulp.dest('build'));
 }
 
-function buildTypescript() {
-    return browserify(['build/newmde.js'], {standalone: 'NewMDE'})
-    // return browserify(['build/index.js'], {standalone: 'Test'})
-    // return browserify(['build/test.js'], {standalone: 'Test'})
-    // .plugin('tsify', {project: 'tsconfig.json'})
+function buildBrowserModule() {
+    return browserify(['build/newmde.js'], {standalone: 'NewMDE', extensions: 'common-shakeify'})
         .bundle()
         .pipe(source('newmde.min.js'))
         .pipe(buffer())
@@ -99,10 +72,9 @@ function buildTypescript() {
         .pipe(gulp.dest('dist'));
 }
 
-gulp.task('build', gulp.series(compileTypescript, buildTypescript));
-// return browserify({entries: './src/js/easymde.js', standalone: 'EasyMDE'}).bundle()
-//     .pipe(source('easymde.min.js'))
-//     .pipe(buffer())
-//     .pipe(uglify())
-//     .pipe(header(banner, {pkg}))
-//     .pipe(gulp.dest('./dist/'));
+const buildScripts = gulp.series(compileTypescript, buildBrowserModule);
+
+gulp.task('lint', lintJavascript);
+gulp.task('styles', buildStyles);
+gulp.task('scripts', buildScripts);
+gulp.task('default', gulp.parallel(buildStyles, buildScripts));
