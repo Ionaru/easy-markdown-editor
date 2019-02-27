@@ -1,14 +1,16 @@
 // Create new instance
 const editor = new EasyMDE({
     autoDownloadFontAwesome: false,
-    element: document.getElementById("mdEditor")!,
-    hideIcons: ["side-by-side", "fullscreen"],
+    element: document.getElementById('mdEditor')!,
+    hideIcons: ['side-by-side', 'fullscreen'],
     shortcuts: {
-        drawTable: "Cmd-Alt-T",
+        drawTable: 'Cmd-Alt-T',
         toggleFullScreen: null
     },
     spellChecker: false,
-    onToggleFullScreen: (full: boolean) => { console.log('FullscreenToggled', full); },
+    onToggleFullScreen: (full: boolean) => {
+        console.log('FullscreenToggled', full);
+    },
     theme: 'someOtherTheme',
 });
 
@@ -23,4 +25,6 @@ const fullscreen = editor.isFullscreenActive() as boolean;
 editor.codemirror.setOption('readOnly', true);
 
 // Static properties
-EasyMDE.toggleItalic = (editor: EasyMDE) => { console.log('SomeButtonOverride'); };
+EasyMDE.toggleItalic = (editor: EasyMDE) => {
+    console.log('SomeButtonOverride');
+};
