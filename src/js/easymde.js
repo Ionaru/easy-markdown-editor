@@ -1298,7 +1298,7 @@ var toolbarBuiltInButtons = {
     },
     'guide': {
         name: 'guide',
-        action: 'https://simplemde.com/markdown-guide',
+        action: 'https://www.markdownguide.org/basic-syntax/',
         className: 'fa fa-question-circle',
         noDisable: true,
         title: 'Markdown Guide',
