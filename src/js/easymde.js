@@ -661,7 +661,7 @@ function drawLink(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.link);
+        url = prompt(options.promptTexts.link, 'https://');
         if (!url) {
             return false;
         }
@@ -678,7 +678,7 @@ function drawImage(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.image);
+        url = prompt(options.promptTexts.image, 'https://');
         if (!url) {
             return false;
         }
