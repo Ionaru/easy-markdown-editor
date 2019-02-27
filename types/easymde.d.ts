@@ -54,6 +54,7 @@ declare namespace EasyMDE {
 
     interface Shortcuts {
         [action: string]: string | undefined | null;
+
         toggleBlockquote?: string | null;
         toggleBold?: string | null;
         cleanBlock?: string | null;
@@ -78,7 +79,7 @@ declare namespace EasyMDE {
 
     interface ToolbarIcon {
         name: string;
-        action: string|((editor: EasyMDE) => void);
+        action: string | ((editor: EasyMDE) => void);
         className: string;
         title: string;
     }
@@ -103,10 +104,10 @@ declare namespace EasyMDE {
         shortcuts?: Shortcuts;
         showIcons?: ReadonlyArray<string>;
         spellChecker?: boolean;
-        status?: boolean|ReadonlyArray<string|StatusBarItem>;
+        status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;
-        toolbar?: boolean|ReadonlyArray<string|ToolbarIcon>;
+        toolbar?: boolean | ReadonlyArray<string | ToolbarIcon>;
         toolbarTips?: boolean;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
@@ -115,13 +116,20 @@ declare namespace EasyMDE {
 
 declare class EasyMDE {
     constructor(options?: EasyMDE.Options);
+
     value(): string;
     value(val: string): void;
+
     codemirror: CodeMirror.Editor;
+
     toTextArea(): void;
+
     isPreviewActive(): boolean;
+
     isSideBySideActive(): boolean;
+
     isFullscreenActive(): boolean;
+
     clearAutosavedValue(): void;
 
     static toggleBold: (editor: EasyMDE) => void;
