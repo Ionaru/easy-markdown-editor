@@ -2,6 +2,11 @@
     "name": "easymde",
     "version": "2.5.1",
     "description": "A simple, beautiful, and embeddable JavaScript Markdown editor that easy to use. Features include autosaving and spell checking.",
+    "files": [
+        "dist/**/*",
+        "src/**/*",
+        "types/easymde.d.ts"
+    ],
     "keywords": [
         "embeddable",
         "markdown",
@@ -22,7 +27,7 @@
         "marked": "^0.6.0"
     },
     "devDependencies": {
-        "@types/codemirror": "0.0.71",
+        "@types/codemirror": "0.0.72",
         "browserify": "^16.2.3",
         "gulp": "^4.0.0",
         "gulp-clean-css": "^4.0.0",
