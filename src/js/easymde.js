@@ -42,7 +42,7 @@ var bindings = {
     'undo': undo,
     'redo': redo,
     'toggleSideBySide': toggleSideBySide,
-    'toggleFullScreen': toggleFullScreen
+    'toggleFullScreen': toggleFullScreen,
 };
 
 var shortcuts = {
@@ -59,7 +59,7 @@ var shortcuts = {
     'toggleCodeBlock': 'Cmd-Alt-C',
     'togglePreview': 'Cmd-P',
     'toggleSideBySide': 'F9',
-    'toggleFullScreen': 'F11'
+    'toggleFullScreen': 'F11',
 };
 
 var getBindingName = function (f) {
@@ -321,11 +321,11 @@ function toggleCodeBlock(editor) {
         line = line || cm.getLineHandle(line_num);
         firstTok = firstTok || cm.getTokenAt({
             line: line_num,
-            ch: 1
+            ch: 1,
         });
         lastTok = lastTok || (!!line.text && cm.getTokenAt({
             line: line_num,
-            ch: line.text.length - 1
+            ch: line.text.length - 1,
         }));
         var types = firstTok.type ? firstTok.type.split(' ') : [];
         if (lastTok && token_state(lastTok).indentedCode) {
@@ -358,10 +358,10 @@ function toggleCodeBlock(editor) {
         _replaceSelection(cm, false, [repl_start, repl_end]);
         cm.setSelection({
             line: start_line_sel,
-            ch: 0
+            ch: 0,
         }, {
             line: end_line_sel,
-            ch: 0
+            ch: 0,
         });
     }
 
@@ -370,7 +370,7 @@ function toggleCodeBlock(editor) {
         cur_end = cm.getCursor('end'),
         tok = cm.getTokenAt({
             line: cur_start.line,
-            ch: cur_start.ch || 1
+            ch: cur_start.ch || 1,
         }), // avoid ch 0 which is a cursor pos but not token
         line = cm.getLineHandle(cur_start.line),
         is_code = code_type(cm, cur_start.line, line, tok);
@@ -382,10 +382,10 @@ function toggleCodeBlock(editor) {
             end = line.text.slice(cur_start.ch).replace('`', '');
         cm.replaceRange(start + end, {
             line: cur_start.line,
-            ch: 0
+            ch: 0,
         }, {
             line: cur_start.line,
-            ch: 99999999999999
+            ch: 99999999999999,
         });
         cur_start.ch--;
         if (cur_start !== cur_end) {
@@ -406,7 +406,7 @@ function toggleCodeBlock(editor) {
             }
             var fencedTok = cm.getTokenAt({
                 line: block_start,
-                ch: 1
+                ch: 1,
             });
             var fence_chars = token_state(fencedTok).fencedChars;
             var start_text, start_line;
@@ -443,25 +443,25 @@ function toggleCodeBlock(editor) {
                 // end line first, so that line numbers don't change
                 cm.replaceRange(end_text, {
                     line: end_line,
-                    ch: 0
+                    ch: 0,
                 }, {
                     line: end_line + (end_text ? 0 : 1),
-                    ch: 0
+                    ch: 0,
                 });
                 cm.replaceRange(start_text, {
                     line: start_line,
-                    ch: 0
+                    ch: 0,
                 }, {
                     line: start_line + (start_text ? 0 : 1),
-                    ch: 0
+                    ch: 0,
                 });
             });
             cm.setSelection({
                 line: start_line + (start_text ? 1 : 0),
-                ch: 0
+                ch: 0,
             }, {
                 line: end_line + (start_text ? 1 : -1),
-                ch: 0
+                ch: 0,
             });
             cm.focus();
         } else {
@@ -496,17 +496,17 @@ function toggleCodeBlock(editor) {
             cm.operation(function () {
                 cm.replaceRange('', {
                     line: block_start,
-                    ch: 0
+                    ch: 0,
                 }, {
                     line: block_start + 1,
-                    ch: 0
+                    ch: 0,
                 });
                 cm.replaceRange('', {
                     line: block_end - 1,
-                    ch: 0
+                    ch: 0,
                 }, {
                     line: block_end,
-                    ch: 0
+                    ch: 0,
                 });
             });
             cm.focus();
@@ -552,13 +552,13 @@ function toggleCodeBlock(editor) {
         var next_line = cm.getLineHandle(block_end + 1),
             next_line_last_tok = next_line && cm.getTokenAt({
                 line: block_end + 1,
-                ch: next_line.text.length - 1
+                ch: next_line.text.length - 1,
             }),
             next_line_indented = next_line_last_tok && token_state(next_line_last_tok).indentedCode;
         if (next_line_indented) {
             cm.replaceRange('\n', {
                 line: block_end + 1,
-                ch: 0
+                ch: 0,
             });
         }
 
@@ -850,7 +850,7 @@ function _replaceSelection(cm, active, startEnd, url) {
         end = text.slice(startPoint.ch);
         cm.replaceRange(start + end, {
             line: startPoint.line,
-            ch: 0
+            ch: 0,
         });
     } else {
         text = cm.getSelection();
@@ -925,10 +925,10 @@ function _toggleHeading(cm, direction, size) {
 
             cm.replaceRange(text, {
                 line: i,
-                ch: 0
+                ch: 0,
             }, {
                 line: i,
-                ch: 99999999999999
+                ch: 99999999999999,
             });
         })(i);
     }
@@ -949,14 +949,14 @@ function _toggleLine(cm, name) {
     var repl = {
         'quote': /^(\s*)>\s+/,
         'unordered-list': listRegexp,
-        'ordered-list': listRegexp
+        'ordered-list': listRegexp,
     };
 
     var _getChar = function (name, i) {
         var map = {
             'quote': '>',
             'unordered-list': '*',
-            'ordered-list': '%%i.'
+            'ordered-list': '%%i.',
         };
 
         return map[name].replace('%%i', i);
@@ -966,7 +966,7 @@ function _toggleLine(cm, name) {
         var map = {
             'quote': '>',
             'unordered-list': '*',
-            'ordered-list': 'd+.'
+            'ordered-list': 'd+.',
         };
         var rt = new RegExp(map[name]);
 
@@ -994,10 +994,10 @@ function _toggleLine(cm, name) {
             }
             cm.replaceRange(text, {
                 line: i,
-                ch: 0
+                ch: 0,
             }, {
                 line: i,
-                ch: 99999999999999
+                ch: 99999999999999,
             });
         })(i);
     }
@@ -1035,10 +1035,10 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
         }
         cm.replaceRange(start + end, {
             line: startPoint.line,
-            ch: 0
+            ch: 0,
         }, {
             line: startPoint.line,
-            ch: 99999999999999
+            ch: 99999999999999,
         });
 
         if (type == 'bold' || type == 'strikethrough') {
@@ -1087,10 +1087,10 @@ function _cleanBlock(cm) {
 
         cm.replaceRange(text, {
             line: line,
-            ch: 0
+            ch: 0,
         }, {
             line: line,
-            ch: 99999999999999
+            ch: 99999999999999,
         });
     }
 }
@@ -1147,125 +1147,125 @@ var toolbarBuiltInButtons = {
         action: toggleBold,
         className: 'fa fa-bold',
         title: 'Bold',
-        default: true
+        default: true,
     },
     'italic': {
         name: 'italic',
         action: toggleItalic,
         className: 'fa fa-italic',
         title: 'Italic',
-        default: true
+        default: true,
     },
     'strikethrough': {
         name: 'strikethrough',
         action: toggleStrikethrough,
         className: 'fa fa-strikethrough',
-        title: 'Strikethrough'
+        title: 'Strikethrough',
     },
     'heading': {
         name: 'heading',
         action: toggleHeadingSmaller,
         className: 'fa fa-header fa-heading',
         title: 'Heading',
-        default: true
+        default: true,
     },
     'heading-smaller': {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
         className: 'fa fa-header fa-heading header-smaller',
-        title: 'Smaller Heading'
+        title: 'Smaller Heading',
     },
     'heading-bigger': {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
         className: 'fa fa-header fa-heading header-bigger',
-        title: 'Bigger Heading'
+        title: 'Bigger Heading',
     },
     'heading-1': {
         name: 'heading-1',
         action: toggleHeading1,
         className: 'fa fa-header fa-heading header-1',
-        title: 'Big Heading'
+        title: 'Big Heading',
     },
     'heading-2': {
         name: 'heading-2',
         action: toggleHeading2,
         className: 'fa fa-header fa-heading header-2',
-        title: 'Medium Heading'
+        title: 'Medium Heading',
     },
     'heading-3': {
         name: 'heading-3',
         action: toggleHeading3,
         className: 'fa fa-header fa-heading header-3',
-        title: 'Small Heading'
+        title: 'Small Heading',
     },
     'separator-1': {
-        name: 'separator-1'
+        name: 'separator-1',
     },
     'code': {
         name: 'code',
         action: toggleCodeBlock,
         className: 'fa fa-code',
-        title: 'Code'
+        title: 'Code',
     },
     'quote': {
         name: 'quote',
         action: toggleBlockquote,
         className: 'fa fa-quote-left',
         title: 'Quote',
-        default: true
+        default: true,
     },
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
         className: 'fa fa-list-ul',
         title: 'Generic List',
-        default: true
+        default: true,
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
         className: 'fa fa-list-ol',
         title: 'Numbered List',
-        default: true
+        default: true,
     },
     'clean-block': {
         name: 'clean-block',
         action: cleanBlock,
         className: 'fa fa-eraser',
-        title: 'Clean block'
+        title: 'Clean block',
     },
     'separator-2': {
-        name: 'separator-2'
+        name: 'separator-2',
     },
     'link': {
         name: 'link',
         action: drawLink,
         className: 'fa fa-link',
         title: 'Create Link',
-        default: true
+        default: true,
     },
     'image': {
         name: 'image',
         action: drawImage,
         className: 'fa fa-image',
         title: 'Insert Image',
-        default: true
+        default: true,
     },
     'table': {
         name: 'table',
         action: drawTable,
         className: 'fa fa-table',
-        title: 'Insert Table'
+        title: 'Insert Table',
     },
     'horizontal-rule': {
         name: 'horizontal-rule',
         action: drawHorizontalRule,
         className: 'fa fa-minus',
-        title: 'Insert Horizontal Line'
+        title: 'Insert Horizontal Line',
     },
     'separator-3': {
-        name: 'separator-3'
+        name: 'separator-3',
     },
     'preview': {
         name: 'preview',
@@ -1273,7 +1273,7 @@ var toolbarBuiltInButtons = {
         className: 'fa fa-eye',
         noDisable: true,
         title: 'Toggle Preview',
-        default: true
+        default: true,
     },
     'side-by-side': {
         name: 'side-by-side',
@@ -1282,7 +1282,7 @@ var toolbarBuiltInButtons = {
         noDisable: true,
         noMobile: true,
         title: 'Toggle Side by Side',
-        default: true
+        default: true,
     },
     'fullscreen': {
         name: 'fullscreen',
@@ -1291,10 +1291,10 @@ var toolbarBuiltInButtons = {
         noDisable: true,
         noMobile: true,
         title: 'Toggle Fullscreen',
-        default: true
+        default: true,
     },
     'separator-4': {
-        name: 'separator-4'
+        name: 'separator-4',
     },
     'guide': {
         name: 'guide',
@@ -1302,43 +1302,43 @@ var toolbarBuiltInButtons = {
         className: 'fa fa-question-circle',
         noDisable: true,
         title: 'Markdown Guide',
-        default: true
+        default: true,
     },
     'separator-5': {
-        name: 'separator-5'
+        name: 'separator-5',
     },
     'undo': {
         name: 'undo',
         action: undo,
         className: 'fa fa-undo',
         noDisable: true,
-        title: 'Undo'
+        title: 'Undo',
     },
     'redo': {
         name: 'redo',
         action: redo,
         className: 'fa fa-repeat fa-redo',
         noDisable: true,
-        title: 'Redo'
-    }
+        title: 'Redo',
+    },
 };
 
 var insertTexts = {
     link: ['[', '](#url#)'],
     image: ['![](', '#url#)'],
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
-    horizontalRule: ['', '\n\n-----\n\n']
+    horizontalRule: ['', '\n\n-----\n\n'],
 };
 
 var promptTexts = {
     link: 'URL for the link:',
-    image: 'URL of the image:'
+    image: 'URL of the image:',
 };
 
 var blockStyles = {
     'bold': '**',
     'code': '```',
-    'italic': '*'
+    'italic': '*',
 };
 
 /**
@@ -1426,7 +1426,7 @@ function EasyMDE(options) {
 
     // Set default options for parsing config
     options.parsingConfig = extend({
-        highlightFormatting: true // needed for toggleCodeBlock to detect types of code
+        highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
     }, options.parsingConfig || {});
 
 
@@ -1568,7 +1568,7 @@ EasyMDE.prototype.render = function (el) {
         backdrop.gitHubSpice = false;
 
         CodeMirrorSpellChecker({
-            codeMirrorInstance: CodeMirror
+            codeMirrorInstance: CodeMirror,
         });
     } else {
         mode = options.parsingConfig;
@@ -1579,7 +1579,7 @@ EasyMDE.prototype.render = function (el) {
     // eslint-disable-next-line no-unused-vars
     function configureMouse(cm, repeat, event) {
         return {
-            addNew: false
+            addNew: false,
         };
     }
 
@@ -1597,7 +1597,7 @@ EasyMDE.prototype.render = function (el) {
         allowDropFileTypes: ['text/plain'],
         placeholder: options.placeholder || el.getAttribute('placeholder') || '',
         styleSelectedText: (options.styleSelectedText != undefined) ? options.styleSelectedText : !isMobile(),
-        configureMouse: configureMouse
+        configureMouse: configureMouse,
     });
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
@@ -1897,7 +1897,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
             items.push({
                 className: status[i].className,
                 defaultValue: status[i].defaultValue,
-                onUpdate: status[i].onUpdate
+                onUpdate: status[i].onUpdate,
             });
         } else {
             var name = status[i];
@@ -1935,7 +1935,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
             items.push({
                 className: name,
                 defaultValue: defaultValue,
-                onUpdate: onUpdate
+                onUpdate: onUpdate,
             });
         }
     }
