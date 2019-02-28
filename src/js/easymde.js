@@ -1130,7 +1130,7 @@ function extend(target) {
 
 /* The right word count in respect for CJK. */
 function wordCount(data) {
-    var pattern = /[a-zA-Z0-9_\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
+    var pattern = /[a-zA-Z0-9_\u00A0-\u02AF\u0392-\u03c9\u0410-\u04F9]+|[\u4E00-\u9FFF\u3400-\u4dbf\uf900-\ufaff\u3040-\u309f\uac00-\ud7af]+/g;
     var m = data.match(pattern);
     var count = 0;
     if (m === null) return count;
@@ -1429,7 +1429,7 @@ var toolbarBuiltInButtons = {
     },
     'guide': {
         name: 'guide',
-        action: 'https://simplemde.com/markdown-guide',
+        action: 'https://www.markdownguide.org/basic-syntax/',
         className: {
             fa: 'fa fa-question-circle',
             material: 'material-icons'
