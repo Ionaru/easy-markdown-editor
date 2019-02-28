@@ -151,29 +151,38 @@
 
 .editor-toolbar button:after {
     font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
-    font-size: 65%;
     vertical-align: text-bottom;
     position: relative;
+}
+
+.editor-toolbar button.fa:after {
+    font-size: 75%;
     top: 2px;
 }
 
-.editor-toolbar button.heading-1:after {
+.editor-toolbar button.material-icons:after {
+    font-size: 50%;
+    top: -2px;
+    margin-left: -8px;
+}
+
+.editor-toolbar button.header-1:after {
     content: "1";
 }
 
-.editor-toolbar button.heading-2:after {
+.editor-toolbar button.header-2:after {
     content: "2";
 }
 
-.editor-toolbar button.heading-3:after {
+.editor-toolbar button.header-3:after {
     content: "3";
 }
 
-.editor-toolbar button.heading-bigger:after {
+.editor-toolbar button.header-bigger:after {
     content: "▲";
 }
 
-.editor-toolbar button.heading-smaller:after {
+.editor-toolbar button.header-smaller:after {
     content: "▼";
 }
 

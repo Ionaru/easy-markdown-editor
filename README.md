@@ -128,6 +128,9 @@ easyMDE.value('New input for **EasyMDE**');
 - **element**: The DOM element for the TextArea to use. Defaults to the first TextArea on the page.
 - **forceSync**: If set to `true`, force text changes made in EasyMDE to be immediately stored in original text area. Defaults to `false`.
 - **hideIcons**: An array of icon names to hide. Can be used to hide specific icons shown by default without completely customizing the toolbar.
+- **iconsSet**: the icons set to use. Currently supported icons set are:
+  - `fa`: [Font-Awesome icons](https://fontawesome.com/icons) (default);
+  - `material`: [Material Design icons](https://material.io/tools/icons).
 - **indentWithTabs**: If set to `false`, indent using spaces instead of tabs. Defaults to `true`.
 - **initialValue**: If set, will customize the initial value of the editor.
 - **insertTexts**: Customize how certain buttons that insert text behave. Takes an array with two elements. The first element will be the text inserted before the cursor or highlight, and the second element will be inserted after. For example, this is the default link value: `["[", "](http://)"]`.
