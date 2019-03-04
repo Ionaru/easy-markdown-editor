@@ -171,6 +171,30 @@ function createTooltip(title, action, shortcuts) {
 }
 
 /**
+ * Create the input element (ie. <input type='file'>) used to open the
+ * browse-file window in order to allow the user to select an image to be
+ * imported to the server. Used among with the 'import-image' icon.
+ * @param editor {Object} the EasyMDE object
+ * @returns Node The created input DOM element.
+ */
+function createImageInput(editor) {
+    var imageInput = document.createElement('input');
+    imageInput.className = 'imageInput';
+    imageInput.type = 'file';
+    imageInput.multiple = true;
+    imageInput.name = 'image';
+    imageInput.accept = editor.options.imageAccept;
+    imageInput.style.display = 'none';
+    imageInput.style.opacity = 0;
+    imageInput.addEventListener('change', function(event) {
+        for(var i=0; i<event.target.files.length; i++) {
+            console.log('file name: ' + event.target.files[i].name);
+        }
+    });
+    return imageInput;
+}
+
+/**
  * The state of CodeMirror at the given position.
  */
 function getState(cm, pos) {
@@ -684,6 +708,15 @@ function drawImage(editor) {
         }
     }
     _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+}
+
+/**
+ * Action for opening the browse-file window to upload an image to a server.
+ */
+function drawUploadedImage(editor) {
+    // TODO: Draw the image template with a fake url, ie: '![](importing foo.png...)'
+    var imageInput = editor.gui.toolbar.getElementsByClassName('imageInput')[0];
+    imageInput.dispatchEvent(new MouseEvent('click'));
 }
 
 /**
@@ -1252,6 +1285,12 @@ var toolbarBuiltInButtons = {
         title: 'Insert Image',
         default: true,
     },
+    'upload-image': {
+        name: 'upload-image',
+        action: drawUploadedImage,
+        className: 'fa fa-image',
+        title: 'Import an image',
+    },
     'table': {
         name: 'table',
         action: drawTable,
@@ -1446,6 +1485,10 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.minHeight = options.minHeight || '300px';
+
+
+    // import-image default configuration
+    options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -1844,6 +1887,9 @@ EasyMDE.prototype.createToolbar = function (items) {
 
             toolbarData[item.name || item] = el;
             bar.appendChild(el);
+            if (item.name === 'upload-image') {
+                bar.appendChild(createImageInput(self));
+            }
         })(items[i]);
     }
 
