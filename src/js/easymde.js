@@ -145,8 +145,8 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
     for (var classNameIndex = 0; classNameIndex < classNameParts.length; classNameIndex++) {
         var classNamePart = classNameParts[classNameIndex];
         // Split icon classes from the button.
-        // Regex will detect "fa" and "fa-something", but not "fanfare".
-        if (classNamePart.match(/^fa((-.*)|$)/)) {
+        // Regex will detect "fa", "fas", "fa-something" and "fa-some-icon-1", but not "fanfare".
+        if (classNamePart.match(/^fa([srlb]|(-[\w-]*)|$)/)) {
             iconClasses.push(classNamePart);
         } else {
             el.classList.add(classNamePart);
