@@ -188,7 +188,7 @@ function createImageInput(editor) {
     imageInput.style.opacity = 0;
     imageInput.addEventListener('change', function(event) {
         for(var i=0; i<event.target.files.length; i++) {
-            console.log('file name: ' + event.target.files[i].name);
+            uploadImage(event.target.files[i], editor.options);
         }
     });
     return imageInput;
@@ -875,6 +875,7 @@ function _replaceSelection(cm, active, startEnd, url) {
     Object.assign(startPoint, cm.getCursor('start'));
     Object.assign(endPoint, cm.getCursor('end'));
     if (url) {
+        start = start.replace('#url#', url);
         end = end.replace('#url#', url);
     }
     if (active) {
@@ -1126,6 +1127,70 @@ function _cleanBlock(cm) {
             ch: 99999999999999,
         });
     }
+}
+
+/**
+ * Convert a number of bytes to a human-readable file size.
+ * @param bytes {integer} A number of bytes, as integer. Ex: 421137
+ * @param units {number[]} An array of human-readable units, ie. ['b', 'Kb', 'Mb']
+ * @returns string A human-readable file size. Ex: '412Kb'
+ */
+function humanFileSize(bytes, units) {
+    if(Math.abs(bytes) < 1024) {
+        return '' + bytes + units[0];
+    }
+    var u = 0;
+    do {
+        bytes /= 1024;
+        ++u;
+    } while(Math.abs(bytes) >= 1024 && u < units.length);
+    return '' + bytes.toFixed(1) + units[u];
+}
+
+/**
+ * Upload an image to the server.
+ *
+ * Can be triggered by:
+ *   - drag&drop; // TODO
+ *   - copy-paste; // TODO
+ *   - the browse-file window (opened when the user clicks on the *upload-image* icon).
+ *
+ * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
+ * @param options The EasyMDE options.
+ */
+function uploadImage(file, options) {
+    if (file.size >= options.imageMaxSize) {
+        var units = options.imageTexts.sizeUnits.split(',');
+        alert(options.text.errorImageTooBig
+                .replace('#image_name#', file.name)
+                .replace('#image_size#', humanFileSize(file.size, units))
+                .replace('#image_max_size#', humanFileSize(options.imageMaxSize, units))
+        );
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('image', file);
+    var request = new XMLHttpRequest();
+    request.open('POST', options.imageUploadEndpoint);
+    request.send(formData);
+
+    request.onprogress = function (event) {
+        if (event.lengthComputable) {
+            // TODO: test with a big image on a remote web server
+            var progress = Math.round((event.loaded * 100) / event.total);
+            console.log('EasyMDE: image upload progress: ' + progress + '%');
+            // TODO: show progress on status bar instead
+        }
+    };
+
+    request.onload = function () {
+        if(this.status === 200) {
+            console.log('image url: ' + window.location.origin + '/' + this.responseText);
+        } else {
+            console.log('EasyMDE: Error ' + this.status + ' while importing image: ' + this.statusText.toString());
+        }
+    };
 }
 
 // Merge the properties of one object into another.
@@ -1380,6 +1445,12 @@ var blockStyles = {
     'italic': '*',
 };
 
+var imageTexts = {
+    errorImageTooBig: 'Image #image_name# is too big (#image_size#).\n' +
+    'Maximum file size is #image_max_size#.',
+    sizeUnits: 'b,Kb,Mb',
+};
+
 /**
  * Interface of EasyMDE.
  */
@@ -1488,6 +1559,9 @@ function EasyMDE(options) {
 
 
     // import-image default configuration
+    options.uploadImage = options.uploadImage || false;
+    options.imageMaxSize = options.imageMaxSize || 1024*1024*2;
+    options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
 
 
