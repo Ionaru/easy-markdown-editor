@@ -14,7 +14,7 @@ You can [submit an issue️](https://github.com/Ionaru/easy-markdown-editor/issu
 
 ### 📦 Prerequisites
 
-You need node.js and npm.
+You need Node.js and npm.
 
 To install them on Debian-based systems:
 
@@ -37,7 +37,7 @@ git clone https://github.com/Ionaru/easy-markdown-editor.git
 cd easy-markdown-editor
 ```
 
-Then install the EasyMDE with npm:
+Then install the required dependencies:
 
 ```bash
 npm install
@@ -50,12 +50,12 @@ Yay! You are ready! 🍾
 
 1. First, [create a fork of this project](https://github.com/Ionaru/easy-markdown-editor/fork), and copy the https URL (*clone or download* button) of your project (something like https://github.com/YOUR_USERNAME/easy-markdown-editor.git );
 2. a) If you already cloned and worked on the project: `git remote add source https://github.com/Ionaru/easy-markdown-editor.git`;
-b) otherwise, clone your fork: `git clone https://github.com/YOUR_USERNAME/easy-markdown-editor.git`;
-3. create a new dedicated branch `git checkout -b myMergeRequest`;
-4. write some nice code and commit your work;
-5. check files against the ESLint syntax and build minified versions: `gulp`;
-6. push it to a dedicated branch `git push origin myMergeRequest`;
-7. got to the [main project page](https://github.com/Ionaru/easy-markdown-editor) and click on the button *Compare and pull request*, then fill the description.
+b) Otherwise, clone your fork: `git clone https://github.com/YOUR_USERNAME/easy-markdown-editor.git`;
+3. Create a new dedicated branch `git checkout -b myMergeRequest`;
+4. Write some nice code and commit your work;
+5. Check files against the ESLint syntax and build minified versions: `gulp`;
+6. Push it to a dedicated branch `git push origin myMergeRequest`;
+7. Go to the [main project page](https://github.com/Ionaru/easy-markdown-editor) and click on the button *Compare and pull request*, then fill the description.
 
 If you want to make other pull requests, go back to the master branch (`git checkout master`), update it (`git pull --rebase source master`), then follow the instructions above from step 3.
 
