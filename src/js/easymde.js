@@ -113,9 +113,9 @@ function fixShortcut(name) {
 
 
 /**
- * Create icon element for toolbar.
+ * Create button element for toolbar.
  */
-function createIcon(options, enableTooltips, shortcuts) {
+function createToolbarButton(options, enableTooltips, shortcuts) {
     options = options || {};
     var el = document.createElement('button');
     el.className = options.name;
@@ -139,11 +139,28 @@ function createIcon(options, enableTooltips, shortcuts) {
         el.classList.add('no-mobile');
     }
 
+    // Provide backwards compatibility with simple-markdown-editor by adding custom classes to the button.
+    var classNameParts = options.className.split(' ');
+    var iconClasses = [];
+    for (var classNameIndex = 0; classNameIndex < classNameParts.length; classNameIndex++) {
+        var classNamePart = classNameParts[classNameIndex];
+        // Split icon classes from the button.
+        // Regex will detect "fa" and "fa-something", but not "fanfare".
+        if (classNamePart.match(/^fa((-.*)|$)/)) {
+            iconClasses.push(classNamePart);
+        } else {
+            el.classList.add(classNamePart);
+        }
+    }
+
     el.tabIndex = -1;
 
     // Create icon element and append as a child to the button
     var icon = document.createElement('i');
-    icon.className = options.className;
+    for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
+        var iconClass = iconClasses[iconClassIndex];
+        icon.classList.add(iconClass);
+    }
     el.appendChild(icon);
 
     return el;
@@ -1824,7 +1841,7 @@ EasyMDE.prototype.createToolbar = function (items) {
             if (item === '|') {
                 el = createSep();
             } else {
-                el = createIcon(item, self.options.toolbarTips, self.options.shortcuts);
+                el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts);
             }
 
             // bind events, special for info
