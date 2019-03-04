@@ -188,7 +188,11 @@ function createImageInput(editor) {
     imageInput.style.opacity = 0;
     imageInput.addEventListener('change', function(event) {
         for(var i=0; i<event.target.files.length; i++) {
-            uploadImage(event.target.files[i], editor.options);
+            uploadImage(event.target.files[i], editor.options, function(url) {
+                afterImageUploaded(editor, url);
+            }, function(errorStatus, errorStatusText) {
+                console.log('EasyMDE: error ' + errorStatus + ' when importing image: ' + errorStatusText);
+            });
         }
     });
     return imageInput;
@@ -720,6 +724,18 @@ function drawUploadedImage(editor) {
 }
 
 /**
+ * Action executed after an image have been successfully imported on the server.
+ * @param editor The EasyMDE object
+ * @param url {string} The url of the uploaded image
+ */
+function afterImageUploaded(editor, url) {
+    var cm = editor.codemirror;
+    var stat = getState(cm);
+    var options = editor.options;
+    _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
+}
+
+/**
  * Action for drawing a table.
  */
 function drawTable(editor) {
@@ -1157,8 +1173,13 @@ function humanFileSize(bytes, units) {
  *
  * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
  * @param options The EasyMDE options.
+ * @param onSuccess {function} A callback function to execute after the image have been successfully uploaded, with parameters:
+ * - url (string): The URL of the uploaded image.
+ * @param onError {function} A callback function to execute when the image upload fails, with parameters:
+ * - errorStatus (number): The status of the response of the request, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status).
+ * - errorStatusText (string): the response string returned by the HTTP server, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/statusText).
  */
-function uploadImage(file, options) {
+function uploadImage(file, options, onSuccess, onError) {
     if (file.size >= options.imageMaxSize) {
         var units = options.imageTexts.sizeUnits.split(',');
         alert(options.text.errorImageTooBig
@@ -1186,9 +1207,9 @@ function uploadImage(file, options) {
 
     request.onload = function () {
         if(this.status === 200) {
-            console.log('image url: ' + window.location.origin + '/' + this.responseText);
+            onSuccess(window.location.origin + '/' + this.responseText);
         } else {
-            console.log('EasyMDE: Error ' + this.status + ' while importing image: ' + this.statusText.toString());
+            onError(this.status, this.statusText.toString());
         }
     };
 }
@@ -1430,6 +1451,8 @@ var toolbarBuiltInButtons = {
 var insertTexts = {
     link: ['[', '](#url#)'],
     image: ['![](', '#url#)'],
+    uploadedImage: ['![](#url#)', ''],
+    // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
     horizontalRule: ['', '\n\n-----\n\n'],
 };
