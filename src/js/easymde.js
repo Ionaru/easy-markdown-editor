@@ -205,9 +205,10 @@ function createImageInput(editor) {
     imageInput.style.opacity = 0;
     imageInput.addEventListener('change', function(event) {
         for(var i=0; i<event.target.files.length; i++) {
-            uploadImage(event.target.files[i], editor.options, function(url) {
+            uploadImage(event.target.files[i], editor, function(url) {
                 afterImageUploaded(editor, url);
-            }, function(errorStatus, errorStatusText) {
+            }, function(imageName, errorStatus, errorStatusText) {
+                alert(editor.options.imageTexts.errorImport.replace('#image_name#', imageName));
                 console.log('EasyMDE: error ' + errorStatus + ' when importing image: ' + errorStatusText);
             });
         }
@@ -749,7 +750,12 @@ function afterImageUploaded(editor, url) {
     var cm = editor.codemirror;
     var stat = getState(cm);
     var options = editor.options;
+    var imageName = url.substr(url.lastIndexOf('/') + 1);
     _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
+    editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
+    setTimeout(function() {
+        editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
+    }, 1000);
 }
 
 /**
@@ -1189,20 +1195,21 @@ function humanFileSize(bytes, units) {
  *   - the browse-file window (opened when the user clicks on the *upload-image* icon).
  *
  * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
- * @param options The EasyMDE options.
+ * @param editor The EasyMDE object.
  * @param onSuccess {function} A callback function to execute after the image have been successfully uploaded, with parameters:
  * - url (string): The URL of the uploaded image.
  * @param onError {function} A callback function to execute when the image upload fails, with parameters:
+ * - fileName: the name of the image file provided by the user.
  * - errorStatus (number): The status of the response of the request, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status).
  * - errorStatusText (string): the response string returned by the HTTP server, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/statusText).
  */
-function uploadImage(file, options, onSuccess, onError) {
-    if (file.size >= options.imageMaxSize) {
-        var units = options.imageTexts.sizeUnits.split(',');
-        alert(options.imageTexts.errorImageTooBig
+function uploadImage(file, editor, onSuccess, onError) {
+    if (file.size >= editor.options.imageMaxSize) {
+        var units = editor.options.imageTexts.sizeUnits.split(',');
+        alert(editor.options.imageTexts.errorImageTooBig
                 .replace('#image_name#', file.name)
                 .replace('#image_size#', humanFileSize(file.size, units))
-                .replace('#image_max_size#', humanFileSize(options.imageMaxSize, units))
+                .replace('#image_max_size#', humanFileSize(editor.options.imageMaxSize, units))
         );
         return;
     }
@@ -1210,15 +1217,14 @@ function uploadImage(file, options, onSuccess, onError) {
     var formData = new FormData();
     formData.append('image', file);
     var request = new XMLHttpRequest();
-    request.open('POST', options.imageUploadEndpoint);
+    request.open('POST', editor.options.imageUploadEndpoint);
     request.send(formData);
 
     request.onprogress = function (event) {
         if (event.lengthComputable) {
             // TODO: test with a big image on a remote web server
             var progress = Math.round((event.loaded * 100) / event.total);
-            console.log('EasyMDE: image upload progress: ' + progress + '%');
-            // TODO: show progress on status bar instead
+            editor.updateStatusBar('upload-image', editor.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
         }
     };
 
@@ -1226,7 +1232,7 @@ function uploadImage(file, options, onSuccess, onError) {
         if(this.status === 200) {
             onSuccess(window.location.origin + '/' + this.responseText);
         } else {
-            onError(this.status, this.statusText.toString());
+            onError(file.name, this.status, this.statusText.toString());
         }
     };
 }
@@ -1486,6 +1492,12 @@ var blockStyles = {
 };
 
 var imageTexts = {
+    sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
+    sbOnDragEnter: 'Drop image to upload it.',
+    sbOnDrop: 'Uploading images #images_names#',
+    sbProgress: 'Uploading #file_name#: #progress#%',
+    sbOnUploaded: 'Uploaded #image_name#',
+    errorImport: 'Can not import #image_name#',
     errorImageTooBig: 'Image #image_name# is too big (#image_size#).\n' +
     'Maximum file size is #image_max_size#.',
     sizeUnits: 'b,Kb,Mb',
@@ -1561,7 +1573,11 @@ function EasyMDE(options) {
 
     // Handle status bar
     if (!options.hasOwnProperty('status')) {
-        options.status = ['autosave', 'lines', 'words', 'cursor'];
+        if (options.uploadImage) {
+        options.status = ['upload-image', 'autosave', 'lines', 'words', 'cursor'];
+        } else {
+            options.status = ['autosave', 'lines', 'words', 'cursor'];
+        }
     }
 
 
@@ -1629,6 +1645,7 @@ function EasyMDE(options) {
         var self = this;
 
         this.codemirror.on('dragenter', function(cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -1642,20 +1659,38 @@ function EasyMDE(options) {
             event.stopPropagation();
             event.preventDefault();
 
-            var dt = event.dataTransfer;
-            var files = dt.files;
-            console.log(files);
-
+            var files = event.dataTransfer.files;
+            var names = [];
             for(var i=0; i<files.length; i++) {
-                uploadImage(files[i], options, function(url) {
+                names.push(files[i].name);
+
+                uploadImage(files[i], self, function(url) {
                     afterImageUploaded(self, url);
-                }, function(errorStatus, errorStatusText) {
-                    console.log('EasyMDE: error ' + errorStatus + ' when importing image: ' + errorStatusText);
+                }, function(imageName, errorStatus, errorStatusText) {
+                    alert(self.options.imageTexts.errorImport.replace('#image_name#', imageName));
+                    console.log('EasyMDE: error ' + errorStatus + ' when importing image ' + imageName + ': ' + errorStatusText);
                 });
             }
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
         });
     }
 }
+
+/**
+ *
+ * @param itemName
+ * @param content
+ */
+EasyMDE.prototype.updateStatusBar = function(itemName, content) {
+    var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
+    if (matchingClasses.length === 1) {
+        this.gui.statusbar.getElementsByClassName(itemName)[0].innerHTML = content;
+    } else if (matchingClasses.length === 0) {
+        console.log('EasyMDE: status bar item ' + itemName + ' was not found.');
+    } else {
+        console.log('EasyMDE: Several status bar items named ' + itemName + ' was found.');
+    }
+};
 
 /**
  * Default markdown render.
@@ -2120,6 +2155,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     if (options.autosave != undefined && options.autosave.enabled === true) {
                         el.setAttribute('id', 'autosaved');
                     }
+                };
+            } else if (name === 'upload-image') {
+                defaultValue = function (el) {
+                    el.innerHTML = options.imageTexts.sbInit;
                 };
             }
 

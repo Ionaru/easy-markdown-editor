@@ -153,7 +153,13 @@ easyMDE.value('New input for **EasyMDE**');
 - **imageAccept**: A comma-separated list of mime-types used to check image type before upload (note: never trust client, always check file types at server-side). Defaults to `image/png, image/jpeg`.
 - **imageUploadEndpoint**: The endpoint where the images data will be sent, via an asynchronous *POST* request. The server is supposed to save this image, and if it's successful, return a 200-OK HTTP response containing the relative path of the image. No default value.
 - **imageTexts**: Several string literals used in image-upload features:
-    - **errorImageTooBig**: The error prompted to the user when the size of the image being imported is bigger than the `imageMaxSize`, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values. Defaults to `Image #image_name# is too big (#image_size#).\n' +
+    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`,
+    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`,
+    - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
+    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`,
+    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`,
+    - **errorImport**: Error message prompted when the served did not return a 200 response code. Defaults to `Can not import #image_name#`,
+    - **errorImageTooBig**: Error message prompted to the user when the size of the image being imported is bigger than the `imageMaxSize`, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values. Defaults to `Image #image_name# is too big (#image_size#).\n' +
     'Maximum file size is #image_max_size#.`.
     - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
