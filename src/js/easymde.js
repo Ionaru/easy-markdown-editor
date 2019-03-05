@@ -1199,7 +1199,7 @@ function humanFileSize(bytes, units) {
 function uploadImage(file, options, onSuccess, onError) {
     if (file.size >= options.imageMaxSize) {
         var units = options.imageTexts.sizeUnits.split(',');
-        alert(options.text.errorImageTooBig
+        alert(options.imageTexts.errorImageTooBig
                 .replace('#image_name#', file.name)
                 .replace('#image_size#', humanFileSize(file.size, units))
                 .replace('#image_max_size#', humanFileSize(options.imageMaxSize, units))
