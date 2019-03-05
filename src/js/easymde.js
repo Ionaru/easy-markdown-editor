@@ -1624,6 +1624,37 @@ function EasyMDE(options) {
     if (options.initialValue && (!this.options.autosave || this.options.autosave.foundSavedValue !== true)) {
         this.value(options.initialValue);
     }
+
+    if (options.uploadImage) {
+        var self = this;
+
+        this.codemirror.on('dragenter', function(cm, event) {
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        this.codemirror.on('dragover', function(cm, event) {
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        this.codemirror.on('drop', function(cm, event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var dt = event.dataTransfer;
+            var files = dt.files;
+            console.log(files);
+
+            for(var i=0; i<files.length; i++) {
+                uploadImage(files[i], options, function(url) {
+                    afterImageUploaded(self, url);
+                }, function(errorStatus, errorStatusText) {
+                    console.log('EasyMDE: error ' + errorStatus + ' when importing image: ' + errorStatusText);
+                });
+            }
+        });
+    }
 }
 
 /**
