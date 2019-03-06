@@ -188,35 +188,6 @@ function createTooltip(title, action, shortcuts) {
 }
 
 /**
- * Create the input element (ie. <input type='file'>) used to open the
- * browse-file window in order to allow the user to select an image to be
- * imported to the server. Used among with the 'import-image' icon.
- * @param editor {Object} the EasyMDE object
- * @returns Node The created input DOM element.
- */
-function createImageInput(editor) {
-    var imageInput = document.createElement('input');
-    imageInput.className = 'imageInput';
-    imageInput.type = 'file';
-    imageInput.multiple = true;
-    imageInput.name = 'image';
-    imageInput.accept = editor.options.imageAccept;
-    imageInput.style.display = 'none';
-    imageInput.style.opacity = 0;
-    imageInput.addEventListener('change', function(event) {
-        for(var i=0; i<event.target.files.length; i++) {
-            uploadImage(event.target.files[i], editor, function(url) {
-                afterImageUploaded(editor, url);
-            }, function(imageName, errorStatus, errorStatusText) {
-                alert(editor.options.imageTexts.errorImport.replace('#image_name#', imageName));
-                console.log('EasyMDE: error ' + errorStatus + ' when importing image: ' + errorStatusText);
-            });
-        }
-    });
-    return imageInput;
-}
-
-/**
  * The state of CodeMirror at the given position.
  */
 function getState(cm, pos) {
@@ -1186,57 +1157,6 @@ function humanFileSize(bytes, units) {
     return '' + bytes.toFixed(1) + units[u];
 }
 
-/**
- * Upload an image to the server.
- *
- * Can be triggered by:
- *   - drag&drop; // TODO
- *   - copy-paste; // TODO
- *   - the browse-file window (opened when the user clicks on the *upload-image* icon).
- *
- * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
- * @param editor The EasyMDE object.
- * @param onSuccess {function} A callback function to execute after the image have been successfully uploaded, with parameters:
- * - url (string): The URL of the uploaded image.
- * @param onError {function} A callback function to execute when the image upload fails, with parameters:
- * - fileName: the name of the image file provided by the user.
- * - errorStatus (number): The status of the response of the request, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status).
- * - errorStatusText (string): the response string returned by the HTTP server, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/statusText).
- */
-function uploadImage(file, editor, onSuccess, onError) {
-    if (file.size >= editor.options.imageMaxSize) {
-        var units = editor.options.imageTexts.sizeUnits.split(',');
-        alert(editor.options.imageTexts.errorImageTooBig
-                .replace('#image_name#', file.name)
-                .replace('#image_size#', humanFileSize(file.size, units))
-                .replace('#image_max_size#', humanFileSize(editor.options.imageMaxSize, units))
-        );
-        return;
-    }
-
-    var formData = new FormData();
-    formData.append('image', file);
-    var request = new XMLHttpRequest();
-    request.open('POST', editor.options.imageUploadEndpoint);
-    request.send(formData);
-
-    request.onprogress = function (event) {
-        if (event.lengthComputable) {
-            // TODO: test with a big image on a remote web server
-            var progress = Math.round((event.loaded * 100) / event.total);
-            editor.updateStatusBar('upload-image', editor.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
-        }
-    };
-
-    request.onload = function () {
-        if(this.status === 200) {
-            onSuccess(window.location.origin + '/' + this.responseText);
-        } else {
-            onError(file.name, this.status, this.statusText.toString());
-        }
-    };
-}
-
 // Merge the properties of one object into another.
 function _mergeProperties(target, source) {
     for (var property in source) {
@@ -1658,23 +1578,36 @@ function EasyMDE(options) {
         this.codemirror.on('drop', function(cm, event) {
             event.stopPropagation();
             event.preventDefault();
-
-            var files = event.dataTransfer.files;
-            var names = [];
-            for(var i=0; i<files.length; i++) {
-                names.push(files[i].name);
-
-                uploadImage(files[i], self, function(url) {
-                    afterImageUploaded(self, url);
-                }, function(imageName, errorStatus, errorStatusText) {
-                    alert(self.options.imageTexts.errorImport.replace('#image_name#', imageName));
-                    console.log('EasyMDE: error ' + errorStatus + ' when importing image ' + imageName + ': ' + errorStatusText);
-                });
-            }
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+            self.uploadImages(event.dataTransfer.files);
         });
     }
 }
+
+/**
+ * Upload asynchronously a list of images to a server.
+ *
+ * Can be triggered by:
+ * - drag&drop;
+ * - copy-paste;
+ * - the browse-file window (opened when the user clicks on the *upload-image* icon).
+
+ * @param {FileList} files The files to upload the the server.
+ */
+EasyMDE.prototype.uploadImages = function(files) {
+    var names = [];
+    var self = this;
+    for(var i=0; i<files.length; i++) {
+        names.push(files[i].name);
+
+        this.uploadImage(files[i], function onSuccess(imageUrl) {
+            afterImageUploaded(self, imageUrl);
+        }, function onFailure(imageName, errorStatus, errorStatusText) {
+            alert(self.options.imageTexts.errorImport.replace('#image_name#', imageName));
+            console.log('EasyMDE: error ' + errorStatus + ' when importing image ' + imageName + ': ' + errorStatusText);
+        });
+    }
+    this.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+};
 
 /**
  *
@@ -1950,6 +1883,53 @@ EasyMDE.prototype.clearAutosavedValue = function () {
     }
 };
 
+/**
+ * Upload an image to the server.
+ *
+ * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
+ * @param onSuccess {function} A callback function to execute after the image have been successfully uploaded, with parameters:
+ * - url (string): The URL of the uploaded image.
+ * @param onError {function} A callback function to execute when the image upload fails, with parameters:
+ * - fileName: the name of the image file provided by the user.
+ * - errorStatus (number): The status of the response of the request, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status).
+ * - errorStatusText (string): the response string returned by the HTTP server, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/statusText).
+ */
+EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
+    if (file.size >= this.options.imageMaxSize) {
+        var units = this.options.imageTexts.sizeUnits.split(',');
+        alert(this.options.imageTexts.errorImageTooBig
+                .replace('#image_name#', file.name)
+                .replace('#image_size#', humanFileSize(file.size, units))
+                .replace('#image_max_size#', humanFileSize(this.options.imageMaxSize, units))
+        );
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('image', file);
+    var request = new XMLHttpRequest();
+    request.open('POST', this.options.imageUploadEndpoint);
+    request.send(formData);
+
+    var self = this;
+    request.onprogress = function (event) {
+        if (event.lengthComputable) {
+            // TODO: test with a big image on a remote web server
+            var progress = '' + Math.round((event.loaded * 100) / event.total);
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
+        }
+    };
+
+    request.onload = function () {
+        if(this.status === 200) {
+            onSuccess(window.location.origin + '/' + this.responseText);
+        } else {
+            onError(file.name, this.status, this.statusText.toString());
+            // TODO: handle several errors defined by the server (bad type, file too large, etc.)
+        }
+    };
+};
+
 EasyMDE.prototype.createSideBySide = function () {
     var cm = this.codemirror;
     var wrapper = cm.getWrapperElement();
@@ -2067,8 +2047,22 @@ EasyMDE.prototype.createToolbar = function (items) {
 
             toolbarData[item.name || item] = el;
             bar.appendChild(el);
+
+            // Create the input element (ie. <input type='file'>), used among
+            // with the 'import-image' icon to open the browse-file window.
             if (item.name === 'upload-image') {
-                bar.appendChild(createImageInput(self));
+                var imageInput = document.createElement('input');
+                imageInput.className = 'imageInput';
+                imageInput.type = 'file';
+                imageInput.multiple = true;
+                imageInput.name = 'image';
+                imageInput.accept = self.options.imageAccept;
+                imageInput.style.display = 'none';
+                imageInput.style.opacity = 0;
+                imageInput.addEventListener('change', function (event) {
+                    self.uploadImages(event.target.files);
+                });
+                bar.appendChild(imageInput);
             }
         })(items[i]);
     }
