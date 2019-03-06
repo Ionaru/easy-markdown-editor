@@ -1580,6 +1580,10 @@ function EasyMDE(options) {
             event.preventDefault();
             self.uploadImages(event.dataTransfer.files);
         });
+
+        this.codemirror.on('paste', function(cm, event) {
+            self.uploadImages(event.clipboardData.files);
+        });
     }
 }
 
