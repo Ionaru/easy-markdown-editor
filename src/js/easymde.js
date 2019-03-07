@@ -705,6 +705,7 @@ function drawImage(editor) {
 
 /**
  * Action for opening the browse-file window to upload an image to a server.
+ * @param editor {EasyMDE} The EasyMDE object
  */
 function drawUploadedImage(editor) {
     // TODO: Draw the image template with a fake url, ie: '![](importing foo.png...)'
@@ -714,7 +715,7 @@ function drawUploadedImage(editor) {
 
 /**
  * Action executed after an image have been successfully imported on the server.
- * @param editor The EasyMDE object
+ * @param editor {EasyMDE} The EasyMDE object
  * @param url {string} The url of the uploaded image
  */
 function afterImageUploaded(editor, url) {
@@ -1411,16 +1412,29 @@ var blockStyles = {
     'italic': '*',
 };
 
+/**
+ * Texts displayed to the user (mainly on the status bar) for the import image
+ * feature. Can be used for customization or internationalization.
+ */
 var imageTexts = {
     sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
     sbOnDragEnter: 'Drop image to upload it.',
     sbOnDrop: 'Uploading image #images_names#...',
     sbProgress: 'Uploading #file_name#: #progress#%',
     sbOnUploaded: 'Uploaded #image_name#',
-    errorImport: 'Can not import #image_name#',
-    errorImageTooBig: 'Image #image_name# is too big (#image_size#).\n' +
-    'Maximum file size is #image_max_size#.',
     sizeUnits: 'b,Kb,Mb',
+};
+
+/**
+ * Errors displayed to the user, mainly on alert popups. Can be used for
+ * customization or internationalization.
+ */
+var errorMessages = {
+    noFileGiven: 'You must select a file.',
+    imageTypeNotAllowed: 'This image type is not allowed.',
+    imageTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
+        'Maximum file size is #image_max_size#.',
+    imageImportError: 'Something went wrong when uploading the image #image_name#.',
 };
 
 /**
@@ -1534,11 +1548,12 @@ function EasyMDE(options) {
     options.minHeight = options.minHeight || '300px';
 
 
-    // import-image default configuration
+    // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
     options.imageMaxSize = options.imageMaxSize || 1024*1024*2;
-    options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
+    options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
+    options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -1605,18 +1620,17 @@ EasyMDE.prototype.uploadImages = function(files) {
 
         this.uploadImage(files[i], function onSuccess(imageUrl) {
             afterImageUploaded(self, imageUrl);
-        }, function onFailure(imageName, errorStatus, errorStatusText) {
-            alert(self.options.imageTexts.errorImport.replace('#image_name#', imageName));
-            console.log('EasyMDE: error ' + errorStatus + ' when importing image ' + imageName + ': ' + errorStatusText);
+        }, function onFailure(error) {
+            alert(error);
         });
     }
     this.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
 };
 
 /**
- *
- * @param itemName
- * @param content
+ * Update an item in the status bar.
+ * @param itemName {string} The name of the item to update (ie. 'upload-image', 'autosave', etc.).
+ * @param content {string} the new content of the item to write in the status bar.
  */
 EasyMDE.prototype.updateStatusBar = function(itemName, content) {
     var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
@@ -1890,23 +1904,23 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 /**
  * Upload an image to the server.
  *
- * @param file {File} The image to upload as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
- * @param onSuccess {function} A callback function to execute after the image have been successfully uploaded, with parameters:
+ * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
+ * @param onSuccess {function} A callback function to execute after the image has been successfully uploaded, with one parameter:
  * - url (string): The URL of the uploaded image.
- * @param onError {function} A callback function to execute when the image upload fails, with parameters:
- * - fileName: the name of the image file provided by the user.
- * - errorStatus (number): The status of the response of the request, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/status).
- * - errorStatusText (string): the response string returned by the HTTP server, provided by XMLHttpRequest (see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/statusText).
+ * @param onError {function} A callback function to execute when the image upload fails, with one parameter:
+ * - error (string): the detailed error to display to the user (based on messages from options.errorMessages).
  */
 EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
-    if (file.size >= this.options.imageMaxSize) {
-        var units = this.options.imageTexts.sizeUnits.split(',');
-        alert(this.options.imageTexts.errorImageTooBig
-                .replace('#image_name#', file.name)
-                .replace('#image_size#', humanFileSize(file.size, units))
-                .replace('#image_max_size#', humanFileSize(this.options.imageMaxSize, units))
-        );
-        return;
+    function fillErrorMessage(errorMessage) {
+        var units = self.options.imageTexts.sizeUnits.split(',');
+        return errorMessage
+            .replace('#image_name#', file.name)
+            .replace('#image_size#', humanFileSize(file.size, units))
+            .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
+    }
+
+    if (file.size > this.options.imageMaxSize) {
+        onError(fillErrorMessage(this.options.errorMessages.imageTooLarge));
     }
 
     var formData = new FormData();
@@ -1914,23 +1928,41 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     var request = new XMLHttpRequest();
     request.open('POST', this.options.imageUploadEndpoint);
     request.send(formData);
-
     var self = this;
+
     request.onprogress = function (event) {
         if (event.lengthComputable) {
-            // TODO: test with a big image on a remote web server
+            // FIXME: progress doesn't work well
             var progress = '' + Math.round((event.loaded * 100) / event.total);
             self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
         }
     };
 
     request.onload = function () {
-        if(this.status === 200) {
+        try {
+            var response = JSON.parse(this.responseText);
+        } catch (error) {
+            console.log('EasyMDE: The server did not return a valid json.');
+            onError(fillErrorMessage(self.options.errorMessages.imageImportError));
+            return;
+        }
+        if(this.status === 200 && response && response.data && !response.error) {
             onSuccess(window.location.origin + '/' + this.responseText);
         } else {
-            onError(file.name, this.status, this.statusText.toString());
-            // TODO: handle several errors defined by the server (bad type, file too large, etc.)
+            if(response.error && response.error in self.options.errorMessages) {
+                onError(fillErrorMessage(self.options.errorMessages[response.error]));
+            } else {
+                console.log('EasyMDE: Received an unexpected response after uploading the image.'
+                    + this.status + ' (' + this.statusText + ')');
+                onError(fillErrorMessage(self.options.errorMessages.imageImportError));
+            }
         }
+    };
+
+    request.onerror = function (event) {
+        console.log('EasyMDE: An unexpected error occurred when trying to upload the image.'
+            + event.target.status + ' (' + event.target.statusText + ')');
+        onError(self.options.errorMessages.imageImportError);
     };
 };
 
