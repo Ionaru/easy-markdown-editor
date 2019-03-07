@@ -152,16 +152,19 @@ easyMDE.value('New input for **EasyMDE**');
 - **imageMaxSize**: Maximum image size in bytes, checked before upload (note: never trust client, always check image size at server-side). Defaults to `1024*1024*2` (2Mb).
 - **imageAccept**: A comma-separated list of mime-types used to check image type before upload (note: never trust client, always check file types at server-side). Defaults to `image/png, image/jpeg`.
 - **imageUploadEndpoint**: The endpoint where the images data will be sent, via an asynchronous *POST* request. The server is supposed to save this image, and if it's successful, return a 200-OK HTTP response containing the relative path of the image. No default value.
-- **imageTexts**: Several string literals used in image-upload features:
-    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`,
-    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`,
+- **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
+    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
+    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`.
     - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
-    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`,
-    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`,
-    - **errorImport**: Error message prompted when the served did not return a 200 response code. Defaults to `Can not import #image_name#`,
-    - **errorImageTooBig**: Error message prompted to the user when the size of the image being imported is bigger than the `imageMaxSize`, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values. Defaults to `Image #image_name# is too big (#image_size#).\n' +
-    'Maximum file size is #image_max_size#.`.
+    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`.
+    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`.
     - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
+- **errorMessages**: Errors displayed to the user, mainly on alert popups, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
+    - **noFileGiven**: The server did not receive any file from the user. Defaults to `You must select a file.`.
+    - **imageTypeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
+    - **imageTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
+    - **imageImportError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
+
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
