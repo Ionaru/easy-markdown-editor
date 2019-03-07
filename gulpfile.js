@@ -40,7 +40,7 @@ function styles() {
     var css_files = [
         './node_modules/codemirror/lib/codemirror.css',
         './src/css/*.css',
-        './node_modules/codemirror-spell-checker/src/css/spell-checker.css'
+        './node_modules/codemirror-spell-checker/src/css/spell-checker.css',
     ];
 
     return gulp.src(css_files)

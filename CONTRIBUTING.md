@@ -52,10 +52,11 @@ Yay! You are ready! 🍾
 2. a) If you already cloned and worked on the project: `git remote add source https://github.com/Ionaru/easy-markdown-editor.git`;
 b) Otherwise, clone your fork: `git clone https://github.com/YOUR_USERNAME/easy-markdown-editor.git`;
 3. Create a new dedicated branch `git checkout -b myMergeRequest`;
-4. Write some nice code and commit your work;
+4. Write some nice code and commit your work. (Don't forget to add your changes to the changelog!);
 5. Check files against the ESLint syntax and build minified versions: `gulp`;
-6. Push it to a dedicated branch `git push origin myMergeRequest`;
-7. Go to the [main project page](https://github.com/Ionaru/easy-markdown-editor) and click on the button *Compare and pull request*, then fill the description.
+6. Test your changes;
+7. Push it to a dedicated branch `git push origin myMergeRequest`;
+8. Go to the [main project page](https://github.com/Ionaru/easy-markdown-editor) and click on the button *Compare and pull request*, then fill the description.
 
 If you want to make other pull requests, go back to the master branch (`git checkout master`), update it (`git pull --rebase source master`), then follow the instructions above from step 3.
 
