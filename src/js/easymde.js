@@ -169,7 +169,7 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
 function createSep() {
     var el = document.createElement('i');
     el.className = 'separator';
-    el.innerHTML = '|';
+    el.textContent = '|';
     return el;
 }
 
@@ -1414,7 +1414,7 @@ var blockStyles = {
 var imageTexts = {
     sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
     sbOnDragEnter: 'Drop image to upload it.',
-    sbOnDrop: 'Uploading images #images_names#',
+    sbOnDrop: 'Uploading image #images_names#...',
     sbProgress: 'Uploading #file_name#: #progress#%',
     sbOnUploaded: 'Uploaded #image_name#',
     errorImport: 'Can not import #image_name#',
@@ -1621,7 +1621,7 @@ EasyMDE.prototype.uploadImages = function(files) {
 EasyMDE.prototype.updateStatusBar = function(itemName, content) {
     var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
     if (matchingClasses.length === 1) {
-        this.gui.statusbar.getElementsByClassName(itemName)[0].innerHTML = content;
+        this.gui.statusbar.getElementsByClassName(itemName)[0].textContent = content;
     } else if (matchingClasses.length === 0) {
         console.log('EasyMDE: status bar item ' + itemName + ' was not found.');
     } else {
@@ -1863,7 +1863,7 @@ EasyMDE.prototype.autosave = function () {
             }
             m = m < 10 ? '0' + m : m;
 
-            el.innerHTML = 'Autosaved: ' + h + ':' + m + ' ' + dd;
+            el.textContent = 'Autosaved: ' + h + ':' + m + ' ' + dd;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
@@ -2128,25 +2128,25 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
             if (name === 'words') {
                 defaultValue = function (el) {
-                    el.innerHTML = wordCount(cm.getValue());
+                    el.textContent = wordCount(cm.getValue());
                 };
                 onUpdate = function (el) {
-                    el.innerHTML = wordCount(cm.getValue());
+                    el.textContent = wordCount(cm.getValue());
                 };
             } else if (name === 'lines') {
                 defaultValue = function (el) {
-                    el.innerHTML = cm.lineCount();
+                    el.textContent = cm.lineCount();
                 };
                 onUpdate = function (el) {
-                    el.innerHTML = cm.lineCount();
+                    el.textContent = cm.lineCount();
                 };
             } else if (name === 'cursor') {
                 defaultValue = function (el) {
-                    el.innerHTML = '0:0';
+                    el.textContent = '0:0';
                 };
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
-                    el.innerHTML = pos.line + ':' + pos.ch;
+                    el.textContent = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
                 defaultValue = function (el) {
@@ -2156,7 +2156,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
             } else if (name === 'upload-image') {
                 defaultValue = function (el) {
-                    el.innerHTML = options.imageTexts.sbInit;
+                    el.textContent = options.imageTexts.sbInit;
                 };
             }
 
