@@ -1426,7 +1426,7 @@ var imageTexts = {
 };
 
 /**
- * Errors displayed to the user, mainly on alert popups. Can be used for
+ * Errors displayed to the user, using the `errorCallback` option. Can be used for
  * customization or internationalization.
  */
 var errorMessages = {
@@ -1547,6 +1547,9 @@ function EasyMDE(options) {
 
     options.minHeight = options.minHeight || '300px';
 
+    options.errorCallback = options.errorCallback || function(errorMessage) {
+      alert(errorMessage);
+    };
 
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
@@ -1621,7 +1624,7 @@ EasyMDE.prototype.uploadImages = function(files) {
         this.uploadImage(files[i], function onSuccess(imageUrl) {
             afterImageUploaded(self, imageUrl);
         }, function onFailure(error) {
-            alert(error);
+            self.options.errorCallback(error);
         });
     }
     this.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
@@ -1831,22 +1834,22 @@ EasyMDE.prototype.autosave = function () {
             console.log('EasyMDE: You must set a uniqueId to use the autosave feature');
             return;
         }
-        
+
         if(this.options.autosave.binded !== true) {
           if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
               easyMDE.element.form.addEventListener('submit', function () {
                   clearTimeout(easyMDE.autosaveTimeoutId);
                   easyMDE.autosaveTimeoutId = undefined;
-                
+
                   localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
-                  
+
                   // Restart autosaving in case the submit will be cancelled down the line
                   setTimeout(function() {
                     easyMDE.autosave();
                   }, easyMDE.options.autosave.delay || 10000);
               });
           }
-          
+
           this.options.autosave.binded = true;
         }
 
