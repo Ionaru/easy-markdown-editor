@@ -5,21 +5,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
-## Added
+### Added
 - Contributing guide (Thanks to @roipoussiere, #54).
 - Issue templates.
 - Standardized changelog file.
 
-## Changed
+### Changed
 - Finish rewrite of README (Thanks to @roipoussiere, #54).
 - Image and link prompt fill with "https://" by default.
 - Link to markdown guide to https://www.markdownguide.org/basic-syntax/.
 
-## Fixed
+### Fixed
 - Backwards compatibility in the API with SimpleMDE 1.0.0 (#41).
 - Automatic publish of master branch to `@next`
 
-## Removed
+### Removed
 - Distribution files from source-control.
 
 ## [2.5.1] - 2019-01-17
