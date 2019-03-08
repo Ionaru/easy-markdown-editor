@@ -6,17 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- Contributing guide (Thanks to @roipoussiere, #54).
+- Contributing guide (Thanks to [@roipoussiere], [#54]).
 - Issue templates.
 - Standardized changelog file.
 
 ### Changed
-- Finish rewrite of README (Thanks to @roipoussiere, #54).
+- Finish rewrite of README (Thanks to [@roipoussiere], [#54]).
 - Image and link prompt fill with "https://" by default.
 - Link to markdown guide to https://www.markdownguide.org/basic-syntax/.
 
 ### Fixed
-- Backwards compatibility in the API with SimpleMDE 1.0.0 (#41).
+- Backwards compatibility in the API with SimpleMDE 1.0.0 ([#41]).
 - Automatic publish of master branch to `@next`
 
 ### Removed
@@ -24,12 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.5.1] - 2019-01-17
 ### Fixed
-- `role="button"` needed to be `type="button"`, fixes #45.
+- `role="button"` needed to be `type="button"` ([#45]).
 
 ## [2.5.0] - 2019-01-17
 ### Added
-- Typescript support (Thanks to @FranklinWhale, #44).
-- `role="button"` to toolbar buttons (#38).
+- Typescript support (Thanks to [@FranklinWhale], [#44]).
+- `role="button"` to toolbar buttons ([#38]).
 
 ### Fixed
 - Eraser icon not working with FontAwesome 5.
@@ -40,19 +40,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Header button icons not showing sub-icons with FontAwesome 5.
-- Inconsistent autosave behaviour when submitting a form (Thanks to @Furgas and @adamb70, #31).
+- Inconsistent autosave behaviour when submitting a form (Thanks to [@Furgas] and [@adamb70], [#31]).
 
 ## [2.4.1] - 2018-10-15
 ### Added
-- `fa-redo` class to redo button for FA5 compatibility (Thanks to @Summon528, #27).
+- `fa-redo` class to redo button for FA5 compatibility (Thanks to [@Summon528], [#27]).
 
 ## [2.4.0] - 2018-10-15
 ### Added
-- Theming support (Thanks to @LeviticusMB, #17).
-- onToggleFullscreen event hook (Thanks to @n-3-0, #16).
+- Theming support (Thanks to [@LeviticusMB], [#17]).
+- onToggleFullscreen event hook (Thanks to [@n-3-0], [#16]).
 
 ### Fixed
-- Fullscreen not working with `toolbar: false` (Thanks to @aphitiel, #19).
+- Fullscreen not working with `toolbar: false` (Thanks to [@aphitiel], [#19]).
 
 ## [2.2.2] - 2019-07-03
 ### Fixed
@@ -64,8 +64,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Links in the preview window will open in a new tab by default.
 
 ### Fixed
-- Multi-text select issue by disabling multi-select in the editor (#10).
-- `main` file in package.json (Thanks to @sne11ius, #11).
+- Multi-text select issue by disabling multi-select in the editor ([#10]).
+- `main` file in package.json (Thanks to [@sne11ius], [#11]).
 
 ## [2.0.1] - 2018-05-13
 ### Changed
@@ -73,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated gulp to version 4.0.0.
 
 ### Fixed
-- Icons for `heading-smaller`, `heading-bigger`, `heading-1`, `heading-2` and `heading-3` not showing (#9).
+- Icons for `heading-smaller`, `heading-bigger`, `heading-1`, `heading-2` and `heading-3` not showing ([#9]).
 
 ## [2.0.0] - 2018-04-23
 Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown-editor)
@@ -94,6 +94,35 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 ### Fixed
 - Cursor not always showing in "text" mode over the edit field
 
+<!-- Linked issues -->
+[#45]: https://github.com/Ionaru/easy-markdown-editor/issues/45
+[#44]: https://github.com/Ionaru/easy-markdown-editor/issues/44
+[#41]: https://github.com/Ionaru/easy-markdown-editor/issues/41
+[#38]: https://github.com/Ionaru/easy-markdown-editor/issues/38
+[#17]: https://github.com/Ionaru/easy-markdown-editor/issues/17
+[#16]: https://github.com/Ionaru/easy-markdown-editor/issues/16
+[#11]: https://github.com/Ionaru/easy-markdown-editor/issues/11
+[#10]: https://github.com/Ionaru/easy-markdown-editor/issues/10
+[#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
+
+<!-- Linked PRs -->
+[#54]: https://github.com/Ionaru/easy-markdown-editor/pull/54
+[#31]: https://github.com/Ionaru/easy-markdown-editor/pull/31
+[#27]: https://github.com/Ionaru/easy-markdown-editor/pull/27
+[#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
+
+<!-- Linked users -->
+[@roipoussiere]: https://github.com/roipoussiere
+[@FranklinWhale]: https://github.com/FranklinWhale
+[@Furgas]: https://github.com/Furgas
+[@adamb70]: https://github.com/adamb70
+[@Summon528]: https://github.com/Summon528
+[@LeviticusMB]: https://github.com/LeviticusMB
+[@n-3-0]: https://github.com/n-3-0
+[@aphitiel]: https://github.com/aphitiel
+[@sne11ius]: https://github.com/sne11ius
+
+<!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.1...HEAD
 [2.5.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.0...2.5.1
 [2.5.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.4.2...2.5.0
