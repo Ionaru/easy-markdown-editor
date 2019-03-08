@@ -58,7 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Automatic publish only publishing tags.
 
-## [2.2.1] - 2019-06-29 [YANKED]
+## [2.2.1] - 2019-06-29
 ### Changed
 - Attempt automatic publish `@next` version on npm.
 - Links in the preview window will open in a new tab by default.

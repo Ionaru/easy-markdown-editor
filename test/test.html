@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EASYMDE TEST</title>
+    <link rel="stylesheet" href="../dist/easymde.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/all.css" integrity="sha384-DNOHZ68U8hZfKXOrtjWvjxusGo9WQnrNx2sqG0tfsghAvtVlRW3tvkXWZh58N9jp" crossorigin="anonymous">
+    <script src="../dist/easymde.min.js"></script>
+</head>
+<body>
+<textarea id="my-text-area"></textarea>
+<script>
+    var mde = new EasyMDE({
+        element: document.getElementById('my-text-area'),
+        autoDownloadFontAwesome: false,
+        styleSelectedText: false,
+        spellChecker: false,
+        toolbar: [{
+            name: "bold",
+            action: EasyMDE.toggleBold,
+            className: "fa fa-eye some-class fa-moo no-mobile",
+            title: "Bold",
+            // noDisable: true,
+        }],
+    });
+</script>
+
+</body>
+</html>
