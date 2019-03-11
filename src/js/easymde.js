@@ -1623,8 +1623,6 @@ EasyMDE.prototype.uploadImages = function(files) {
 
         this.uploadImage(files[i], function onSuccess(imageUrl) {
             afterImageUploaded(self, imageUrl);
-        }, function onFailure(error) {
-            self.options.errorCallback(error);
         });
     }
     this.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
@@ -1910,10 +1908,13 @@ EasyMDE.prototype.clearAutosavedValue = function () {
  * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
  * @param onSuccess {function} A callback function to execute after the image has been successfully uploaded, with one parameter:
  * - url (string): The URL of the uploaded image.
- * @param onError {function} A callback function to execute when the image upload fails, with one parameter:
+ * @param [onError] {function} A callback function to execute when the image upload fails, with one parameter:
  * - error (string): the detailed error to display to the user (based on messages from options.errorMessages).
  */
 EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
+    var self = this;
+    onError = onError || self.options.errorCallback;
+
     function fillErrorMessage(errorMessage) {
         var units = self.options.imageTexts.sizeUnits.split(',');
         return errorMessage
@@ -1931,7 +1932,6 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     var request = new XMLHttpRequest();
     request.open('POST', this.options.imageUploadEndpoint);
     request.send(formData);
-    var self = this;
 
     request.onprogress = function (event) {
         if (event.lengthComputable) {
