@@ -1949,8 +1949,8 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
             onError(fillErrorMessage(self.options.errorMessages.imageImportError));
             return;
         }
-        if(this.status === 200 && response && response.data && !response.error) {
-            onSuccess(window.location.origin + '/' + this.responseText);
+        if(this.status === 200 && response && !response.error && response.data && response.data.filePath) {
+            onSuccess(window.location.origin + '/' + response.data.filePath);
         } else {
             if(response.error && response.error in self.options.errorMessages) {
                 onError(fillErrorMessage(self.options.errorMessages[response.error]));
