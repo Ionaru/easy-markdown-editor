@@ -1431,10 +1431,10 @@ var imageTexts = {
  */
 var errorMessages = {
     noFileGiven: 'You must select a file.',
-    imageTypeNotAllowed: 'This image type is not allowed.',
-    imageTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
+    typeNotAllowed: 'This image type is not allowed.',
+    fileTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
         'Maximum file size is #image_max_size#.',
-    imageImportError: 'Something went wrong when uploading the image #image_name#.',
+    importError: 'Something went wrong when uploading the image #image_name#.',
 };
 
 /**
@@ -1924,7 +1924,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     }
 
     if (file.size > this.options.imageMaxSize) {
-        onError(fillErrorMessage(this.options.errorMessages.imageTooLarge));
+        onError(fillErrorMessage(this.options.errorMessages.fileTooLarge));
     }
 
     var formData = new FormData();
@@ -1946,7 +1946,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
             var response = JSON.parse(this.responseText);
         } catch (error) {
             console.log('EasyMDE: The server did not return a valid json.');
-            onError(fillErrorMessage(self.options.errorMessages.imageImportError));
+            onError(fillErrorMessage(self.options.errorMessages.importError));
             return;
         }
         if(this.status === 200 && response && !response.error && response.data && response.data.filePath) {
@@ -1957,7 +1957,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
             } else {
                 console.log('EasyMDE: Received an unexpected response after uploading the image.'
                     + this.status + ' (' + this.statusText + ')');
-                onError(fillErrorMessage(self.options.errorMessages.imageImportError));
+                onError(fillErrorMessage(self.options.errorMessages.importError));
             }
         }
     };
@@ -1965,7 +1965,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     request.onerror = function (event) {
         console.log('EasyMDE: An unexpected error occurred when trying to upload the image.'
             + event.target.status + ' (' + event.target.statusText + ')');
-        onError(self.options.errorMessages.imageImportError);
+        onError(self.options.errorMessages.importError);
     };
 };
 
