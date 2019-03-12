@@ -1925,6 +1925,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
 
     if (file.size > this.options.imageMaxSize) {
         onError(fillErrorMessage(this.options.errorMessages.fileTooLarge));
+        return;
     }
 
     var formData = new FormData();
