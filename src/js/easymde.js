@@ -708,9 +708,8 @@ function drawImage(editor) {
  * @param editor {EasyMDE} The EasyMDE object
  */
 function drawUploadedImage(editor) {
-    // TODO: Draw the image template with a fake url, ie: '![](importing foo.png...)'
-    var imageInput = editor.gui.toolbar.getElementsByClassName('imageInput')[0];
-    imageInput.dispatchEvent(new MouseEvent('click'));
+    // TODO: Draw the image template with a fake url? ie: '![](importing foo.png...)'
+    editor.openBrowseFileWindow();
 }
 
 /**
@@ -1612,20 +1611,17 @@ function EasyMDE(options) {
  * - drag&drop;
  * - copy-paste;
  * - the browse-file window (opened when the user clicks on the *upload-image* icon).
-
  * @param {FileList} files The files to upload the the server.
+ * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
+ * @param [onError] {function} see EasyMDE.prototype.uploadImage
  */
-EasyMDE.prototype.uploadImages = function(files) {
+EasyMDE.prototype.uploadImages = function(files, onSuccess, onError) {
     var names = [];
-    var self = this;
     for(var i=0; i<files.length; i++) {
         names.push(files[i].name);
-
-        this.uploadImage(files[i], function onSuccess(imageUrl) {
-            afterImageUploaded(self, imageUrl);
-        });
+        this.uploadImage(files[i], onSuccess, onError);
     }
-    this.updateStatusBar('upload-image', self.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
 };
 
 /**
@@ -1903,16 +1899,35 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 };
 
 /**
+ * Open the browse-file window to upload an image to a server.
+ * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
+ * @param [onError] {function} see EasyMDE.prototype.uploadImage
+ */
+EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
+    var self = this;
+    var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
+    imageInput.dispatchEvent(new MouseEvent('click'));
+    function onChange(event) {
+        self.uploadImages(event.target.files, onSuccess, onError);
+        imageInput.removeEventListener('change', onChange);
+    }
+    imageInput.addEventListener('change', onChange);
+};
+
+/**
  * Upload an image to the server.
  *
  * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
- * @param onSuccess {function} A callback function to execute after the image has been successfully uploaded, with one parameter:
+ * @param [onSuccess] {function} A callback function to execute after the image has been successfully uploaded, with one parameter:
  * - url (string): The URL of the uploaded image.
  * @param [onError] {function} A callback function to execute when the image upload fails, with one parameter:
  * - error (string): the detailed error to display to the user (based on messages from options.errorMessages).
  */
 EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     var self = this;
+    onSuccess = onSuccess || function onSuccess(imageUrl) {
+        afterImageUploaded(self, imageUrl);
+    };
     onError = onError || self.options.errorCallback;
 
     function fillErrorMessage(errorMessage) {
@@ -2099,9 +2114,6 @@ EasyMDE.prototype.createToolbar = function (items) {
                 imageInput.accept = self.options.imageAccept;
                 imageInput.style.display = 'none';
                 imageInput.style.opacity = 0;
-                imageInput.addEventListener('change', function (event) {
-                    self.uploadImages(event.target.files);
-                });
                 bar.appendChild(imageInput);
             }
         })(items[i]);
