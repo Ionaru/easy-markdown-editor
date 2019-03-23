@@ -1,6 +1,6 @@
 /*global require,module*/
 'use strict';
-var CodeMirror = require('codemirror');
+window.CodeMirror = require('codemirror');
 require('codemirror/addon/edit/continuelist.js');
 require('./codemirror/tablist');
 require('codemirror/addon/display/fullscreen.js');
@@ -1600,7 +1600,7 @@ EasyMDE.prototype.render = function (el) {
         };
     }
 
-    this.codemirror = CodeMirror.fromTextArea(el, {
+    this.codemirror = window.CodeMirror.fromTextArea(el, {
         mode: mode,
         backdrop: backdrop,
         theme: (options.theme != undefined) ? options.theme : 'easymde',
