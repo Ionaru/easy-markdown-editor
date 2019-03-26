@@ -1,18 +1,32 @@
 language: node_js
 node_js:
-- '6'
-- '5'
-- '4'
-- '0.12'
-before_script:
-- npm install -g gulp
-script: gulp
+  - '11' # EOL: June 2019
+  - '10' # EOL: April 2021
+  - '8' # EOL: December 2019
+  - '6' # EOL: April 2019
+script:
+  - npm run prepare
+  - npm run test:types
+before_deploy:
+  - if [ "$TRAVIS_BRANCH" = master ] && [ "$TRAVIS_PULL_REQUEST" = false ]; then npm version prerelease --no-git-tag-version --preid "$TRAVIS_BUILD_NUMBER"; fi
 deploy:
-  provider: npm
-  email: support@nextstepwebs.com
-  api_key:
-    secure: nADZupyOhJAhTQgr5uOIydbDEjCTAj+3nGHW7ZBJUrVJcb0uR4pg8ngmwrUpvaCeNXgKPG9Uag75/mPcBre9ly2cigBIG9LHlxImlF8qi1jRJykcNRmBb9N2MJJj+zdAMwLaF5Ns+f2v3zt97qxovbEzunhXGcZeCaxc6y40nDM8OTyo0PESNBjQYqaNblt2gO2KHysrwFL8i4kCCKLa+HOBLu2iqgk/fYVqTmfhEeOiiwQ4lIXJeyPyzgb3OPhKCMV1FI5H0T48fRD0MPczt8ds3Daj1OjCbIZurQ7s1dcKwz1g6TKATN59HcMsSarW4lImrEeYmfQxz2F5NjKDRhnith5V0W2IssrkpDG9teTFQ20eQdl5cpnlGjgBvsjb8GhPLR44GvefyJL4+kJGI3O1KVq3/7wbmu/IXrvhtKHEQSdGL2PTqW8QxKasAoUCnk3LGZKN12g8bg0xDg2tvoCUk5Z3asHLRdCJpDbBq1h8QfZ4HV5VLYjr84xduOUZbEUtfMVAixPpJ4h1E3OXJ1wil97BlHjxOZ8JkkxJg5lgSUZ/O/QWwJokEAYXR9c+ouMoVokChAyleV77cRZ5qLn9zbnUxZtnKX8w0IUKeu95/z8QgiaRcERKVCpZvceo8Qw0Y+JoiEtno7Zg/nsrZGxsS6K/V3yg1QQmT3bjDHQ=
-  on:
-    tags: true
-    repo: NextStepWebs/simplemde-markdown-editor
-    branch: production
+  - provider: npm
+    email: info@saturnserver.org
+    api_key:
+      secure: rp4P11u0Vvz6iTkC1uj9LfNVOJASnTjffpqpe9lhuC/php7+fdoYvZ4e1EwKj2RVbi7YNqZE6w+Y6fsxZk72N4RGVO6HROm6gNv2wl+qk0B1XwciONO9y5FhTcdZrsq5Vx5WdoZThs5CSkXpvtHiavAnAt1ufYjqKGBZOENdxJ40kkn9WdQG2WvG7iZWDlDpDoqof2uO9k89d2UuTG5DKAoMpN+4UH0Fr0gV0u11IcBeH7rlSo2btlMaMsSO9Nb10Zf1rC0USHfyrui/BKvVGeRh7FASYrHwjqt4bwqzKZlP5bZ4zGIPMYXXsGLcidxIvSsNIRp7cgkWvsywe8cIi5XzaM48afWsbMUfMgXi9BDNjK7vBiuPBnGWYS3ylJZn/7SvMuqsoj4De5GWrCJ5pTsEKD5yw5+iqQv7v2ZYhuN7/tTSoEy/BOMdN43zWquJp57LXkyFQ9esGoI0bfeYojV2BvcpwY/UFS27e/9bH+RBlXsLfP0kEtosVGZ6i3AuUKtsYOxo4QZSI4yHtP7fKsoCoJIvpW3hcWjrnI8N7IC18/KihsUByuMgDgTTXXtDKxLbNVjbiVvFJeuClwe1oc1uusY1v/EkNpGDFZX5zFEVv3zC76NaLB75kCUN3gGC0RRFk0J9i3k8qa42TLjbOqvxgRxOEtVeRxowBNrymIQ=
+    tag: next
+    skip_cleanup: true
+    on:
+      node: 10
+      branch: master
+      repo: Ionaru/easy-markdown-editor
+  - provider: npm
+    email: info@saturnserver.org
+    api_key:
+      secure: rp4P11u0Vvz6iTkC1uj9LfNVOJASnTjffpqpe9lhuC/php7+fdoYvZ4e1EwKj2RVbi7YNqZE6w+Y6fsxZk72N4RGVO6HROm6gNv2wl+qk0B1XwciONO9y5FhTcdZrsq5Vx5WdoZThs5CSkXpvtHiavAnAt1ufYjqKGBZOENdxJ40kkn9WdQG2WvG7iZWDlDpDoqof2uO9k89d2UuTG5DKAoMpN+4UH0Fr0gV0u11IcBeH7rlSo2btlMaMsSO9Nb10Zf1rC0USHfyrui/BKvVGeRh7FASYrHwjqt4bwqzKZlP5bZ4zGIPMYXXsGLcidxIvSsNIRp7cgkWvsywe8cIi5XzaM48afWsbMUfMgXi9BDNjK7vBiuPBnGWYS3ylJZn/7SvMuqsoj4De5GWrCJ5pTsEKD5yw5+iqQv7v2ZYhuN7/tTSoEy/BOMdN43zWquJp57LXkyFQ9esGoI0bfeYojV2BvcpwY/UFS27e/9bH+RBlXsLfP0kEtosVGZ6i3AuUKtsYOxo4QZSI4yHtP7fKsoCoJIvpW3hcWjrnI8N7IC18/KihsUByuMgDgTTXXtDKxLbNVjbiVvFJeuClwe1oc1uusY1v/EkNpGDFZX5zFEVv3zC76NaLB75kCUN3gGC0RRFk0J9i3k8qa42TLjbOqvxgRxOEtVeRxowBNrymIQ=
+    skip_cleanup: true
+    on:
+      node: 10
+      branch: master
+      tags: true
+      repo: Ionaru/easy-markdown-editor
