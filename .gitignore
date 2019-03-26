@@ -1,9 +1,13 @@
-localtesting/
-node_modules/
-bower_components/
+# generated files
+dist/
 
-#For IDE
+# NPM files
+node_modules/
+
+# IDE files
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
+dev_test/
