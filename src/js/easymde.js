@@ -168,7 +168,7 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
 
 function createLabel(label) {
     var el = document.createElement('label');
-    el.className = "editor-label";
+    el.className = 'editor-label';
     el.innerHTML = label;
     return el;
 }
@@ -1795,7 +1795,7 @@ EasyMDE.prototype.createSideBySide = function () {
 
 EasyMDE.prototype.createToolbar = function (items) {
     items = items || this.options.toolbar;
-    label = this.options.label;
+    var label = this.options.label;
 
     if (!items || items.length === 0) {
         return;
@@ -1873,12 +1873,10 @@ EasyMDE.prototype.createToolbar = function (items) {
     }
 
     if (label) {
-        var labelEl = document.createElement("label");
-        labelEl.className = "editor-label";
-        labelEl.innerHTML = label;
+        var labelEl = createLabel(label);
 
-        var labelBar = document.createElement("div");
-        labelBar.className = "editor-toolbar-label";
+        var labelBar = document.createElement('div');
+        labelBar.className = 'editor-toolbar-label';
         labelBar.appendChild(labelEl);
         labelBar.appendChild(bar);
         bar = labelBar;
