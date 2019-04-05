@@ -166,6 +166,13 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
     return el;
 }
 
+function createLabel(label) {
+    var el = document.createElement('label');
+    el.className = "editor-label";
+    el.innerHTML = label;
+    return el;
+}
+
 function createSep() {
     var el = document.createElement('i');
     el.className = 'separator';
@@ -1674,22 +1681,22 @@ EasyMDE.prototype.autosave = function () {
             console.log('EasyMDE: You must set a uniqueId to use the autosave feature');
             return;
         }
-        
+
         if(this.options.autosave.binded !== true) {
           if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
               easyMDE.element.form.addEventListener('submit', function () {
                   clearTimeout(easyMDE.autosaveTimeoutId);
                   easyMDE.autosaveTimeoutId = undefined;
-                
+
                   localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
-                  
+
                   // Restart autosaving in case the submit will be cancelled down the line
                   setTimeout(function() {
                     easyMDE.autosave();
                   }, easyMDE.options.autosave.delay || 10000);
               });
           }
-          
+
           this.options.autosave.binded = true;
         }
 
@@ -1788,6 +1795,7 @@ EasyMDE.prototype.createSideBySide = function () {
 
 EasyMDE.prototype.createToolbar = function (items) {
     items = items || this.options.toolbar;
+    label = this.options.label;
 
     if (!items || items.length === 0) {
         return;
@@ -1862,6 +1870,18 @@ EasyMDE.prototype.createToolbar = function (items) {
             toolbarData[item.name || item] = el;
             bar.appendChild(el);
         })(items[i]);
+    }
+
+    if (label) {
+        var labelEl = document.createElement("label");
+        labelEl.className = "editor-label";
+        labelEl.innerHTML = label;
+
+        var labelBar = document.createElement("div");
+        labelBar.className = "editor-toolbar-label";
+        labelBar.appendChild(labelEl);
+        labelBar.appendChild(bar);
+        bar = labelBar;
     }
 
     self.toolbarElements = toolbarData;
