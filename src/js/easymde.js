@@ -13,7 +13,7 @@ require('codemirror/mode/gfm/gfm.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
 var marked = require('marked');
-
+var patchHTML = require('html2idom/light').patchHTML;
 
 // Some variables
 var isMac = /Mac/.test(navigator.platform);
@@ -757,25 +757,20 @@ function toggleSideBySide(editor) {
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
-    var useSideBySideListener = false;
+
     if (/editor-preview-active-side/.test(preview.className)) {
+        editor.renderPreview(false); // stop rendering
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
         );
         if (toolbarButton) toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
         wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
     } else {
-        // When the preview button is clicked for the first time,
-        // give some time for the transition from editor.css to fire and the view to slide from right to left,
-        // instead of just appearing.
-        setTimeout(function () {
-            if (!cm.getOption('fullScreen'))
-                toggleFullScreen(editor);
-            preview.className += ' editor-preview-active-side';
-        }, 1);
+        editor.renderPreview(preview);
+        if (!cm.getOption('fullScreen')) toggleFullScreen(editor);
+        preview.className += ' editor-preview-active-side';
         if (toolbarButton) toolbarButton.className += ' active';
         wrapper.className += ' CodeMirror-sided';
-        useSideBySideListener = true;
     }
 
     // Hide normal preview if active
@@ -788,21 +783,6 @@ function toggleSideBySide(editor) {
         var toolbar_div = wrapper.previousSibling;
         toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
         toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
-    }
-
-    var sideBySideRenderingFunction = function () {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
-    };
-
-    if (!cm.sideBySideRenderingFunction) {
-        cm.sideBySideRenderingFunction = sideBySideRenderingFunction;
-    }
-
-    if (useSideBySideListener) {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
-        cm.on('update', cm.sideBySideRenderingFunction);
-    } else {
-        cm.off('update', cm.sideBySideRenderingFunction);
     }
 
     // Refresh to fix selection being off (#309)
@@ -820,11 +800,13 @@ function togglePreview(editor) {
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
     if (!preview || !/editor-preview/.test(preview.className)) {
+        // initialize the preview element and the preview function
         preview = document.createElement('div');
         preview.className = 'editor-preview';
         wrapper.appendChild(preview);
     }
     if (/editor-preview-active/.test(preview.className)) {
+        editor.renderPreview(false); // stop rendering
         preview.className = preview.className.replace(
             /\s*editor-preview-active\s*/g, ''
         );
@@ -833,6 +815,8 @@ function togglePreview(editor) {
             toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
         }
     } else {
+        editor.renderPreview(preview);
+
         // When the preview button is clicked for the first time,
         // give some time for the transition from editor.css to fire and the view to slide from right to left,
         // instead of just appearing.
@@ -844,7 +828,6 @@ function togglePreview(editor) {
             toolbar_div.className += ' disabled-for-preview';
         }
     }
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
 
     // Turn off side by side if needed
     var sidebyside = cm.getWrapperElement().nextSibling;
@@ -1629,12 +1612,12 @@ EasyMDE.prototype.render = function (el) {
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
 
-    if (options.forceSync === true) {
-        var cm = this.codemirror;
-        cm.on('change', function () {
-            cm.save();
-        });
-    }
+    var cm = this.codemirror;
+    var editor = this;
+    cm.on('change', function() {
+        editor.renderPreview();
+        if (options.forceSync === true) cm.save();
+    });
 
     this.gui = {};
 
@@ -1652,12 +1635,31 @@ EasyMDE.prototype.render = function (el) {
 
     this._rendered = this.element;
 
-
     // Fixes CodeMirror bug (#344)
-    var temp_cm = this.codemirror;
-    setTimeout(function () {
-        temp_cm.refresh();
-    }.bind(temp_cm), 0);
+    setTimeout(cm.refresh, 0);
+};
+
+/**
+ * Set preview target and remember it
+ * Render the current markdown content inside it
+ */
+EasyMDE.prototype.renderPreview = function(previewTarget) {
+    var editor = this;
+    if (previewTarget === false) {
+        // stop rendering preview
+        editor.previewElement = null;
+    }
+    if (typeof previewTarget === 'object' && previewTarget.nodeType === 1) {
+        // remember new preview target
+        editor.previewElement = previewTarget;
+    }
+    if (!editor.previewElement) {
+        return;
+    }
+    patchHTML(
+        editor.previewElement,
+        editor.options.previewRender(editor.value())
+    );
 };
 
 // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem throw QuotaExceededError. We're going to detect this and set a variable accordingly.
@@ -2021,11 +2023,7 @@ EasyMDE.prototype.value = function (val) {
         return cm.getValue();
     } else {
         cm.getDoc().setValue(val);
-        if (this.isPreviewActive()) {
-            var wrapper = cm.getWrapperElement();
-            var preview = wrapper.lastChild;
-            preview.innerHTML = this.options.previewRender(val, preview);
-        }
+        this.renderPreview();
         return this;
     }
 };
