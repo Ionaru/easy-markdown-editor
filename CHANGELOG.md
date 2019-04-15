@@ -4,7 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Fixed
+- Keyboard shortcuts for custom actions not working (Thanks to [@ysykzheng], [#75]).
+
 ## [2.6.0] - 2019-04-15
 ### Added
 - Contributing guide (Thanks to [@roipoussiere], [#54]).
@@ -107,12 +110,14 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
 [#54]: https://github.com/Ionaru/easy-markdown-editor/pull/54
 [#31]: https://github.com/Ionaru/easy-markdown-editor/pull/31
 [#27]: https://github.com/Ionaru/easy-markdown-editor/pull/27
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@ysykzheng]: https://github.com/ysykzheng
 [@roipoussiere]: https://github.com/roipoussiere
 [@FranklinWhale]: https://github.com/FranklinWhale
 [@Furgas]: https://github.com/Furgas
