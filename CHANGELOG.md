@@ -4,7 +4,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!--## [Unreleased]-->
+## [2.6.0] - 2019-04-15
 ### Added
 - Contributing guide (Thanks to [@roipoussiere], [#54]).
 - Issue templates.
@@ -13,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Finish rewrite of README (Thanks to [@roipoussiere], [#54]).
 - Image and link prompt fill with "https://" by default.
-- Link to markdown guide to https://www.markdownguide.org/basic-syntax/.
+- Link to markdown guide to <https://www.markdownguide.org/basic-syntax/>.
 
 ### Fixed
 - Backwards compatibility in the API with SimpleMDE 1.0.0 ([#41]).
@@ -123,7 +124,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.1...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.0...HEAD
+[2.6.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.1...2.6.0
 [2.5.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.0...2.5.1
 [2.5.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.4.2...2.5.0
 [2.4.2]: https://github.com/Ionaru/easy-markdown-editor/compare/2.4.1...2.4.2
