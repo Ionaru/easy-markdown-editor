@@ -1561,7 +1561,12 @@ EasyMDE.prototype.render = function (el) {
         if (options.shortcuts[key] !== null && bindings[key] !== null) {
             (function (key) {
                 keyMaps[fixShortcut(options.shortcuts[key])] = function () {
-                    bindings[key](self);
+                    var action = bindings[key];
+                    if (typeof action === 'function') {
+                        action(self);
+                    } else if (typeof action === 'string') {
+                        window.open(action, '_blank');
+                    }
                 };
             })(key);
         }
@@ -2129,6 +2134,7 @@ EasyMDE.prototype.isPreviewActive = function () {
 
     return /editor-preview-active/.test(preview.className);
 };
+
 
 EasyMDE.prototype.isSideBySideActive = function () {
     var cm = this.codemirror;
