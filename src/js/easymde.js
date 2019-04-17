@@ -13,7 +13,7 @@ require('codemirror/mode/gfm/gfm.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
 var marked = require('marked');
-var patchHTML = require('html2idom/light').patchHTML;
+var htm = require('htm');
 
 // Some variables
 var isMac = /Mac/.test(navigator.platform);
@@ -1656,9 +1656,9 @@ EasyMDE.prototype.renderPreview = function(previewTarget) {
     if (!editor.previewElement) {
         return;
     }
-    patchHTML(
-        editor.previewElement,
-        editor.options.previewRender(editor.value())
+    htm.render(
+        htm.html(editor.options.previewRender(editor.value())),
+        editor.previewElement
     );
 };
 
