@@ -32,7 +32,7 @@
 }
 
 .CodeMirror-placeholder {
-    opacity: .5;
+    opacity: 0.5;
 }
 
 .CodeMirror-focused .CodeMirror-selected {
@@ -62,11 +62,11 @@
 }
 
 .editor-toolbar:before {
-    margin-bottom: 8px
+    margin-bottom: 8px;
 }
 
 .editor-toolbar:after {
-    margin-top: 8px
+    margin-top: 8px;
 }
 
 .editor-toolbar.fullscreen {
@@ -90,12 +90,38 @@
 .editor-toolbar.fullscreen::before {
     width: 20px;
     height: 50px;
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
-    background: linear-gradient(to right, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+    background: -moz-linear-gradient(
+        left,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        color-stop(0%, rgba(255, 255, 255, 1)),
+        color-stop(100%, rgba(255, 255, 255, 0))
+    );
+    background: -webkit-linear-gradient(
+        left,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background: -o-linear-gradient(
+        left,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background: -ms-linear-gradient(
+        left,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0) 100%
+    );
     position: fixed;
     top: 0;
     left: 0;
@@ -106,12 +132,38 @@
 .editor-toolbar.fullscreen::after {
     width: 20px;
     height: 50px;
-    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(100%, rgba(255, 255, 255, 1)));
-    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+    background: -moz-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background: -webkit-gradient(
+        linear,
+        left top,
+        right top,
+        color-stop(0%, rgba(255, 255, 255, 0)),
+        color-stop(100%, rgba(255, 255, 255, 1))
+    );
+    background: -webkit-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background: -o-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background: -ms-linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
     position: fixed;
     top: 0;
     right: 0;
@@ -150,7 +202,7 @@
 }
 
 .editor-toolbar button:after {
-    font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;
+    font-family: Arial, 'Helvetica Neue', Helvetica, sans-serif;
     font-size: 65%;
     vertical-align: text-bottom;
     position: relative;
@@ -158,27 +210,27 @@
 }
 
 .editor-toolbar button.heading-1:after {
-    content: "1";
+    content: '1';
 }
 
 .editor-toolbar button.heading-2:after {
-    content: "2";
+    content: '2';
 }
 
 .editor-toolbar button.heading-3:after {
-    content: "3";
+    content: '3';
 }
 
 .editor-toolbar button.heading-bigger:after {
-    content: "▲";
+    content: '▲';
 }
 
 .editor-toolbar button.heading-smaller:after {
-    content: "▼";
+    content: '▼';
 }
 
 .editor-toolbar.disabled-for-preview button:not(.no-disable) {
-    opacity: .6;
+    opacity: 0.6;
     pointer-events: none;
 }
 
@@ -202,15 +254,15 @@
 }
 
 .editor-statusbar .lines:before {
-    content: 'lines: '
+    content: 'lines: ';
 }
 
 .editor-statusbar .words:before {
-    content: 'words: '
+    content: 'words: ';
 }
 
 .editor-statusbar .characters:before {
-    content: 'characters: '
+    content: 'characters: ';
 }
 
 .editor-preview {
@@ -244,16 +296,16 @@
 }
 
 .editor-preview-active-side {
-    display: block
+    display: block;
 }
 
 .editor-preview-active {
-    display: block
+    display: block;
 }
 
 .editor-preview > p,
 .editor-preview-side > p {
-    margin-top: 0
+    margin-top: 0;
 }
 
 .editor-preview pre,
@@ -303,7 +355,7 @@
 }
 
 .cm-s-easymde .cm-comment {
-    background: rgba(0, 0, 0, .05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 2px;
 }
 
