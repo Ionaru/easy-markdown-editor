@@ -42,7 +42,7 @@
     "scripts": {
         "prepare": "gulp",
         "build": "gulp",
-        "dev": "nodemon -x gulp -w src",
+        "dev": "nodemon -x gulp -w src -e js,css",
         "test:types": "tsc --project types/tsconfig.json"
     }
 }
