@@ -42,7 +42,7 @@
     "scripts": {
         "prepare": "gulp",
         "test:types": "tsc --project types/tsconfig.json",
-        "format": "prettier --write 'src/**/*'"
+        "format": "prettier --write 'src/**/*' && eslint --fix"
     },
     "prettier": {
         "trailingComma": "es5",

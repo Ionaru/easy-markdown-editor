@@ -52,7 +52,7 @@ var shortcuts = {
     toggleHeadingBigger: 'Shift-Cmd-H',
     cleanBlock: 'Cmd-E',
     drawImage: 'Cmd-Alt-I',
-    toggleBlockquote: "Cmd-'",
+    toggleBlockquote: 'Cmd-\'',
     toggleOrderedList: 'Cmd-Alt-L',
     toggleUnorderedList: 'Cmd-L',
     toggleCodeBlock: 'Cmd-Alt-C',
@@ -335,7 +335,7 @@ function toggleCodeBlock(editor) {
     function fencing_line(line) {
         /* return true, if this is a ``` or ~~~ line */
         if (typeof line !== 'object') {
-            throw "fencing_line() takes a 'line' object (not a line number, or line text).  Got: " +
+            throw 'fencing_line() takes a \'line\' object (not a line number, or line text).  Got: ' +
                 typeof line +
                 ': ' +
                 line;
