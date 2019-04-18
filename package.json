@@ -33,6 +33,7 @@
         "gulp-header": "^2.0.7",
         "gulp-rename": "^1.4.0",
         "gulp-uglify": "^3.0.1",
+        "nodemon": "^1.18.11",
         "typescript": "^3.3.3",
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^2.0.0"
@@ -40,6 +41,8 @@
     "repository": "github:Ionaru/easy-markdown-editor",
     "scripts": {
         "prepare": "gulp",
+        "build": "gulp",
+        "dev": "nodemon -x gulp -w src",
         "test:types": "tsc --project types/tsconfig.json"
     }
 }
