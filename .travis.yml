@@ -1,5 +1,6 @@
 language: node_js
 node_js:
+  - '12' # EOL: April 2022
   - '11' # EOL: June 2019
   - '10' # EOL: April 2021
   - '8' # EOL: December 2019
