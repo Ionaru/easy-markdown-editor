@@ -126,7 +126,7 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
 	if( options.name && options.name in shortcuts ){
 		bindings[options.name] = options.action;
     }
-    
+
     if (options.title && enableTooltips) {
         el.title = createTooltip(options.title, options.action, shortcuts);
 
@@ -988,11 +988,25 @@ function _toggleLine(cm, name) {
         var map = {
             'quote': '>',
             'unordered-list': '*',
-            'ordered-list': 'd+.',
+            'ordered-list': '\\d+.',
         };
         var rt = new RegExp(map[name]);
 
         return char && rt.test(char);
+    };
+
+    var _toggle = function (name, text, untoggleOnly) {
+        var arr = listRegexp.exec(text);
+        var char = _getChar(name, line);
+        if (arr !== null) {
+            if (_checkChar(name, arr[2])) {
+                char = '';
+            }
+            text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
+        } else if (untoggleOnly == false){
+            text = char + ' ' + text;
+        }
+        return text;
     };
 
     var line = 1;
@@ -1002,16 +1016,13 @@ function _toggleLine(cm, name) {
             if (stat[name]) {
                 text = text.replace(repl[name], '$1');
             } else {
-                var arr = listRegexp.exec(text);
-                var char = _getChar(name, line);
-                if (arr !== null) {
-                    if (_checkChar(name, arr[2])) {
-                        char = '';
-                    }
-                    text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
-                } else {
-                    text = char + ' ' + text;
+                // If we're toggling unordered-list formatting, check if the current line
+                // is part of an ordered-list, and if so, untoggle that first.
+                // Workaround for https://github.com/Ionaru/easy-markdown-editor/issues/92
+                if (name == 'unordered-list') {
+                    text = _toggle('ordered-list', text, true);
                 }
+                text = _toggle(name, text, false);
                 line += 1;
             }
             cm.replaceRange(text, {
@@ -1684,22 +1695,22 @@ EasyMDE.prototype.autosave = function () {
             console.log('EasyMDE: You must set a uniqueId to use the autosave feature');
             return;
         }
-        
+
         if(this.options.autosave.binded !== true) {
           if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
               easyMDE.element.form.addEventListener('submit', function () {
                   clearTimeout(easyMDE.autosaveTimeoutId);
                   easyMDE.autosaveTimeoutId = undefined;
-                
+
                   localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
-                  
+
                   // Restart autosaving in case the submit will be cancelled down the line
                   setTimeout(function() {
                     easyMDE.autosave();
                   }, easyMDE.options.autosave.delay || 10000);
               });
           }
-          
+
           this.options.autosave.binded = true;
         }
 
