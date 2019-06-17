@@ -995,7 +995,7 @@ function _toggleLine(cm, name) {
         return char && rt.test(char);
     };
 
-    var _do = function (name, text, untoggleOnly) {
+    var _toggle = function (name, text, untoggleOnly) {
         var arr = listRegexp.exec(text);
         var char = _getChar(name, line);
         if (arr !== null) {
@@ -1020,9 +1020,9 @@ function _toggleLine(cm, name) {
                 // is part of an ordered-list, and if so, untoggle that first.
                 // Workaround for https://github.com/Ionaru/easy-markdown-editor/issues/92
                 if (name == 'unordered-list') {
-                    text = _do('ordered-list', text, true);
+                    text = _toggle('ordered-list', text, true);
                 }
-                text = _do(name, text, false);
+                text = _toggle(name, text, false);
                 line += 1;
             }
             cm.replaceRange(text, {
@@ -1378,7 +1378,6 @@ var blockStyles = {
  * Interface of EasyMDE.
  */
 function EasyMDE(options) {
-    console.log('oh hai');
     // Handle options parameter
     options = options || {};
 
