@@ -134,7 +134,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.1...HEAD
-[2.6.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.0...2.6.1
+[2.6.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.0...2.6.1
 [2.6.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.1...2.6.0
 [2.5.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.5.0...2.5.1
 [2.5.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.4.2...2.5.0
