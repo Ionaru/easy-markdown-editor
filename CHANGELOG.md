@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Fixed
+- Error when toggling between ordered and unordered lists (Thanks to [@roryok], [#93]).
 - Keyboard shortcuts for custom actions not working (Thanks to [@ysykzheng], [#75]).
 
 ## [2.6.0] - 2019-04-15
@@ -110,6 +111,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#93]: https://github.com/Ionaru/easy-markdown-editor/pull/93
 [#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
 [#54]: https://github.com/Ionaru/easy-markdown-editor/pull/54
 [#31]: https://github.com/Ionaru/easy-markdown-editor/pull/31
@@ -117,6 +119,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@roryok]: https://github.com/roryok
 [@ysykzheng]: https://github.com/ysykzheng
 [@roipoussiere]: https://github.com/roipoussiere
 [@FranklinWhale]: https://github.com/FranklinWhale
