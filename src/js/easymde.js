@@ -225,9 +225,9 @@ function getState(cm, pos) {
             ret.strikethrough = true;
         } else if (data === 'comment') {
             ret.code = true;
-        } else if (data === 'link') {
+        } else if (data === 'link' && !ret.image) {
             ret.link = true;
-        } else if (data === 'tag') {
+        } else if (data === 'image') {
             ret.image = true;
         } else if (data.match(/^header(-[1-6])?$/)) {
             ret[data.replace('header', 'heading')] = true;
@@ -680,15 +680,16 @@ function cleanBlock(editor) {
 function drawLink(editor) {
     var cm = editor.codemirror;
     var stat = getState(cm);
+    var type = 'link';
     var options = editor.options;
     var url = 'https://';
-    if (options.promptURLs) {
+    if (!stat[type] && options.promptURLs) {
         url = prompt(options.promptTexts.link, 'https://');
         if (!url) {
             return false;
         }
     }
-    _replaceSelection(cm, stat.link, options.insertTexts.link, url);
+    _toggleLink(cm, type, options.insertTexts.link, url);
 }
 
 /**
@@ -697,15 +698,16 @@ function drawLink(editor) {
 function drawImage(editor) {
     var cm = editor.codemirror;
     var stat = getState(cm);
+    var type = 'image';
     var options = editor.options;
     var url = 'https://';
-    if (options.promptURLs) {
+    if (!stat[type] && options.promptURLs) {
         url = prompt(options.promptTexts.image, 'https://');
         if (!url) {
             return false;
         }
     }
-    _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+    _toggleLink(cm, type, options.insertTexts.image, url);
 }
 
 /**
@@ -887,7 +889,41 @@ function _replaceSelection(cm, active, startEnd, url) {
     cm.focus();
 }
 
+function _toggleLink(cm, type, startEnd, url)
+{
+    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+    return;
+    var stat = getState(cm);
 
+    if (stat[type]) {
+        var startPoint = cm.getCursor('start');
+        var endPoint = cm.getCursor('end');
+        var text = cm.getLine(startPoint.line);
+        var start = text.slice(0, startPoint.ch);
+        var end = text.slice(startPoint.ch);
+
+        var startReg = type == 'link' ? /\[$/ : /!\[$/;
+        start = start.replace(startReg, '');
+        end = end.replace(/\]\(.*?\)/, '');
+
+        cm.replaceRange(start + end, {
+            line: startPoint.line,
+            ch: 0,
+        }, {
+            line: startPoint.line,
+            ch: 99999999999999,
+        });
+
+        startPoint.ch -= startEnd[0].length;
+        if (startPoint !== endPoint) {
+            endPoint.ch -= startEnd[0].length;
+        }
+        cm.setSelection(startPoint, endPoint);
+        cm.focus();
+    } else {
+        _replaceSelection(cm,stat[type],startEnd,url);
+    }
+}
 function _toggleHeading(cm, direction, size) {
     if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
         return;
@@ -956,7 +992,6 @@ function _toggleHeading(cm, direction, size) {
     }
     cm.focus();
 }
-
 
 function _toggleLine(cm, name) {
     if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
@@ -1358,7 +1393,7 @@ var toolbarBuiltInButtons = {
 
 var insertTexts = {
     link: ['[', '](#url#)'],
-    image: ['![](', '#url#)'],
+    image: ['![', '](#url#)'],
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
     horizontalRule: ['', '\n\n-----\n\n'],
 };
