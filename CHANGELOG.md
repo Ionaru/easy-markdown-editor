@@ -4,7 +4,11 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Fixed
+- Updated dependencies to resolve potential security issue.
+- Resolved small code style issues shown by new eslint rules.
+
 ## [2.6.1] - 2019-06-17
 ### Fixed
 - Error when toggling between ordered and unordered lists (Thanks to [@roryok], [#93]).

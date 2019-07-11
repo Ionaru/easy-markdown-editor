@@ -1,4 +1,3 @@
-/*global require,module*/
 'use strict';
 var CodeMirror = require('codemirror');
 require('codemirror/addon/edit/continuelist.js');
@@ -1131,7 +1130,7 @@ function _cleanBlock(cm) {
 // Merge the properties of one object into another.
 function _mergeProperties(target, source) {
     for (var property in source) {
-        if (source.hasOwnProperty(property)) {
+        if (Object.prototype.hasOwnProperty.call(source, property)) {
             if (source[property] instanceof Array) {
                 target[property] = source[property].concat(target[property] instanceof Array ? target[property] : []);
             } else if (
@@ -1429,7 +1428,7 @@ function EasyMDE(options) {
 
         // Loop over the built in buttons, to get the preferred order
         for (var key in toolbarBuiltInButtons) {
-            if (toolbarBuiltInButtons.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(toolbarBuiltInButtons, key)) {
                 if (key.indexOf('separator-') != -1) {
                     options.toolbar.push('|');
                 }
@@ -1443,7 +1442,7 @@ function EasyMDE(options) {
 
 
     // Handle status bar
-    if (!options.hasOwnProperty('status')) {
+    if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
         options.status = ['autosave', 'lines', 'words', 'cursor'];
     }
 
