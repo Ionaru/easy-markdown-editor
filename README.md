@@ -143,6 +143,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **strikethrough**: If set to `false`, will not process GFM strikethrough syntax. Defaults to `true`.
   - **underscoresBreakWords**: If set to `true`, let underscores be a delimiter for separating words. Defaults to `false`.
 - **placeholder**: If set, displays a custom placeholder message.
+- **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
 - **promptURLs**: If set to `true`, a JS alert window appears asking for the link or image URL. Defaults to `false`.
 - **promptTexts**: Customize the text used to prompt for URLs.
@@ -201,6 +202,10 @@ var editor = new EasyMDE({
 		underscoresBreakWords: true,
 	},
 	placeholder: "Type here...",
+	
+	previewClass: "my-custom-styling",
+	previewClass: ["my-custom-styling", "more-custom-styling"],
+	
 	previewRender: function(plainText) {
 		return customMarkdownParser(plainText); // Returns HTML from a custom parser
 	},
