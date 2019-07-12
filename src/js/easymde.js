@@ -818,9 +818,23 @@ function togglePreview(editor) {
     var toolbar_div = wrapper.previousSibling;
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
-    if (!preview || !/editor-preview/.test(preview.className)) {
+    if (!preview || !/editor-preview-full/.test(preview.className)) {
+
         preview = document.createElement('div');
-        preview.className = 'editor-preview';
+        preview.className = 'editor-preview-full';
+
+        if (editor.options.previewClass) {
+
+            if (Array.isArray(editor.options.previewClass)) {
+                for (var i = 0; i < editor.options.previewClass.length; i++) {
+                    preview.className += (' ' + editor.options.previewClass[i]);
+                }
+
+            } else if (typeof editor.options.previewClass === 'string') {
+                preview.className += (' ' + editor.options.previewClass);
+            }
+        }
+
         wrapper.appendChild(preview);
     }
     if (/editor-preview-active/.test(preview.className)) {
@@ -1440,6 +1454,10 @@ function EasyMDE(options) {
         }
     }
 
+    // Editor preview styling class.
+    if (!Object.prototype.hasOwnProperty.call(options, 'previewClass')) {
+        options.previewClass = 'editor-preview';
+    }
 
     // Handle status bar
     if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
@@ -1772,6 +1790,19 @@ EasyMDE.prototype.createSideBySide = function () {
     if (!preview || !/editor-preview-side/.test(preview.className)) {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
+
+        if (this.options.previewClass) {
+
+            if (Array.isArray(this.options.previewClass)) {
+                for (var i = 0; i < this.options.previewClass.length; i++) {
+                    preview.className += (' ' + this.options.previewClass[i]);
+                }
+
+            } else if (typeof this.options.previewClass === 'string') {
+                preview.className += (' ' + this.options.previewClass);
+            }
+        }
+
         wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
     }
 
