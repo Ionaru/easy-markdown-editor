@@ -41,6 +41,7 @@
     "repository": "github:Ionaru/easy-markdown-editor",
     "scripts": {
         "prepare": "gulp",
+        "test": "npm run test:types",
         "test:types": "tsc --project types/tsconfig.json"
     }
 }
