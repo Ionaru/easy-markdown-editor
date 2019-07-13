@@ -100,6 +100,7 @@ declare namespace EasyMDE {
         lineWrapping?: boolean;
         parsingConfig?: ParsingOptions;
         placeholder?: string;
+        previewClass?: string | ReadonlyArray<string>;
         previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;

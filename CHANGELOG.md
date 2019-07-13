@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- `previewClass` option for overwriting the preview screen class ([#99]).
+
 ### Fixed
 - Updated dependencies to resolve potential security issue.
 - Resolved small code style issues shown by new eslint rules.
@@ -105,6 +108,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#99]: https://github.com/Ionaru/easy-markdown-editor/issues/99
 [#45]: https://github.com/Ionaru/easy-markdown-editor/issues/45
 [#44]: https://github.com/Ionaru/easy-markdown-editor/issues/44
 [#41]: https://github.com/Ionaru/easy-markdown-editor/issues/41
@@ -124,6 +128,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@sn3p]: https://github.com/sn3p
 [@roryok]: https://github.com/roryok
 [@ysykzheng]: https://github.com/ysykzheng
 [@roipoussiere]: https://github.com/roipoussiere
