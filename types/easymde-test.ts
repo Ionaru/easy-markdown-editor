@@ -7,6 +7,7 @@ const editor = new EasyMDE({
         drawTable: 'Cmd-Alt-T',
         toggleFullScreen: null
     },
+    previewClass: 'my-custom-class',
     spellChecker: false,
     onToggleFullScreen: (full: boolean) => {
         console.log('FullscreenToggled', full);
@@ -28,3 +29,33 @@ editor.codemirror.setOption('readOnly', true);
 EasyMDE.toggleItalic = (editor: EasyMDE) => {
     console.log('SomeButtonOverride');
 };
+
+const editor2 = new EasyMDE({
+    autoDownloadFontAwesome: undefined,
+    previewClass: ['my-custom-class', 'some-other-class'],
+    toolbar: [{
+        name: 'bold',
+        action: EasyMDE.toggleBold,
+        className: 'fa fa-bolt',
+        title: 'Bold',
+    }, '|', { // Separator
+        name: 'alert',
+        action: (editor) => {
+            alert('This is from a custom button action!');
+            // Custom functions have access to the `editor` instance.
+        },
+        className: 'fa fa-star',
+        title: 'A Custom Button',
+        noDisable: undefined,
+        noMobile: false,
+    }, '|', {
+        name: 'link',
+        action: 'https://github.com/Ionaru/easy-markdown-editor',
+        className: 'fa fab fa-github',
+        title: 'A Custom Link',
+        noDisable: true,
+        noMobile: true,
+    }]
+});
+
+editor2.clearAutosavedValue();

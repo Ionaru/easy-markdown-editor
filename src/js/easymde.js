@@ -1,4 +1,3 @@
-/*global require,module*/
 'use strict';
 var CodeMirror = require('codemirror');
 require('codemirror/addon/edit/continuelist.js');
@@ -122,6 +121,11 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
     el.setAttribute('type', 'button');
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
+    // Properly hande custom shortcuts
+	if( options.name && options.name in shortcuts ){
+		bindings[options.name] = options.action;
+    }
+
     if (options.title && enableTooltips) {
         el.title = createTooltip(options.title, options.action, shortcuts);
 
@@ -169,7 +173,7 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
 function createSep() {
     var el = document.createElement('i');
     el.className = 'separator';
-    el.textContent = '|';
+    el.innerHTML = '|';
     return el;
 }
 
@@ -840,9 +844,23 @@ function togglePreview(editor) {
     var toolbar_div = wrapper.previousSibling;
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
-    if (!preview || !/editor-preview/.test(preview.className)) {
+    if (!preview || !/editor-preview-full/.test(preview.className)) {
+
         preview = document.createElement('div');
-        preview.className = 'editor-preview';
+        preview.className = 'editor-preview-full';
+
+        if (editor.options.previewClass) {
+
+            if (Array.isArray(editor.options.previewClass)) {
+                for (var i = 0; i < editor.options.previewClass.length; i++) {
+                    preview.className += (' ' + editor.options.previewClass[i]);
+                }
+
+            } else if (typeof editor.options.previewClass === 'string') {
+                preview.className += (' ' + editor.options.previewClass);
+            }
+        }
+
         wrapper.appendChild(preview);
     }
     if (/editor-preview-active/.test(preview.className)) {
@@ -885,7 +903,6 @@ function _replaceSelection(cm, active, startEnd, url) {
     Object.assign(startPoint, cm.getCursor('start'));
     Object.assign(endPoint, cm.getCursor('end'));
     if (url) {
-        start = start.replace('#url#', url);
         end = end.replace('#url#', url);
     }
     if (active) {
@@ -1010,11 +1027,25 @@ function _toggleLine(cm, name) {
         var map = {
             'quote': '>',
             'unordered-list': '*',
-            'ordered-list': 'd+.',
+            'ordered-list': '\\d+.',
         };
         var rt = new RegExp(map[name]);
 
         return char && rt.test(char);
+    };
+
+    var _toggle = function (name, text, untoggleOnly) {
+        var arr = listRegexp.exec(text);
+        var char = _getChar(name, line);
+        if (arr !== null) {
+            if (_checkChar(name, arr[2])) {
+                char = '';
+            }
+            text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
+        } else if (untoggleOnly == false){
+            text = char + ' ' + text;
+        }
+        return text;
     };
 
     var line = 1;
@@ -1024,16 +1055,13 @@ function _toggleLine(cm, name) {
             if (stat[name]) {
                 text = text.replace(repl[name], '$1');
             } else {
-                var arr = listRegexp.exec(text);
-                var char = _getChar(name, line);
-                if (arr !== null) {
-                    if (_checkChar(name, arr[2])) {
-                        char = '';
-                    }
-                    text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
-                } else {
-                    text = char + ' ' + text;
+                // If we're toggling unordered-list formatting, check if the current line
+                // is part of an ordered-list, and if so, untoggle that first.
+                // Workaround for https://github.com/Ionaru/easy-markdown-editor/issues/92
+                if (name == 'unordered-list') {
+                    text = _toggle('ordered-list', text, true);
                 }
+                text = _toggle(name, text, false);
                 line += 1;
             }
             cm.replaceRange(text, {
@@ -1160,7 +1188,7 @@ function humanFileSize(bytes, units) {
 // Merge the properties of one object into another.
 function _mergeProperties(target, source) {
     for (var property in source) {
-        if (source.hasOwnProperty(property)) {
+        if (Object.prototype.hasOwnProperty.call(source, property)) {
             if (source[property] instanceof Array) {
                 target[property] = source[property].concat(target[property] instanceof Array ? target[property] : []);
             } else if (
@@ -1491,7 +1519,7 @@ function EasyMDE(options) {
 
         // Loop over the built in buttons, to get the preferred order
         for (var key in toolbarBuiltInButtons) {
-            if (toolbarBuiltInButtons.hasOwnProperty(key)) {
+            if (Object.prototype.hasOwnProperty.call(toolbarBuiltInButtons, key)) {
                 if (key.indexOf('separator-') != -1) {
                     options.toolbar.push('|');
                 }
@@ -1503,9 +1531,13 @@ function EasyMDE(options) {
         }
     }
 
+    // Editor preview styling class.
+    if (!Object.prototype.hasOwnProperty.call(options, 'previewClass')) {
+        options.previewClass = 'editor-preview';
+    }
 
     // Handle status bar
-    if (!options.hasOwnProperty('status')) {
+    if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
         if (options.uploadImage) {
         options.status = ['upload-image', 'autosave', 'lines', 'words', 'cursor'];
         } else {
@@ -1710,7 +1742,12 @@ EasyMDE.prototype.render = function (el) {
         if (options.shortcuts[key] !== null && bindings[key] !== null) {
             (function (key) {
                 keyMaps[fixShortcut(options.shortcuts[key])] = function () {
-                    bindings[key](self);
+                    var action = bindings[key];
+                    if (typeof action === 'function') {
+                        action(self);
+                    } else if (typeof action === 'string') {
+                        window.open(action, '_blank');
+                    }
                 };
             })(key);
         }
@@ -1874,7 +1911,7 @@ EasyMDE.prototype.autosave = function () {
             }
             m = m < 10 ? '0' + m : m;
 
-            el.textContent = 'Autosaved: ' + h + ':' + m + ' ' + dd;
+            el.innerHTML = 'Autosaved: ' + h + ':' + m + ' ' + dd;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
@@ -1993,6 +2030,19 @@ EasyMDE.prototype.createSideBySide = function () {
     if (!preview || !/editor-preview-side/.test(preview.className)) {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
+
+        if (this.options.previewClass) {
+
+            if (Array.isArray(this.options.previewClass)) {
+                for (var i = 0; i < this.options.previewClass.length; i++) {
+                    preview.className += (' ' + this.options.previewClass[i]);
+                }
+
+            } else if (typeof this.options.previewClass === 'string') {
+                preview.className += (' ' + this.options.previewClass);
+            }
+        }
+
         wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
     }
 
@@ -2176,25 +2226,25 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
             if (name === 'words') {
                 defaultValue = function (el) {
-                    el.textContent = wordCount(cm.getValue());
+                    el.innerHTML = wordCount(cm.getValue());
                 };
                 onUpdate = function (el) {
-                    el.textContent = wordCount(cm.getValue());
+                    el.innerHTML = wordCount(cm.getValue());
                 };
             } else if (name === 'lines') {
                 defaultValue = function (el) {
-                    el.textContent = cm.lineCount();
+                    el.innerHTML = cm.lineCount();
                 };
                 onUpdate = function (el) {
-                    el.textContent = cm.lineCount();
+                    el.innerHTML = cm.lineCount();
                 };
             } else if (name === 'cursor') {
                 defaultValue = function (el) {
-                    el.textContent = '0:0';
+                    el.innerHTML = '0:0';
                 };
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
-                    el.textContent = pos.line + ':' + pos.ch;
+                    el.innerHTML = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
                 defaultValue = function (el) {
@@ -2204,7 +2254,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
             } else if (name === 'upload-image') {
                 defaultValue = function (el) {
-                    el.textContent = options.imageTexts.sbInit;
+                    el.innerHTML = options.imageTexts.sbInit;
                 };
             }
 

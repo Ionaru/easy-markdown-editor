@@ -1,10 +1,26 @@
 # EasyMDE Changelog
-All notable changes to this project will be documented in this file.
+All notable changes to easymde will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!--## [Unreleased]-->
+Merge 2.7.0 with https://github.com/Ionaru/easy-markdown-editor/pull/71 @jeroenvo
+
+## [2.7.0] - 2019-07-13
+### Added
+- `previewClass` option for overwriting the preview screen class ([#99]).
+
+### Fixed
+- Updated dependencies to resolve potential security issue.
+- Resolved small code style issues shown by new eslint rules.
+
+## [2.6.1] - 2019-06-17
+### Fixed
+- Error when toggling between ordered and unordered lists (Thanks to [@roryok], [#93]).
+- Keyboard shortcuts for custom actions not working (Thanks to [@ysykzheng], [#75]).
+
+## [2.6.0] - 2019-04-15
 ### Added
 - Contributing guide (Thanks to [@roipoussiere], [#54]).
 - Issue templates.
@@ -13,7 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Finish rewrite of README (Thanks to [@roipoussiere], [#54]).
 - Image and link prompt fill with "https://" by default.
-- Link to markdown guide to https://www.markdownguide.org/basic-syntax/.
+- Link to markdown guide to <https://www.markdownguide.org/basic-syntax/>.
 
 ### Fixed
 - Backwards compatibility in the API with SimpleMDE 1.0.0 ([#41]).
