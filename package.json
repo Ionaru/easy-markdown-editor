@@ -1,6 +1,6 @@
 {
     "name": "easymde",
-    "version": "2.5.1",
+    "version": "2.7.0",
     "description": "A simple, beautiful, and embeddable JavaScript Markdown editor that easy to use. Features include autosaving and spell checking.",
     "files": [
         "dist/**/*",
@@ -18,34 +18,30 @@
     "types": "types/easymde.d.ts",
     "license": "MIT",
     "author": "Jeroen Akkerman",
-    "bugs": {
-        "url": "https://github.com/ionaru/easy-markdown-editor/issues"
-    },
     "dependencies": {
-        "codemirror": "^5.43.0",
+        "codemirror": "^5.48.0",
         "codemirror-spell-checker": "1.1.2",
-        "marked": "^0.6.1"
+        "marked": "^0.7.0"
     },
     "devDependencies": {
-        "@types/codemirror": "0.0.72",
-        "browserify": "^16.2.3",
-        "gulp": "^4.0.0",
-        "gulp-clean-css": "^4.0.0",
+        "@types/codemirror": "0.0.76",
+        "browserify": "^16.3.0",
+        "gulp": "^4.0.2",
+        "gulp-clean-css": "^4.2.0",
         "gulp-concat": "^2.6.1",
-        "gulp-eslint": "^5.0.0",
+        "gulp-eslint": "^6.0.0",
         "gulp-header": "^2.0.7",
         "gulp-rename": "^1.4.0",
-        "gulp-uglify": "^3.0.1",
-        "typescript": "^3.3.3",
+        "gulp-terser": "^1.2.0",
+        "gulp-uglify": "^3.0.2",
+        "typescript": "^3.5.3",
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^2.0.0"
     },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ionaru/easy-markdown-editor"
-    },
+    "repository": "github:Ionaru/easy-markdown-editor",
     "scripts": {
         "prepare": "gulp",
+        "test": "npm run test:types",
         "test:types": "tsc --project types/tsconfig.json"
     }
 }
