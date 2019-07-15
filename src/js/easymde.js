@@ -727,6 +727,7 @@ function afterImageUploaded(editor, url) {
     var options = editor.options;
     var imageName = url.substr(url.lastIndexOf('/') + 1);
     _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
+    // show uploaded image filename for 1000ms
     editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
     setTimeout(function() {
         editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
@@ -1619,8 +1620,19 @@ function EasyMDE(options) {
             event.stopPropagation();
             event.preventDefault();
         });
+        this.codemirror.on('dragend', function(cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+        this.codemirror.on('dragleave', function(cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            event.stopPropagation();
+            event.preventDefault();
+        });
 
         this.codemirror.on('dragover', function(cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -1944,7 +1956,7 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
     var self = this;
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
-    imageInput.dispatchEvent(new MouseEvent('click'));
+    imageInput.click() //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         self.uploadImages(event.target.files, onSuccess, onError);
         imageInput.removeEventListener('change', onChange);
