@@ -1995,8 +1995,12 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
 
     var formData = new FormData();
     formData.append('image', file);
+
+    // insert CSRF token if provided in config.
+    if(self.options.imageCSRFToken){
+        formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
+    }
     var request = new XMLHttpRequest();
-    // TODO insert csrf token in post ajax request
     request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             var progress = '' + Math.round((event.loaded * 100) / event.total);
@@ -2004,7 +2008,6 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
         }
     };
     request.open('POST', this.options.imageUploadEndpoint);
-
 
     request.onload = function () {
         try {

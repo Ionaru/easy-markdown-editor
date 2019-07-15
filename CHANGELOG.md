@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - replace MouseEvent(click) with .click() for IE compat
 - Fix status bar update when dragging but not dropping
 - Fix progressbar
+- Add option for CSRF token to include in AJAX call for imageupload
 
 ## [2.7.0] - 2019-07-13
 ### Added
