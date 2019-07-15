@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Merge 2.7.0 with https://github.com/Ionaru/easy-markdown-editor/pull/71 @jeroenvo
 - replace MouseEvent(click) with .click() for IE compat
 - Fix status bar update when dragging but not dropping
-- 
+- Fix progressbar
 
 ## [2.7.0] - 2019-07-13
 ### Added

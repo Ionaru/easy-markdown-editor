@@ -1956,7 +1956,7 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
     var self = this;
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
-    imageInput.click() //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
+    imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         self.uploadImages(event.target.files, onSuccess, onError);
         imageInput.removeEventListener('change', onChange);
@@ -1996,16 +1996,15 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     var formData = new FormData();
     formData.append('image', file);
     var request = new XMLHttpRequest();
-    request.open('POST', this.options.imageUploadEndpoint);
-    request.send(formData);
-
-    request.onprogress = function (event) {
+    // TODO insert csrf token in post ajax request
+    request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
-            // FIXME: progress doesn't work well
             var progress = '' + Math.round((event.loaded * 100) / event.total);
             self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
         }
     };
+    request.open('POST', this.options.imageUploadEndpoint);
+
 
     request.onload = function () {
         try {
@@ -2033,6 +2032,9 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
             + event.target.status + ' (' + event.target.statusText + ')');
         onError(self.options.errorMessages.importError);
     };
+
+    request.send(formData);
+
 };
 
 EasyMDE.prototype.createSideBySide = function () {
