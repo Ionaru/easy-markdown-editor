@@ -31,7 +31,7 @@ function scripts() {
     return browserify({entries: './src/js/easymde.js', standalone: 'EasyMDE'}).bundle()
         .pipe(source('easymde.min.js'))
         .pipe(buffer())
-        // .pipe(terser())  // TODO enable to minify output
+        .pipe(terser())
         .pipe(header(banner, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }
