@@ -904,7 +904,7 @@ function _replaceSelection(cm, active, startEnd, url) {
     Object.assign(startPoint, cm.getCursor('start'));
     Object.assign(endPoint, cm.getCursor('end'));
     if (url) {
-        start = start.replace('#url#', url);
+        start = start.replace('#url#', url);  // url is in start for upload-image
         end = end.replace('#url#', url);
     }
     if (active) {
