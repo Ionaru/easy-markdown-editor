@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix status bar update when dragging but not dropping
 - Fix progressbar
 - Add option for CSRF token to include in AJAX call for imageupload
+- Fix status bar reset after upload error
+- Add server side error messages on image upload.
 
 ## [2.7.0] - 2019-07-13
 ### Added
