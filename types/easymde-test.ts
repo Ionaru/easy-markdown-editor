@@ -76,9 +76,9 @@ const editorImages = new EasyMDE({
     },
     errorMessages: {
         noFileGiven: 'Please select a file',
-        imageTypeNotAllowed: 'This file type is not allowed!',
-        imageTooLarge: 'Image too big',
-        imageImportError: 'Something went oops!',
+        typeNotAllowed: 'This file type is not allowed!',
+        fileTooLarge: 'Image too big',
+        importError: 'Something went oops!',
     },
     errorCallback: (errorMessage) => {
         console.error(errorMessage);

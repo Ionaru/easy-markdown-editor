@@ -97,9 +97,9 @@ declare namespace EasyMDE {
 
     interface ImageErrorTextsOptions {
         noFileGiven?: string;
-        imageTypeNotAllowed?: string;
-        imageTooLarge?: string;
-        imageImportError?: string;
+        typeNotAllowed?: string;
+        fileTooLarge?: string;
+        importError?: string;
     }
 
     interface Options {
