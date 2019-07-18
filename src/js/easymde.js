@@ -2232,11 +2232,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
     var options = this.options;
     var cm = this.codemirror;
 
-
     // Make sure the status variable is valid
-    if (!status || status.length === 0)
+    if (!status || status.length === 0) {
         return;
-
+    }
 
     // Set up the built-in items
     var items = [];
