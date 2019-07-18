@@ -122,8 +122,8 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
     // Properly hande custom shortcuts
-	if( options.name && options.name in shortcuts ){
-		bindings[options.name] = options.action;
+    if (options.name && options.name in shortcuts) {
+        bindings[options.name] = options.action;
     }
 
     if (options.title && enableTooltips) {
@@ -284,7 +284,7 @@ function toggleFullScreen(editor) {
     if (/editor-preview-active-side/.test(sidebyside.className))
         toggleSideBySide(editor);
 
-	if (editor.options.onToggleFullScreen) {
+    if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
     }
 }
@@ -729,7 +729,7 @@ function afterImageUploaded(editor, url) {
     _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     // show uploaded image filename for 1000ms
     editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
-    setTimeout(function() {
+    setTimeout(function () {
         editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
     }, 1000);
 }
@@ -1044,7 +1044,7 @@ function _toggleLine(cm, name) {
                 char = '';
             }
             text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
-        } else if (untoggleOnly == false){
+        } else if (untoggleOnly == false) {
             text = char + ' ' + text;
         }
         return text;
@@ -1176,14 +1176,14 @@ function _cleanBlock(cm) {
  * @returns string A human-readable file size. Ex: '412Kb'
  */
 function humanFileSize(bytes, units) {
-    if(Math.abs(bytes) < 1024) {
+    if (Math.abs(bytes) < 1024) {
         return '' + bytes + units[0];
     }
     var u = 0;
     do {
         bytes /= 1024;
         ++u;
-    } while(Math.abs(bytes) >= 1024 && u < units.length);
+    } while (Math.abs(bytes) >= 1024 && u < units.length);
     return '' + bytes.toFixed(1) + units[u];
 }
 
@@ -1580,13 +1580,13 @@ function EasyMDE(options) {
 
     options.minHeight = options.minHeight || '300px';
 
-    options.errorCallback = options.errorCallback || function(errorMessage) {
-      alert(errorMessage);
+    options.errorCallback = options.errorCallback || function (errorMessage) {
+        alert(errorMessage);
     };
 
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
-    options.imageMaxSize = options.imageMaxSize || 1024*1024*2;
+    options.imageMaxSize = options.imageMaxSize || 1024 * 1024 * 2;
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
@@ -1615,35 +1615,35 @@ function EasyMDE(options) {
     if (options.uploadImage) {
         var self = this;
 
-        this.codemirror.on('dragenter', function(cm, event) {
+        this.codemirror.on('dragenter', function (cm, event) {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
-        this.codemirror.on('dragend', function(cm, event) {
+        this.codemirror.on('dragend', function (cm, event) {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
             event.stopPropagation();
             event.preventDefault();
         });
-        this.codemirror.on('dragleave', function(cm, event) {
+        this.codemirror.on('dragleave', function (cm, event) {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
             event.stopPropagation();
             event.preventDefault();
         });
 
-        this.codemirror.on('dragover', function(cm, event) {
+        this.codemirror.on('dragover', function (cm, event) {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
 
-        this.codemirror.on('drop', function(cm, event) {
+        this.codemirror.on('drop', function (cm, event) {
             event.stopPropagation();
             event.preventDefault();
             self.uploadImages(event.dataTransfer.files);
         });
 
-        this.codemirror.on('paste', function(cm, event) {
+        this.codemirror.on('paste', function (cm, event) {
             self.uploadImages(event.clipboardData.files);
         });
     }
@@ -1660,9 +1660,9 @@ function EasyMDE(options) {
  * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
  * @param [onError] {function} see EasyMDE.prototype.uploadImage
  */
-EasyMDE.prototype.uploadImages = function(files, onSuccess, onError) {
+EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
     var names = [];
-    for(var i=0; i<files.length; i++) {
+    for (var i = 0; i < files.length; i++) {
         names.push(files[i].name);
         this.uploadImage(files[i], onSuccess, onError);
     }
@@ -1674,7 +1674,7 @@ EasyMDE.prototype.uploadImages = function(files, onSuccess, onError) {
  * @param itemName {string} The name of the item to update (ie. 'upload-image', 'autosave', etc.).
  * @param content {string} the new content of the item to write in the status bar.
  */
-EasyMDE.prototype.updateStatusBar = function(itemName, content) {
+EasyMDE.prototype.updateStatusBar = function (itemName, content) {
     var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
     if (matchingClasses.length === 1) {
         this.gui.statusbar.getElementsByClassName(itemName)[0].textContent = content;
@@ -1879,22 +1879,22 @@ EasyMDE.prototype.autosave = function () {
             return;
         }
 
-        if(this.options.autosave.binded !== true) {
-          if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
-              easyMDE.element.form.addEventListener('submit', function () {
-                  clearTimeout(easyMDE.autosaveTimeoutId);
-                  easyMDE.autosaveTimeoutId = undefined;
+        if (this.options.autosave.binded !== true) {
+            if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
+                easyMDE.element.form.addEventListener('submit', function () {
+                    clearTimeout(easyMDE.autosaveTimeoutId);
+                    easyMDE.autosaveTimeoutId = undefined;
 
-                  localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
+                    localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
 
-                  // Restart autosaving in case the submit will be cancelled down the line
-                  setTimeout(function() {
-                    easyMDE.autosave();
-                  }, easyMDE.options.autosave.delay || 10000);
-              });
-          }
+                    // Restart autosaving in case the submit will be cancelled down the line
+                    setTimeout(function () {
+                        easyMDE.autosave();
+                    }, easyMDE.options.autosave.delay || 10000);
+                });
+            }
 
-          this.options.autosave.binded = true;
+            this.options.autosave.binded = true;
         }
 
         if (this.options.autosave.loaded !== true) {
@@ -1953,7 +1953,7 @@ EasyMDE.prototype.clearAutosavedValue = function () {
  * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
  * @param [onError] {function} see EasyMDE.prototype.uploadImage
  */
-EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
+EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     var self = this;
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
@@ -1961,6 +1961,7 @@ EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
         self.uploadImages(event.target.files, onSuccess, onError);
         imageInput.removeEventListener('change', onChange);
     }
+
     imageInput.addEventListener('change', onChange);
 };
 
@@ -1973,19 +1974,20 @@ EasyMDE.prototype.openBrowseFileWindow = function(onSuccess, onError) {
  * @param [onError] {function} A callback function to execute when the image upload fails, with one parameter:
  * - error (string): the detailed error to display to the user (based on messages from options.errorMessages).
  */
-EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
+EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     var self = this;
     onSuccess = onSuccess || function onSuccess(imageUrl) {
         afterImageUploaded(self, imageUrl);
     };
-    function onErrorSup(errorMessage){
+
+    function onErrorSup(errorMessage) {
         // show error on status bar and reset after 1000ms
         self.updateStatusBar('upload-image', errorMessage);
-        setTimeout(function() {
+        setTimeout(function () {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
         }, 1000);
         // run custom error handler
-        if(onError && typeof onError === 'function'){
+        if (onError && typeof onError === 'function') {
             onError(errorMessage);
         }
         // run error handler from options, this alerts the message.
@@ -2009,7 +2011,7 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
     formData.append('image', file);
 
     // insert CSRF token if provided in config.
-    if(self.options.imageCSRFToken){
+    if (self.options.imageCSRFToken) {
         formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
     }
     var request = new XMLHttpRequest();
@@ -2029,12 +2031,12 @@ EasyMDE.prototype.uploadImage = function(file, onSuccess, onError) {
             onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
             return;
         }
-        if(this.status === 200 && response && !response.error && response.data && response.data.filePath) {
+        if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
             onSuccess(window.location.origin + '/' + response.data.filePath);
         } else {
-            if(response.error && response.error in self.options.errorMessages) {  // preformatted error message
+            if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
                 onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
-            }else if(response.error){  // server side generated error message
+            } else if (response.error) {  // server side generated error message
                 onErrorSup(fillErrorMessage(response.error));
             } else {  //unknown error
                 console.log('EasyMDE: Received an unexpected response after uploading the image.'
