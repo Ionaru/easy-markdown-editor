@@ -1586,7 +1586,7 @@ function EasyMDE(options) {
 
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
-    options.imageMaxSize = options.imageMaxSize || 1024 * 1024 * 2;
+    options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
