@@ -1981,11 +1981,13 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     };
 
     function onErrorSup(errorMessage) {
-        // show error on status bar and reset after 1000ms
+        // show error on status bar and reset after 10000ms
         self.updateStatusBar('upload-image', errorMessage);
+
         setTimeout(function () {
             self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
-        }, 1000);
+        }, 10000);
+
         // run custom error handler
         if (onError && typeof onError === 'function') {
             onError(errorMessage);
