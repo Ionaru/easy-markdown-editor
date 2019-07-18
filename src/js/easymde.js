@@ -2029,7 +2029,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
         try {
             var response = JSON.parse(this.responseText);
         } catch (error) {
-            console.log('EasyMDE: The server did not return a valid json.');
+            console.error('EasyMDE: The server did not return a valid json.');
             onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
             return;
         }
@@ -2041,7 +2041,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             } else if (response.error) {  // server side generated error message
                 onErrorSup(fillErrorMessage(response.error));
             } else {  //unknown error
-                console.log('EasyMDE: Received an unexpected response after uploading the image.'
+                console.error('EasyMDE: Received an unexpected response after uploading the image.'
                     + this.status + ' (' + this.statusText + ')');
                 onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
             }
@@ -2049,7 +2049,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     };
 
     request.onerror = function (event) {
-        console.log('EasyMDE: An unexpected error occurred when trying to upload the image.'
+        console.error('EasyMDE: An unexpected error occurred when trying to upload the image.'
             + event.target.status + ' (' + event.target.statusText + ')');
         onErrorSup(self.options.errorMessages.importError);
     };
