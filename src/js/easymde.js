@@ -1540,10 +1540,10 @@ function EasyMDE(options) {
 
     // Handle status bar
     if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
+        options.status = ['autosave', 'lines', 'words', 'cursor'];
+
         if (options.uploadImage) {
-        options.status = ['upload-image', 'autosave', 'lines', 'words', 'cursor'];
-        } else {
-            options.status = ['autosave', 'lines', 'words', 'cursor'];
+            options.status.unshift('upload-image');
         }
     }
 
