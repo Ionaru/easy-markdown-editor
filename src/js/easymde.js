@@ -122,8 +122,8 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
     // Properly hande custom shortcuts
-	if( options.name && options.name in shortcuts ){
-		bindings[options.name] = options.action;
+    if (options.name && options.name in shortcuts) {
+        bindings[options.name] = options.action;
     }
 
     if (options.title && enableTooltips) {
@@ -284,7 +284,7 @@ function toggleFullScreen(editor) {
     if (/editor-preview-active-side/.test(sidebyside.className))
         toggleSideBySide(editor);
 
-	if (editor.options.onToggleFullScreen) {
+    if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
     }
 }
@@ -708,6 +708,33 @@ function drawImage(editor) {
 }
 
 /**
+ * Action for opening the browse-file window to upload an image to a server.
+ * @param editor {EasyMDE} The EasyMDE object
+ */
+function drawUploadedImage(editor) {
+    // TODO: Draw the image template with a fake url? ie: '![](importing foo.png...)'
+    editor.openBrowseFileWindow();
+}
+
+/**
+ * Action executed after an image have been successfully imported on the server.
+ * @param editor {EasyMDE} The EasyMDE object
+ * @param url {string} The url of the uploaded image
+ */
+function afterImageUploaded(editor, url) {
+    var cm = editor.codemirror;
+    var stat = getState(cm);
+    var options = editor.options;
+    var imageName = url.substr(url.lastIndexOf('/') + 1);
+    _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
+    // show uploaded image filename for 1000ms
+    editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
+    setTimeout(function () {
+        editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
+    }, 1000);
+}
+
+/**
  * Action for drawing a table.
  */
 function drawTable(editor) {
@@ -877,6 +904,7 @@ function _replaceSelection(cm, active, startEnd, url) {
     Object.assign(startPoint, cm.getCursor('start'));
     Object.assign(endPoint, cm.getCursor('end'));
     if (url) {
+        start = start.replace('#url#', url);  // url is in start for upload-image
         end = end.replace('#url#', url);
     }
     if (active) {
@@ -1016,7 +1044,7 @@ function _toggleLine(cm, name) {
                 char = '';
             }
             text = arr[1] + char + arr[3] + text.replace(whitespacesRegexp, '').replace(repl[name], '$1');
-        } else if (untoggleOnly == false){
+        } else if (untoggleOnly == false) {
             text = char + ' ' + text;
         }
         return text;
@@ -1139,6 +1167,24 @@ function _cleanBlock(cm) {
             ch: 99999999999999,
         });
     }
+}
+
+/**
+ * Convert a number of bytes to a human-readable file size.
+ * @param bytes {integer} A number of bytes, as integer. Ex: 421137
+ * @param units {number[]} An array of human-readable units, ie. ['b', 'Kb', 'Mb']
+ * @returns string A human-readable file size. Ex: '412Kb'
+ */
+function humanFileSize(bytes, units) {
+    if (Math.abs(bytes) < 1024) {
+        return '' + bytes + units[0];
+    }
+    var u = 0;
+    do {
+        bytes /= 1024;
+        ++u;
+    } while (Math.abs(bytes) >= 1024 && u < units.length);
+    return '' + bytes.toFixed(1) + units[u];
 }
 
 // Merge the properties of one object into another.
@@ -1298,6 +1344,12 @@ var toolbarBuiltInButtons = {
         title: 'Insert Image',
         default: true,
     },
+    'upload-image': {
+        name: 'upload-image',
+        action: drawUploadedImage,
+        className: 'fa fa-image',
+        title: 'Import an image',
+    },
     'table': {
         name: 'table',
         action: drawTable,
@@ -1372,6 +1424,8 @@ var toolbarBuiltInButtons = {
 var insertTexts = {
     link: ['[', '](#url#)'],
     image: ['![](', '#url#)'],
+    uploadedImage: ['![](#url#)', ''],
+    // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
     horizontalRule: ['', '\n\n-----\n\n'],
 };
@@ -1385,6 +1439,31 @@ var blockStyles = {
     'bold': '**',
     'code': '```',
     'italic': '*',
+};
+
+/**
+ * Texts displayed to the user (mainly on the status bar) for the import image
+ * feature. Can be used for customization or internationalization.
+ */
+var imageTexts = {
+    sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
+    sbOnDragEnter: 'Drop image to upload it.',
+    sbOnDrop: 'Uploading image #images_names#...',
+    sbProgress: 'Uploading #file_name#: #progress#%',
+    sbOnUploaded: 'Uploaded #image_name#',
+    sizeUnits: 'b,Kb,Mb',
+};
+
+/**
+ * Errors displayed to the user, using the `errorCallback` option. Can be used for
+ * customization or internationalization.
+ */
+var errorMessages = {
+    noFileGiven: 'You must select a file.',
+    typeNotAllowed: 'This image type is not allowed.',
+    fileTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
+        'Maximum file size is #image_max_size#.',
+    importError: 'Something went wrong when uploading the image #image_name#.',
 };
 
 /**
@@ -1462,6 +1541,10 @@ function EasyMDE(options) {
     // Handle status bar
     if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
         options.status = ['autosave', 'lines', 'words', 'cursor'];
+
+        if (options.uploadImage) {
+            options.status.unshift('upload-image');
+        }
     }
 
 
@@ -1497,6 +1580,17 @@ function EasyMDE(options) {
 
     options.minHeight = options.minHeight || '300px';
 
+    options.errorCallback = options.errorCallback || function (errorMessage) {
+        alert(errorMessage);
+    };
+
+    // Import-image default configuration
+    options.uploadImage = options.uploadImage || false;
+    options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
+    options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
+    options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
+    options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
+
 
     // Change unique_id to uniqueId for backwards compatibility
     if (options.autosave != undefined && options.autosave.unique_id != undefined && options.autosave.unique_id != '')
@@ -1517,7 +1611,79 @@ function EasyMDE(options) {
     if (options.initialValue && (!this.options.autosave || this.options.autosave.foundSavedValue !== true)) {
         this.value(options.initialValue);
     }
+
+    if (options.uploadImage) {
+        var self = this;
+
+        this.codemirror.on('dragenter', function (cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+        this.codemirror.on('dragend', function (cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+        this.codemirror.on('dragleave', function (cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        this.codemirror.on('dragover', function (cm, event) {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
+            event.stopPropagation();
+            event.preventDefault();
+        });
+
+        this.codemirror.on('drop', function (cm, event) {
+            event.stopPropagation();
+            event.preventDefault();
+            self.uploadImages(event.dataTransfer.files);
+        });
+
+        this.codemirror.on('paste', function (cm, event) {
+            self.uploadImages(event.clipboardData.files);
+        });
+    }
 }
+
+/**
+ * Upload asynchronously a list of images to a server.
+ *
+ * Can be triggered by:
+ * - drag&drop;
+ * - copy-paste;
+ * - the browse-file window (opened when the user clicks on the *upload-image* icon).
+ * @param {FileList} files The files to upload the the server.
+ * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
+ * @param [onError] {function} see EasyMDE.prototype.uploadImage
+ */
+EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
+    var names = [];
+    for (var i = 0; i < files.length; i++) {
+        names.push(files[i].name);
+        this.uploadImage(files[i], onSuccess, onError);
+    }
+    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+};
+
+/**
+ * Update an item in the status bar.
+ * @param itemName {string} The name of the item to update (ie. 'upload-image', 'autosave', etc.).
+ * @param content {string} the new content of the item to write in the status bar.
+ */
+EasyMDE.prototype.updateStatusBar = function (itemName, content) {
+    var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
+    if (matchingClasses.length === 1) {
+        this.gui.statusbar.getElementsByClassName(itemName)[0].textContent = content;
+    } else if (matchingClasses.length === 0) {
+        console.log('EasyMDE: status bar item ' + itemName + ' was not found.');
+    } else {
+        console.log('EasyMDE: Several status bar items named ' + itemName + ' was found.');
+    }
+};
 
 /**
  * Default markdown render.
@@ -1713,22 +1879,22 @@ EasyMDE.prototype.autosave = function () {
             return;
         }
 
-        if(this.options.autosave.binded !== true) {
-          if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
-              easyMDE.element.form.addEventListener('submit', function () {
-                  clearTimeout(easyMDE.autosaveTimeoutId);
-                  easyMDE.autosaveTimeoutId = undefined;
+        if (this.options.autosave.binded !== true) {
+            if (easyMDE.element.form != null && easyMDE.element.form != undefined) {
+                easyMDE.element.form.addEventListener('submit', function () {
+                    clearTimeout(easyMDE.autosaveTimeoutId);
+                    easyMDE.autosaveTimeoutId = undefined;
 
-                  localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
+                    localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
 
-                  // Restart autosaving in case the submit will be cancelled down the line
-                  setTimeout(function() {
-                    easyMDE.autosave();
-                  }, easyMDE.options.autosave.delay || 10000);
-              });
-          }
+                    // Restart autosaving in case the submit will be cancelled down the line
+                    setTimeout(function () {
+                        easyMDE.autosave();
+                    }, easyMDE.options.autosave.delay || 10000);
+                });
+            }
 
-          this.options.autosave.binded = true;
+            this.options.autosave.binded = true;
         }
 
         if (this.options.autosave.loaded !== true) {
@@ -1780,6 +1946,116 @@ EasyMDE.prototype.clearAutosavedValue = function () {
     } else {
         console.log('EasyMDE: localStorage not available, cannot autosave');
     }
+};
+
+/**
+ * Open the browse-file window to upload an image to a server.
+ * @param [onSuccess] {function} see EasyMDE.prototype.uploadImage
+ * @param [onError] {function} see EasyMDE.prototype.uploadImage
+ */
+EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
+    var self = this;
+    var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
+    imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
+    function onChange(event) {
+        self.uploadImages(event.target.files, onSuccess, onError);
+        imageInput.removeEventListener('change', onChange);
+    }
+
+    imageInput.addEventListener('change', onChange);
+};
+
+/**
+ * Upload an image to the server.
+ *
+ * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File)
+ * @param [onSuccess] {function} A callback function to execute after the image has been successfully uploaded, with one parameter:
+ * - url (string): The URL of the uploaded image.
+ * @param [onError] {function} A callback function to execute when the image upload fails, with one parameter:
+ * - error (string): the detailed error to display to the user (based on messages from options.errorMessages).
+ */
+EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
+    var self = this;
+    onSuccess = onSuccess || function onSuccess(imageUrl) {
+        afterImageUploaded(self, imageUrl);
+    };
+
+    function onErrorSup(errorMessage) {
+        // show error on status bar and reset after 10000ms
+        self.updateStatusBar('upload-image', errorMessage);
+
+        setTimeout(function () {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+        }, 10000);
+
+        // run custom error handler
+        if (onError && typeof onError === 'function') {
+            onError(errorMessage);
+        }
+        // run error handler from options, this alerts the message.
+        self.options.errorCallback(errorMessage);
+    }
+
+    function fillErrorMessage(errorMessage) {
+        var units = self.options.imageTexts.sizeUnits.split(',');
+        return errorMessage
+            .replace('#image_name#', file.name)
+            .replace('#image_size#', humanFileSize(file.size, units))
+            .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
+    }
+
+    if (file.size > this.options.imageMaxSize) {
+        onErrorSup(fillErrorMessage(this.options.errorMessages.fileTooLarge));
+        return;
+    }
+
+    var formData = new FormData();
+    formData.append('image', file);
+
+    // insert CSRF token if provided in config.
+    if (self.options.imageCSRFToken) {
+        formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
+    }
+    var request = new XMLHttpRequest();
+    request.upload.onprogress = function (event) {
+        if (event.lengthComputable) {
+            var progress = '' + Math.round((event.loaded * 100) / event.total);
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
+        }
+    };
+    request.open('POST', this.options.imageUploadEndpoint);
+
+    request.onload = function () {
+        try {
+            var response = JSON.parse(this.responseText);
+        } catch (error) {
+            console.error('EasyMDE: The server did not return a valid json.');
+            onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
+            return;
+        }
+        if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
+            onSuccess(window.location.origin + '/' + response.data.filePath);
+        } else {
+            if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
+                onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
+            } else if (response.error) {  // server side generated error message
+                onErrorSup(fillErrorMessage(response.error));
+            } else {  //unknown error
+                console.error('EasyMDE: Received an unexpected response after uploading the image.'
+                    + this.status + ' (' + this.statusText + ')');
+                onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
+            }
+        }
+    };
+
+    request.onerror = function (event) {
+        console.error('EasyMDE: An unexpected error occurred when trying to upload the image.'
+            + event.target.status + ' (' + event.target.statusText + ')');
+        onErrorSup(self.options.errorMessages.importError);
+    };
+
+    request.send(formData);
+
 };
 
 EasyMDE.prototype.createSideBySide = function () {
@@ -1912,6 +2188,20 @@ EasyMDE.prototype.createToolbar = function (items) {
 
             toolbarData[item.name || item] = el;
             bar.appendChild(el);
+
+            // Create the input element (ie. <input type='file'>), used among
+            // with the 'import-image' icon to open the browse-file window.
+            if (item.name === 'upload-image') {
+                var imageInput = document.createElement('input');
+                imageInput.className = 'imageInput';
+                imageInput.type = 'file';
+                imageInput.multiple = true;
+                imageInput.name = 'image';
+                imageInput.accept = self.options.imageAccept;
+                imageInput.style.display = 'none';
+                imageInput.style.opacity = 0;
+                bar.appendChild(imageInput);
+            }
         })(items[i]);
     }
 
@@ -1944,11 +2234,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
     var options = this.options;
     var cm = this.codemirror;
 
-
     // Make sure the status variable is valid
-    if (!status || status.length === 0)
+    if (!status || status.length === 0) {
         return;
-
+    }
 
     // Set up the built-in items
     var items = [];
@@ -1997,6 +2286,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     if (options.autosave != undefined && options.autosave.enabled === true) {
                         el.setAttribute('id', 'autosaved');
                     }
+                };
+            } else if (name === 'upload-image') {
+                defaultValue = function (el) {
+                    el.innerHTML = options.imageTexts.sbInit;
                 };
             }
 
@@ -2175,7 +2468,6 @@ EasyMDE.prototype.isPreviewActive = function () {
 
     return /editor-preview-active/.test(preview.className);
 };
-
 
 EasyMDE.prototype.isSideBySideActive = function () {
     var cm = this.codemirror;

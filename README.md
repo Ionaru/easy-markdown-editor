@@ -149,6 +149,27 @@ easyMDE.value('New input for **EasyMDE**');
 - **promptTexts**: Customize the text used to prompt for URLs.
   - **image**: The text to use when prompting for an image's URL.  Defaults to `URL of the image:`.
   - **link**: The text to use when prompting for a link's URL. Defaults to `URL for the link:`.
+- **uploadImage**: If set to `true`, enables the image upload functionality, which can be triggered by drag&drop, copy-paste and through the browse-file window (opened when the user click on the *upload-image* icon). Defaults to `false`.
+- **imageMaxSize**: Maximum image size in bytes, checked before upload (note: never trust client, always check image size at server-side). Defaults to `1024*1024*2` (2Mb).
+- **imageAccept**: A comma-separated list of mime-types used to check image type before upload (note: never trust client, always check file types at server-side). Defaults to `image/png, image/jpeg`.
+- **imageUploadEndpoint**: The endpoint where the images data will be sent, via an asynchronous *POST* request. The server is supposed to save this image, and return a json response.
+     - if the request was successfully processed (HTTP 200-OK): `{"data": {"filePath": "<filePath>"}}` where *filePath* is the relative path of the image;
+     - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400), `typeNotAllowed` (HTTP 415), `fileTooLarge` (HTTP 413) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server side error messages.
+     No default value.
+- **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For instance used with Django backend. 
+- **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
+    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
+    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`.
+    - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
+    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`.
+    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`.
+    - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
+- **errorMessages**: Errors displayed to the user, using the `errorCallback` option, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
+    - **noFileGiven**: The server did not receive any file from the user. Defaults to `You must select a file.`.
+    - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
+    - **fileTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
+    - **importError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
+- **errorCallback**: A callback function used to define how to display an error message. Defaults to `function(errorMessage) {alert(errorMessage);};`.
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
