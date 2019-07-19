@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Added
+- Upload images functionality. (Thanks to [@roipoussiere] and [@JeroenvO], [#71], [#101]
+
 ## [2.7.0] - 2019-07-13
 ### Added
 - `previewClass` option for overwriting the preview screen class ([#99]).
@@ -121,14 +124,17 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#101]: https://github.com/Ionaru/easy-markdown-editor/pull/101
 [#93]: https://github.com/Ionaru/easy-markdown-editor/pull/93
 [#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
+[#71]: https://github.com/Ionaru/easy-markdown-editor/pull/71
 [#54]: https://github.com/Ionaru/easy-markdown-editor/pull/54
 [#31]: https://github.com/Ionaru/easy-markdown-editor/pull/31
 [#27]: https://github.com/Ionaru/easy-markdown-editor/pull/27
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@JeroenvO]: https://github.com/JeroenvO
 [@sn3p]: https://github.com/sn3p
 [@roryok]: https://github.com/roryok
 [@ysykzheng]: https://github.com/ysykzheng

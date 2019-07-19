@@ -59,3 +59,28 @@ const editor2 = new EasyMDE({
 });
 
 editor2.clearAutosavedValue();
+
+const editorImages = new EasyMDE({
+    uploadImage: true,
+    imageAccept: 'image/png, image/bmp',
+    imageCSRFToken: undefined,
+    imageMaxSize: 10485760,
+    imageUploadEndpoint: 'https://my.domain/image-upload/',
+    imageTexts: {
+        sbInit: 'Drag & drop images!',
+        sbOnDragEnter: 'Let it go, let it go',
+        sbOnDrop: 'Uploading...',
+        sbProgress: 'Uploading... (#progress#)',
+        sbOnUploaded: 'Upload complete!',
+        sizeUnits: 'b,Kb,Mb'
+    },
+    errorMessages: {
+        noFileGiven: 'Please select a file',
+        typeNotAllowed: 'This file type is not allowed!',
+        fileTooLarge: 'Image too big',
+        importError: 'Something went oops!',
+    },
+    errorCallback: (errorMessage) => {
+        console.error(errorMessage);
+    },
+});
