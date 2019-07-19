@@ -135,6 +135,7 @@ declare namespace EasyMDE {
         imageMaxSize?: number;
         imageAccept?: string;
         imageUploadEndpoint?: string;
+        imageUploadFunction?: (files: FileList) => void;
         imageCSRFToken?: string;
         imageTexts?: ImageTextsOptions;
         errorMessages?: ImageErrorTextsOptions;

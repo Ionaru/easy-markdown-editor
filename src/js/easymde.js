@@ -1640,11 +1640,19 @@ function EasyMDE(options) {
         this.codemirror.on('drop', function (cm, event) {
             event.stopPropagation();
             event.preventDefault();
-            self.uploadImages(event.dataTransfer.files);
+            if (options.imageUploadFunction) {
+                options.imageUploadFunction(event.dataTransfer.files);
+            } else {
+                self.uploadImages(event.dataTransfer.files);
+            }
         });
 
         this.codemirror.on('paste', function (cm, event) {
-            self.uploadImages(event.clipboardData.files);
+            if (options.imageUploadFunction) {
+                options.imageUploadFunction(event.clipboardData.files);
+            } else {
+                self.uploadImages(event.clipboardData.files);
+            }
         });
     }
 }
@@ -2390,6 +2398,7 @@ EasyMDE.redo = redo;
 EasyMDE.togglePreview = togglePreview;
 EasyMDE.toggleSideBySide = toggleSideBySide;
 EasyMDE.toggleFullScreen = toggleFullScreen;
+EasyMDE.afterImageUploaded = afterImageUploaded;
 
 /**
  * Bind instance methods for exports.

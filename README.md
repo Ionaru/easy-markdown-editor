@@ -156,6 +156,10 @@ easyMDE.value('New input for **EasyMDE**');
      - if the request was successfully processed (HTTP 200-OK): `{"data": {"filePath": "<filePath>"}}` where *filePath* is the relative path of the image;
      - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400), `typeNotAllowed` (HTTP 415), `fileTooLarge` (HTTP 413) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server side error messages.
      No default value.
+- **imageUploadFunction**: A custom function for handling the image upload. Using this function will render the options `imageMaxSize`, `imageAccept`, `imageUploadEndpoint` and `imageCSRFToken` ineffective.
+    - The function gets the list of files as parameter.
+    - Calling the exposed `EasyMDE.afterImageUploaded` function with as parameters the editor and the url, will insert the correct markdown in the editor.
+    - Example: `function (files) { var url = upload(files[0]); EasyMDE.afterImageUploaded(editor, url); }`
 - **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For instance used with Django backend. 
 - **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
     - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
