@@ -1640,11 +1640,19 @@ function EasyMDE(options) {
         this.codemirror.on('drop', function (cm, event) {
             event.stopPropagation();
             event.preventDefault();
-            self.uploadImages(event.dataTransfer.files);
+            if (options.imageUploadFunction) {
+                self.uploadImagesUsingCustomFunction(options.imageUploadFunction, event.dataTransfer.files);
+            } else {
+                self.uploadImages(event.dataTransfer.files);
+            }
         });
 
         this.codemirror.on('paste', function (cm, event) {
-            self.uploadImages(event.clipboardData.files);
+            if (options.imageUploadFunction) {
+                self.uploadImagesUsingCustomFunction(options.imageUploadFunction, event.clipboardData.files);
+            } else {
+                self.uploadImages(event.clipboardData.files);
+            }
         });
     }
 }
@@ -1665,6 +1673,25 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
     for (var i = 0; i < files.length; i++) {
         names.push(files[i].name);
         this.uploadImage(files[i], onSuccess, onError);
+    }
+    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+};
+
+/**
+ * Upload asynchronously a list of images to a server.
+ *
+ * Can be triggered by:
+ * - drag&drop;
+ * - copy-paste;
+ * - the browse-file window (opened when the user clicks on the *upload-image* icon).
+ * @param imageUploadFunction {Function} The custom function to upload the image passed in options.
+ * @param {FileList} files The files to upload the the server.
+ */
+EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunction, files) {
+    var names = [];
+    for (var i = 0; i < files.length; i++) {
+        names.push(files[i].name);
+        this.uploadImageUsingCustomFunction(imageUploadFunction, files[i]);
     }
     this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
 };
@@ -2056,6 +2083,42 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
 
     request.send(formData);
 
+};
+
+/**
+ * Upload an image to the server using a custom upload function.
+ *
+ * @param imageUploadFunction {Function} The custom function to upload the image passed in options
+ * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File).
+ */
+EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction, file) {
+    var self = this;
+    function onSuccess(imageUrl) {
+        afterImageUploaded(self, imageUrl);
+    }
+
+    function onError(errorMessage) {
+        var filledErrorMessage = fillErrorMessage(errorMessage);
+        // show error on status bar and reset after 10000ms
+        self.updateStatusBar('upload-image', filledErrorMessage);
+
+        setTimeout(function () {
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+        }, 10000);
+
+        // run error handler from options, this alerts the message.
+        self.options.errorCallback(filledErrorMessage);
+    }
+
+    function fillErrorMessage(errorMessage) {
+        var units = self.options.imageTexts.sizeUnits.split(',');
+        return errorMessage
+            .replace('#image_name#', file.name)
+            .replace('#image_size#', humanFileSize(file.size, units))
+            .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
+    }
+
+    imageUploadFunction(file, onSuccess, onError);
 };
 
 EasyMDE.prototype.createSideBySide = function () {
