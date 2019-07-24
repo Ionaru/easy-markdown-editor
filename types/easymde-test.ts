@@ -92,8 +92,10 @@ const editorImagesCustom = new EasyMDE({
     imageAccept: 'image/png, image/bmp',
     imageCSRFToken: undefined,
     imageMaxSize: 10485760,
-    imageUploadFunction: (file: File, onSuccess: Function, onError: Function) => {
-        console.log(file)
+    imageUploadFunction: (file: File, onSuccess, onError) => {
+        console.log(file);
+        onSuccess('http://image.url/9.png');
+        onError('Failed because reasons.');
     },
     imageTexts: {
         sbInit: 'Drag & drop images!',
