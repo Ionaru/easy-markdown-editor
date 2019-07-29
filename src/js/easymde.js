@@ -1985,7 +1985,11 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
-        self.uploadImages(event.target.files, onSuccess, onError);
+        if (self.options.imageUploadFunction) {
+          self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
+        } else {
+          self.uploadImages(event.target.files, onSuccess, onError);
+        }
         imageInput.removeEventListener('change', onChange);
     }
 
