@@ -2,7 +2,7 @@
 
 var gulp = require('gulp');
 var cleanCSS = require('gulp-clean-css');
-var uglify = require('gulp-uglify');
+var terser = require('gulp-terser');
 var concat = require('gulp-concat');
 var header = require('gulp-header');
 var buffer = require('vinyl-buffer');
@@ -31,7 +31,7 @@ function scripts() {
     return browserify({entries: './src/js/easymde.js', standalone: 'EasyMDE'}).bundle()
         .pipe(source('easymde.min.js'))
         .pipe(buffer())
-        .pipe(uglify())
+        .pipe(terser())
         .pipe(header(banner, {pkg: pkg}))
         .pipe(gulp.dest('./dist/'));
 }

@@ -86,6 +86,22 @@ declare namespace EasyMDE {
         noMobile?: boolean;
     }
 
+    interface ImageTextsOptions {
+        sbInit?: string;
+        sbOnDragEnter?: string;
+        sbOnDrop?: string;
+        sbProgress?: string;
+        sbOnUploaded?: string;
+        sizeUnits?: string;
+    }
+
+    interface ImageErrorTextsOptions {
+        noFileGiven?: string;
+        typeNotAllowed?: string;
+        fileTooLarge?: string;
+        importError?: string;
+    }
+
     interface Options {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
@@ -101,6 +117,7 @@ declare namespace EasyMDE {
         minHeight?: string;
         parsingConfig?: ParsingOptions;
         placeholder?: string;
+        previewClass?: string | ReadonlyArray<string>;
         previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;
@@ -114,6 +131,16 @@ declare namespace EasyMDE {
         toolbarTips?: boolean;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
+
+        uploadImage?: boolean;
+        imageMaxSize?: number;
+        imageAccept?: string;
+        imageUploadFunction?: (file: File, onSuccess: (url: string) => void, onError: (error: string) => void) => void;
+        imageUploadEndpoint?: string;
+        imageCSRFToken?: string;
+        imageTexts?: ImageTextsOptions;
+        errorMessages?: ImageErrorTextsOptions;
+        errorCallback?: (errorMessage: string) => void;
     }
 }
 
