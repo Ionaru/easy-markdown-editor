@@ -1240,6 +1240,23 @@ function wordCount(data) {
     return count;
 }
 
+function maxLengthCount(el, value, options) {
+    el.innerHTML = '';
+    var counter = document.createElement('span');
+    counter.classList.add('counter');
+    counter.innerHTML = String(value.length);
+    el.append(counter);
+    if (undefined !== options.maxLength && options.maxLength > 0) {
+        var maxLength = document.createElement('span');
+        maxLength.classList.add('max-length');
+        if (value.length > options.maxLength) {
+            el.classList.add('max-length-exceeded');
+        }
+        maxLength.innerHTML = String(' / ' + options.maxLength);
+        el.append(maxLength);
+    }
+}
+
 var toolbarBuiltInButtons = {
     'bold': {
         name: 'bold',
@@ -2361,6 +2378,13 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
                     el.innerHTML = pos.line + ':' + pos.ch;
+                };
+            } else if (name === 'characters') {
+                defaultValue = function (el) {
+                    maxLengthCount(el, 0, options);
+                };
+                onUpdate = function (el) {
+                    maxLengthCount(el, cm.getValue(), options);
                 };
             } else if (name === 'autosave') {
                 defaultValue = function (el) {
