@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upload images functionality (Thanks to [@roipoussiere] and [@JeroenvO], [#71], [#101]).
 - Allow custom image upload function (Thanks to [@sperezp], [#106]).
 - More polish to the upload images functionality (Thanks to [@jfly], [#109]).
+- Improved React compatibility (Thanks to [@richtera], [#97]).
 
 ## [2.7.0] - 2019-07-13
 ### Added
@@ -129,6 +130,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#109]: https://github.com/Ionaru/easy-markdown-editor/pull/109
 [#106]: https://github.com/Ionaru/easy-markdown-editor/pull/106
 [#101]: https://github.com/Ionaru/easy-markdown-editor/pull/101
+[#97]: https://github.com/Ionaru/easy-markdown-editor/pull/97
 [#93]: https://github.com/Ionaru/easy-markdown-editor/pull/93
 [#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
 [#71]: https://github.com/Ionaru/easy-markdown-editor/pull/71
@@ -138,6 +140,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@richtera]: https://github.com/richtera
 [@jfly]: https://github.com/jfly
 [@sperezp]: https://github.com/sperezp
 [@JeroenvO]: https://github.com/JeroenvO
