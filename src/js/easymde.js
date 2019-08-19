@@ -1669,6 +1669,9 @@ function EasyMDE(options) {
  * @param [onError] {function} see EasyMDE.prototype.uploadImage
  */
 EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
+    if (files.length === 0) {
+      return;
+    }
     var names = [];
     for (var i = 0; i < files.length; i++) {
         names.push(files[i].name);
@@ -1688,6 +1691,9 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
  * @param {FileList} files The files to upload the the server.
  */
 EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunction, files) {
+    if (files.length === 0) {
+      return;
+    }
     var names = [];
     for (var i = 0; i < files.length; i++) {
         names.push(files[i].name);
@@ -1985,7 +1991,11 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
-        self.uploadImages(event.target.files, onSuccess, onError);
+        if (self.options.imageUploadFunction) {
+          self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
+        } else {
+          self.uploadImages(event.target.files, onSuccess, onError);
+        }
         imageInput.removeEventListener('change', onChange);
     }
 
