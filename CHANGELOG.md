@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - More polish to the upload images functionality (Thanks to [@jfly], [#109]).
 - Improved React compatibility (Thanks to [@richtera], [#97]).
 
+### Fixed
+- Missing link in dist file header.
+
 ## [2.7.0] - 2019-07-13
 ### Added
 - `previewClass` option for overwriting the preview screen class ([#99]).
