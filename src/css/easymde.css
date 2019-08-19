@@ -213,14 +213,12 @@
     content: 'characters: '
 }
 
-.editor-preview {
-    padding: 10px;
+.editor-preview-full {
     position: absolute;
     width: 100%;
     height: 100%;
     top: 0;
     left: 0;
-    background: #fafafa;
     z-index: 7;
     overflow: auto;
     display: none;
@@ -228,13 +226,11 @@
 }
 
 .editor-preview-side {
-    padding: 10px;
     position: fixed;
     bottom: 0;
     width: 50%;
     top: 50px;
     right: 0;
-    background: #fafafa;
     z-index: 9;
     overflow: auto;
     display: none;
@@ -251,21 +247,22 @@
     display: block
 }
 
-.editor-preview > p,
-.editor-preview-side > p {
+.editor-preview {
+    padding: 10px;
+    background: #fafafa;
+}
+
+.editor-preview > p {
     margin-top: 0
 }
 
-.editor-preview pre,
-.editor-preview-side pre {
+.editor-preview pre {
     background: #eee;
     margin-bottom: 10px;
 }
 
 .editor-preview table td,
-.editor-preview table th,
-.editor-preview-side table td,
-.editor-preview-side table th {
+.editor-preview table th {
     border: 1px solid #ddd;
     padding: 5px;
 }
