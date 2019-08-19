@@ -817,7 +817,10 @@ function toggleSideBySide(editor) {
     }
 
     var sideBySideRenderingFunction = function () {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.value(), preview);
+        if (newValue != null) {
+            preview.innerHTML = newValue;
+        }
     };
 
     if (!cm.sideBySideRenderingFunction) {
@@ -825,7 +828,10 @@ function toggleSideBySide(editor) {
     }
 
     if (useSideBySideListener) {
-        preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.value(), preview);
+        if (newValue != null) {
+            preview.innerHTML = newValue;
+        }
         cm.on('update', cm.sideBySideRenderingFunction);
     } else {
         cm.off('update', cm.sideBySideRenderingFunction);
