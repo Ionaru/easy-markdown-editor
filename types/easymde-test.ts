@@ -121,5 +121,18 @@ const editorImagesCustom = new EasyMDE({
     },
     errorCallback: errorMessage => {
         console.error(errorMessage);
-    }
-});
+    },
+    renderingConfig: {
+        codeSyntaxHighlighting: true,
+        markedOptions: {
+            silent: true,
+            highlight(code: string, lang: string, callback?: (error: (any | undefined), code: string) => void): string {
+                return 'something'
+            },
+        },
+    },
+    promptTexts: {
+        image: 'Insert URL'
+    },
+    syncSideBySidePreviewScroll: true
+  });
