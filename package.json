@@ -25,6 +25,7 @@
     },
     "devDependencies": {
         "@types/codemirror": "0.0.76",
+        "@types/marked": "^0.6.5",
         "browserify": "^16.5.0",
         "gulp": "^4.0.2",
         "gulp-clean-css": "^4.2.0",

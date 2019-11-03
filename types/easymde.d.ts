@@ -20,6 +20,7 @@
 // SOFTWARE.
 
 /// <reference types="codemirror"/>
+/// <reference types="marked"/>
 
 declare namespace EasyMDE {
     interface AutoSaveOptions {
@@ -47,9 +48,16 @@ declare namespace EasyMDE {
         underscoresBreakWords?: boolean;
     }
 
+    interface PromptTexts {
+        image?: string;
+        link?: string;
+    }
+
     interface RenderingOptions {
+        codeSyntaxHighlighting?: boolean;
+        hljs?: any;
+        markedOptions?: marked.MarkedOptions;
         singleLineBreaks?: boolean;
-        codeSyntaxHighlighting: boolean;
     }
 
     interface Shortcuts {
@@ -141,6 +149,9 @@ declare namespace EasyMDE {
         imageTexts?: ImageTextsOptions;
         errorMessages?: ImageErrorTextsOptions;
         errorCallback?: (errorMessage: string) => void;
+
+        promptTexts?: PromptTexts;
+        syncSideBySidePreviewScroll?: boolean;
     }
 }
 

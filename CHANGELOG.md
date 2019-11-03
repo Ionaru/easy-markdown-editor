@@ -4,7 +4,11 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Added
+- Missing minHeight option in type definition (Thanks to [@t49tran], [#123]).
+- Other missing type definitions ([#126]).
+
 ## [2.8.0] - 2019-08-20
 ### Added
 - Upload images functionality (Thanks to [@roipoussiere] and [@JeroenvO], [#71], [#101]).
@@ -119,6 +123,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#126]: https://github.com/Ionaru/easy-markdown-editor/issues/126
 [#99]: https://github.com/Ionaru/easy-markdown-editor/issues/99
 [#45]: https://github.com/Ionaru/easy-markdown-editor/issues/45
 [#44]: https://github.com/Ionaru/easy-markdown-editor/issues/44
@@ -131,6 +136,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#123]: https://github.com/Ionaru/easy-markdown-editor/pull/123
 [#109]: https://github.com/Ionaru/easy-markdown-editor/pull/109
 [#106]: https://github.com/Ionaru/easy-markdown-editor/pull/106
 [#101]: https://github.com/Ionaru/easy-markdown-editor/pull/101
@@ -144,6 +150,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@t49tran]: https://github.com/t49tran
 [@richtera]: https://github.com/richtera
 [@jfly]: https://github.com/jfly
 [@sperezp]: https://github.com/sperezp
