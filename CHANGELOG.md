@@ -4,13 +4,14 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!--## [Unreleased]-->
+## [2.9.0] - 2020-01-13
 ### Added
 - Missing minHeight option in type definition (Thanks to [@t49tran], [#123]).
 - Other missing type definitions ([#126]).
 
 ### Changed
-- The editor will remove its saved contents when the editor is emptied, allowing to reload a default value (Thanks to [@Situphen], [#132].
+- The editor will remove its saved contents when the editor is emptied, allowing to reload a default value (Thanks to [@Situphen], [#132]).
 
 ## [2.8.0] - 2019-08-20
 ### Added
@@ -174,7 +175,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.8.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.9.0...HEAD
+[2.9.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.7.0...2.8.0
 [2.7.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.1...2.7.0
 [2.6.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.0...2.6.1
