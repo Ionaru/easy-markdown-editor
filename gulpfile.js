@@ -55,3 +55,4 @@ function styles() {
 var build = gulp.parallel(gulp.series(lint, scripts), styles);
 
 gulp.task('default', build);
+gulp.task('lint', lint);
