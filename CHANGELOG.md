@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing minHeight option in type definition (Thanks to [@t49tran], [#123]).
 - Other missing type definitions ([#126]).
 
+### Changed
+- The editor will remove its saved contents when the editor is emptied, allowing to reload a default value (Thanks to [@Situphen], [#132].
+
 ## [2.8.0] - 2019-08-20
 ### Added
 - Upload images functionality (Thanks to [@roipoussiere] and [@JeroenvO], [#71], [#101]).
@@ -136,6 +139,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#132]: https://github.com/Ionaru/easy-markdown-editor/pull/132
 [#123]: https://github.com/Ionaru/easy-markdown-editor/pull/123
 [#109]: https://github.com/Ionaru/easy-markdown-editor/pull/109
 [#106]: https://github.com/Ionaru/easy-markdown-editor/pull/106
@@ -150,6 +154,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@Situphen]: https://github.com/Situphen
 [@t49tran]: https://github.com/t49tran
 [@richtera]: https://github.com/richtera
 [@jfly]: https://github.com/jfly
