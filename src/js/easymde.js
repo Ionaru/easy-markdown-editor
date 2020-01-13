@@ -1945,7 +1945,12 @@ EasyMDE.prototype.autosave = function () {
             this.options.autosave.loaded = true;
         }
 
-        localStorage.setItem('smde_' + this.options.autosave.uniqueId, easyMDE.value());
+        var value = easyMDE.value();
+        if (value !== '') {
+            localStorage.setItem('smde_' + this.options.autosave.uniqueId, value);
+        } else {
+            localStorage.removeItem('smde_' + this.options.autosave.uniqueId);
+        }
 
         var el = document.getElementById('autosaved');
         if (el != null && el != undefined && el != '') {
