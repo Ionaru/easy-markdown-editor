@@ -22,7 +22,7 @@
     right: 0;
     bottom: 0;
     height: auto;
-    z-index: 9;
+    z-index: 8;
     border-right: none !important;
     border-bottom-right-radius: 0 !important;
 }
@@ -72,9 +72,6 @@
 .editor-toolbar.fullscreen {
     width: 100%;
     height: 50px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
     padding-top: 10px;
     padding-bottom: 10px;
     box-sizing: border-box;
@@ -119,7 +116,7 @@
     padding: 0;
 }
 
-.editor-toolbar button {
+.editor-toolbar button, .editor-toolbar .easymde-dropdown {
     background: transparent;
     display: inline-block;
     text-align: center;
@@ -315,4 +312,21 @@
 .cm-s-easymde .cm-quote {
     color: #7f8c8d;
     font-style: italic;
+}
+
+.easymde-dropdown {
+    position: relative;
+}
+
+.easymde-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    padding: 8px 8px;
+    z-index: 2;
+}
+
+.easymde-dropdown:hover .easymde-dropdown-content {
+    display: block;
 }
