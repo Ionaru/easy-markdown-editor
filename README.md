@@ -346,6 +346,46 @@ var easyMDE = new EasyMDE({
 });
 ```
 
+Put some buttons on dropdown menu
+
+```Javascript
+var easyMDE = new EasyMDE({
+	toolbar: [{
+                name: "heading",
+                action: EasyMDE.toggleHeadingSmaller,
+                className: "fa fa-header",
+                title: "Headers",
+            },
+            "|",
+            {
+                name: "others",
+                className: "fa fa-blind",
+                title: "others buttons",
+                children: [
+                    {
+                        name: "image",
+                        action: EasyMDE.drawImage,
+                        className: "fa fa-picture-o",
+                        title: "Image",
+                    },
+                    {
+                        name: "quote",
+                        action: EasyMDE.toggleBlockquote,
+                        className: "fa fa-percent",
+                        title: "Quote",
+                    },
+                    {
+                        name: "link",
+                        action: EasyMDE.drawLink,
+                        className: "fa fa-link",
+                        title: "Link",
+                    }
+                ]
+            },
+		// [, ...]
+	]
+});
+```
 
 ### Keyboard shortcuts
 
