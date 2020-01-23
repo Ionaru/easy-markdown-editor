@@ -114,7 +114,7 @@ function fixShortcut(name) {
  * Create dropdown block
  */
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
-    var el = createToolbarButton(options, enableTooltips, shortcuts, 'div');
+    var el = createToolbarButton(options, enableTooltips, shortcuts, 'div', parent);
     el.className += ' easymde-dropdown';
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
@@ -2282,12 +2282,10 @@ EasyMDE.prototype.createToolbar = function (items) {
             var el;
             if (item === '|') {
                 el = createSep();
+            } else if (item.children) {
+                el = createToolbarDropdown(item, self.options.toolbarTips, self.options.shortcuts, self);
             } else {
-                if (item.children) {
-                    el = createToolbarDropdown(item, self.options.toolbarTips, self.options.shortcuts, self);
-                } else {
-                    el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts, 'button', self);
-                }
+                el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts, 'button', self);
             }
 
 
