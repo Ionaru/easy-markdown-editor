@@ -1858,6 +1858,8 @@ EasyMDE.prototype.render = function (el) {
         placeholder: options.placeholder || el.getAttribute('placeholder') || '',
         styleSelectedText: (options.styleSelectedText != undefined) ? options.styleSelectedText : !isMobile(),
         configureMouse: configureMouse,
+        inputStyle: (options.inputStyle != undefined) ? options.inputStyle : (!isMobile()) ? 'textarea' : 'contenteditable',
+        spellcheck: (options.nativeSpellcheck != undefined) ? options.nativeSpellcheck : true,
     });
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
