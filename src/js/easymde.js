@@ -1858,7 +1858,7 @@ EasyMDE.prototype.render = function (el) {
         placeholder: options.placeholder || el.getAttribute('placeholder') || '',
         styleSelectedText: (options.styleSelectedText != undefined) ? options.styleSelectedText : !isMobile(),
         configureMouse: configureMouse,
-        inputStyle: (options.inputStyle != undefined) ? options.inputStyle : (!isMobile()) ? 'textarea' : 'contenteditable',
+        inputStyle: (options.inputStyle != undefined) ? options.inputStyle : isMobile() ? 'contenteditable' : 'textarea',
         spellcheck: (options.nativeSpellcheck != undefined) ? options.nativeSpellcheck : true,
     });
 
