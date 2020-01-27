@@ -5,6 +5,7 @@ const editor = new EasyMDE({
     autoDownloadFontAwesome: false,
     element: document.getElementById('mdEditor')!,
     hideIcons: ['side-by-side', 'fullscreen'],
+    inputStyle: 'textarea',
     shortcuts: {
         drawTable: 'Cmd-Alt-T',
         toggleFullScreen: null
@@ -36,6 +37,8 @@ EasyMDE.toggleItalic = (editor: EasyMDE) => {
 const editor2 = new EasyMDE({
     autoDownloadFontAwesome: undefined,
     previewClass: ['my-custom-class', 'some-other-class'],
+    nativeSpellcheck: true,
+    inputStyle: 'contenteditable',
     toolbar: [
         {
             name: 'bold',
@@ -136,3 +139,12 @@ const editorImagesCustom = new EasyMDE({
     },
     syncSideBySidePreviewScroll: true
   });
+
+const editorAutosave = new EasyMDE({
+    autosave: {
+        enabled: true,
+        delay: 2000,
+        submit_delay: 10000,
+        uniqueId: 'abc',
+    }
+});
