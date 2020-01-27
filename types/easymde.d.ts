@@ -26,6 +26,7 @@ declare namespace EasyMDE {
     interface AutoSaveOptions {
         enabled?: boolean;
         delay?: number;
+        submit_delay?: number;
         uniqueId: string;
     }
 
@@ -132,10 +133,12 @@ declare namespace EasyMDE {
         shortcuts?: Shortcuts;
         showIcons?: ReadonlyArray<string>;
         spellChecker?: boolean;
+        inputStyle?: 'textarea' | 'contenteditable';
+        nativeSpellcheck?: boolean;
         status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;
-        toolbar?: boolean | ReadonlyArray<string | ToolbarIcon>;
+        toolbar?: boolean | ReadonlyArray<'|' | ToolbarIcon>;
         toolbarTips?: boolean;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
