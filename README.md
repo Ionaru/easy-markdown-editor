@@ -127,6 +127,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
   - **italic**: Can be set to `*` or `_`. Defaults to `*`.
 - **element**: The DOM element for the TextArea to use. Defaults to the first TextArea on the page.
+- **fontAwesomeVersion**: Allow to specify which Font Awesome version to use (for instance, `v5.12.0`). Defaults to Font Awesome 4.7.0 (`v4`).
 - **forceSync**: If set to `true`, force text changes made in EasyMDE to be immediately stored in original text area. Defaults to `false`.
 - **hideIcons**: An array of icon names to hide. Can be used to hide specific icons shown by default without completely customizing the toolbar.
 - **indentWithTabs**: If set to `false`, indent using spaces instead of tabs. Defaults to `true`.
@@ -211,6 +212,7 @@ var editor = new EasyMDE({
 		italic: "_",
 	},
 	element: document.getElementById("MyID"),
+	fontAwesomeVersion: 'v5.12.0',
 	forceSync: true,
 	hideIcons: ["guide", "heading"],
 	indentWithTabs: false,

@@ -117,6 +117,7 @@ declare namespace EasyMDE {
         autosave?: AutoSaveOptions;
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
+        fontAwesomeVersion?: string;
         forceSync?: boolean;
         hideIcons?: ReadonlyArray<string>;
         indentWithTabs?: boolean;

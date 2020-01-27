@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - `inputStyle` and `nativeSpellcheck` options to manage the native language of the browser (Thanks to [@firm1], [#143]).
+- `fontAwesomeVersion` option to specify which Font Awesome version to use (Thanks to [@Situphen], [#145]).
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
 

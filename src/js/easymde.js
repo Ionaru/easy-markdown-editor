@@ -1473,6 +1473,60 @@ var errorMessages = {
 };
 
 /**
+ * Download Font Awesome
+ */
+
+function downloadFontAwesome(options) {
+    if (options.autoDownloadFontAwesome === false) {
+        return;
+    }
+
+    var version = options.fontAwesomeVersion;
+    if (!version.startsWith('v5')) {
+        version = 'v4';
+    }
+
+    if (options.autoDownloadFontAwesome !== true) {
+        if (version === 'v4') {
+            var styleSheets = document.styleSheets;
+            for (var sheet in styleSheets) {
+                if (!sheet.href)
+                    continue;
+
+                if (sheet.href.indexOf('//maxcdn.bootstrapcdn.com/font-awesome/') > -1) {
+                    return;
+                }
+            }
+        } else {
+            var scripts = document.scripts;
+            for (var script in scripts) {
+                if (!script.src)
+                    continue;
+
+                if (script.src.indexOf('//use.fontawesome.com/releases/' + version) > -1) {
+                    return;
+                }
+            }
+        }
+    }
+
+    if (version === 'v4') {
+        var link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css';
+        document.getElementsByTagName('head')[0].appendChild(link);
+    } else {
+        var script_ = document.createElement('script');
+        script_.src = 'https://use.fontawesome.com/releases/' + version + '/js/all.js';
+        document.getElementsByTagName('head')[0].appendChild(script_);
+
+        script_ = document.createElement('script');
+        script_.src = 'https://use.fontawesome.com/releases/' + version + '/js/v4-shims.js';
+        document.getElementsByTagName('head')[0].appendChild(script_);
+    }
+}
+
+/**
  * Interface of EasyMDE.
  */
 function EasyMDE(options) {
@@ -1482,32 +1536,7 @@ function EasyMDE(options) {
     // Used later to refer to it"s parent
     options.parent = this;
 
-    // Check if Font Awesome needs to be auto downloaded
-    var autoDownloadFA = true;
-
-    if (options.autoDownloadFontAwesome === false) {
-        autoDownloadFA = false;
-    }
-
-    if (options.autoDownloadFontAwesome !== true) {
-        var styleSheets = document.styleSheets;
-        for (var i = 0; i < styleSheets.length; i++) {
-            if (!styleSheets[i].href)
-                continue;
-
-            if (styleSheets[i].href.indexOf('//maxcdn.bootstrapcdn.com/font-awesome/') > -1) {
-                autoDownloadFA = false;
-            }
-        }
-    }
-
-    if (autoDownloadFA) {
-        var link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css';
-        document.getElementsByTagName('head')[0].appendChild(link);
-    }
-
+    downloadFontAwesome(options);
 
     // Find the textarea to use
     if (options.element) {
