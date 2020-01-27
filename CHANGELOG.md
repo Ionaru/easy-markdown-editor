@@ -163,6 +163,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@firm1]: https://github.com/firm1
 [@Situphen]: https://github.com/Situphen
 [@t49tran]: https://github.com/t49tran
 [@richtera]: https://github.com/richtera
