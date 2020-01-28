@@ -122,9 +122,6 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
         var child = createToolbarButton(options.children[childrenIndex], true, enableTooltips, shortcuts, 'button', parent);
         content.appendChild(child);
     }
-    var dropIcon = document.createElement('i');
-    dropIcon.className = 'down';
-    el.appendChild(dropIcon);
     el.appendChild(content);
     return el;
 }

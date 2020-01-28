@@ -319,7 +319,13 @@
 
 .editor-toolbar .easymde-dropdown {
     position: relative;
-    width: 45px;
+    background: linear-gradient(to bottom right, #fff 0%, #fff 84%, #333 50%, #333 100%);
+    border-radius: 0px;
+    border: 1px solid #fff;
+}
+
+.editor-toolbar .easymde-dropdown:hover {
+    background: linear-gradient(to bottom right, #fff 0%, #fff 84%, #333 50%, #333 100%);
 }
 
 .easymde-dropdown-content {
@@ -333,17 +339,6 @@
 }
 
 .easymde-dropdown:active .easymde-dropdown-content,
-.easymde-dropdown:focus .easymde-dropdown-content{
+.easymde-dropdown:focus .easymde-dropdown-content {
     display: block;
-}
-
-.down {
-  transform: rotate(45deg);
-  -webkit-transform: rotate(45deg);
-  border: solid #777;
-  border-width: 0 3px 3px 0;
-  display: inline-block;
-  padding: 2px;
-  margin-left: 8px;
-  margin-bottom: 3px;
 }
