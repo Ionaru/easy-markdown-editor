@@ -114,14 +114,17 @@ function fixShortcut(name) {
  * Create dropdown block
  */
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
-    var el = createToolbarButton(options, enableTooltips, shortcuts, 'div', parent);
+    var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
     el.className += ' easymde-dropdown';
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
     for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
-        var child = createToolbarButton(options.children[childrenIndex], enableTooltips, shortcuts, 'button', parent);
+        var child = createToolbarButton(options.children[childrenIndex], true, enableTooltips, shortcuts, 'button', parent);
         content.appendChild(child);
     }
+    var dropIcon = document.createElement('i');
+    dropIcon.className = 'down';
+    el.appendChild(dropIcon);
     el.appendChild(content);
     return el;
 }
@@ -129,7 +132,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
 /**
  * Create button element for toolbar.
  */
-function createToolbarButton(options, enableTooltips, shortcuts, markup, parent) {
+function createToolbarButton(options, enableActions, enableTooltips, shortcuts, markup, parent) {
     options = options || {};
     var el = document.createElement(markup);
     el.className = options.name;
@@ -182,7 +185,7 @@ function createToolbarButton(options, enableTooltips, shortcuts, markup, parent)
     }
     el.appendChild(icon);
 
-    if (options.action) {
+    if (options.action && enableActions) {
         if (typeof options.action === 'function') {
             el.onclick = function (e) {
                 e.preventDefault();
@@ -2285,7 +2288,7 @@ EasyMDE.prototype.createToolbar = function (items) {
             } else if (item.children) {
                 el = createToolbarDropdown(item, self.options.toolbarTips, self.options.shortcuts, self);
             } else {
-                el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts, 'button', self);
+                el = createToolbarButton(item, true, self.options.toolbarTips, self.options.shortcuts, 'button', self);
             }
 
 
