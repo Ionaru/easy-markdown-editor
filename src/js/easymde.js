@@ -119,8 +119,17 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
     for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
-        var child = createToolbarButton(options.children[childrenIndex], true, enableTooltips, shortcuts, 'button', parent);
-        content.appendChild(child);
+
+        var child = options.children[childrenIndex];
+        var childElement;
+
+        if (typeof child === 'string' && child in toolbarBuiltInButtons) {
+            childElement = createToolbarButton(toolbarBuiltInButtons[child], true, enableTooltips, shortcuts, 'button', parent);
+        } else {
+            childElement = createToolbarButton(child, true, enableTooltips, shortcuts, 'button', parent);
+        }
+
+        content.appendChild(childElement);
     }
     el.appendChild(content);
     return el;
@@ -1791,7 +1800,7 @@ EasyMDE.prototype.markdown = function (text) {
 
         // Convert the markdown to HTML
         var htmlText = marked(text);
-        
+
         // Sanitize HTML
         if (this.options.renderingConfig && typeof this.options.renderingConfig.sanitizerFunction === 'function') {
             htmlText = this.options.renderingConfig.sanitizerFunction.call(this, htmlText);

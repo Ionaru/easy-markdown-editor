@@ -22,6 +22,29 @@
 /// <reference types="codemirror"/>
 /// <reference types="marked"/>
 
+interface ArrayOneOrMore<T> extends Array<T> {
+    0: T
+}
+
+type ToolbarButton =
+    'strikethrough'
+    | 'code'
+    | 'table'
+    | 'redo'
+    | 'heading'
+    | 'undo'
+    | 'heading-bigger'
+    | 'heading-smaller'
+    | 'heading-1'
+    | 'heading-2'
+    | 'heading-3'
+    | 'clean-block'
+    | 'horizontal-rule'
+    | 'preview'
+    | 'side-by-side'
+    | 'fullscreen'
+    | 'guide';
+
 declare namespace EasyMDE {
     interface AutoSaveOptions {
         enabled?: boolean;
@@ -87,6 +110,15 @@ declare namespace EasyMDE {
         onUpdate: (element: HTMLElement) => void;
     }
 
+    interface ToolbarDropdownIcon {
+        name: string;
+        children: ArrayOneOrMore<ToolbarIcon | ToolbarButton>;
+        className: string;
+        title: string;
+        noDisable?: boolean;
+        noMobile?: boolean;
+    }
+
     interface ToolbarIcon {
         name: string;
         action: string | ((editor: EasyMDE) => void);
@@ -139,7 +171,7 @@ declare namespace EasyMDE {
         status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;
-        toolbar?: boolean | ReadonlyArray<'|' | ToolbarIcon>;
+        toolbar?: boolean | ReadonlyArray<'|' | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon>;
         toolbarTips?: boolean;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
