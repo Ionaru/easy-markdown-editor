@@ -47,6 +47,7 @@ const editor2 = new EasyMDE({
             title: 'Bold'
         },
         '|',
+        'undo',
         {
             // Separator
             name: 'alert',
@@ -67,6 +68,23 @@ const editor2 = new EasyMDE({
             title: 'A Custom Link',
             noDisable: true,
             noMobile: true
+        },
+        'preview',
+        {
+            name: 'links',
+            className: 'fa fab fa-arrow-down',
+            title: 'A Custom Link',
+            children: [
+                {
+                    name: 'link',
+                    action: 'https://github.com/Ionaru/easy-markdown-editor',
+                    className: 'fa fab fa-github',
+                    title: 'A Custom Link',
+                    noDisable: true,
+                    noMobile: true
+                },
+                'preview'
+            ]
         }
     ]
 });
