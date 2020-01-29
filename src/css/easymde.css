@@ -320,7 +320,7 @@
 .editor-toolbar .easymde-dropdown {
     position: relative;
     background: linear-gradient(to bottom right, #fff 0%, #fff 84%, #333 50%, #333 100%);
-    border-radius: 0px;
+    border-radius: 0;
     border: 1px solid #fff;
 }
 
@@ -332,7 +332,7 @@
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     padding: 8px;
     z-index: 2;
     top: 30px;
@@ -341,4 +341,9 @@
 .easymde-dropdown:active .easymde-dropdown-content,
 .easymde-dropdown:focus .easymde-dropdown-content {
     display: block;
+}
+
+.editor-toolbar.disabled-for-preview button:not(.no-disable) {
+    opacity: .6;
+    pointer-events: none;
 }

@@ -119,8 +119,21 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
     for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
-        var child = createToolbarButton(options.children[childrenIndex], true, enableTooltips, shortcuts, 'button', parent);
-        content.appendChild(child);
+
+        var child = options.children[childrenIndex];
+        var childElement;
+
+        if (typeof child === 'string') {
+            if (child === '|') {
+                childElement = createSep();
+            } else if (toolbarBuiltInButtons[child]) {
+                childElement = createToolbarButton(toolbarBuiltInButtons[child], true, enableTooltips, shortcuts, 'button', parent);
+            }
+        } else {
+            childElement = createToolbarButton(options.children[childrenIndex], true, enableTooltips, shortcuts, 'button', parent);
+        }
+
+        content.appendChild(childElement);
     }
     el.appendChild(content);
     return el;
