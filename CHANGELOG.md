@@ -146,7 +146,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
-[#143]: https://github.com/Ionaru/easy-markdown-editor/pull/132
+[#143]: https://github.com/Ionaru/easy-markdown-editor/pull/143
 [#139]: https://github.com/Ionaru/easy-markdown-editor/pull/139
 [#132]: https://github.com/Ionaru/easy-markdown-editor/pull/132
 [#123]: https://github.com/Ionaru/easy-markdown-editor/pull/123
