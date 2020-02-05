@@ -20,11 +20,13 @@
 // SOFTWARE.
 
 /// <reference types="codemirror"/>
+/// <reference types="marked"/>
 
 declare namespace EasyMDE {
     interface AutoSaveOptions {
         enabled?: boolean;
         delay?: number;
+        submit_delay?: number;
         uniqueId: string;
     }
 
@@ -47,9 +49,16 @@ declare namespace EasyMDE {
         underscoresBreakWords?: boolean;
     }
 
+    interface PromptTexts {
+        image?: string;
+        link?: string;
+    }
+
     interface RenderingOptions {
+        codeSyntaxHighlighting?: boolean;
+        hljs?: any;
+        markedOptions?: marked.MarkedOptions;
         singleLineBreaks?: boolean;
-        codeSyntaxHighlighting: boolean;
     }
 
     interface Shortcuts {
@@ -114,6 +123,7 @@ declare namespace EasyMDE {
         initialValue?: string;
         insertTexts?: InsertTextOptions;
         lineWrapping?: boolean;
+        minHeight?: string;
         parsingConfig?: ParsingOptions;
         placeholder?: string;
         previewClass?: string | ReadonlyArray<string>;
@@ -123,10 +133,12 @@ declare namespace EasyMDE {
         shortcuts?: Shortcuts;
         showIcons?: ReadonlyArray<string>;
         spellChecker?: boolean;
+        inputStyle?: 'textarea' | 'contenteditable';
+        nativeSpellcheck?: boolean;
         status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;
-        toolbar?: boolean | ReadonlyArray<string | ToolbarIcon>;
+        toolbar?: boolean | ReadonlyArray<'|' | ToolbarIcon>;
         toolbarTips?: boolean;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
@@ -140,6 +152,9 @@ declare namespace EasyMDE {
         imageTexts?: ImageTextsOptions;
         errorMessages?: ImageErrorTextsOptions;
         errorCallback?: (errorMessage: string) => void;
+
+        promptTexts?: PromptTexts;
+        syncSideBySidePreviewScroll?: boolean;
     }
 }
 

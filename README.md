@@ -120,6 +120,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **autosave**: *Saves the text that's being written and will load it back in the future. It will forget the text when the form it's contained in is submitted.*
   - **enabled**: If set to `true`, saves the text automatically. Defaults to `false`.
   - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
+  - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
@@ -180,6 +181,8 @@ easyMDE.value('New input for **EasyMDE**');
 - **shortcuts**: Keyboard shortcuts associated with this instance. Defaults to the [array of shortcuts](#keyboard-shortcuts).
 - **showIcons**: An array of icon names to show. Can be used to show specific icons hidden by default without completely customizing the toolbar.
 - **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.
+- **inputStyle**: `textarea` or `contenteditable`. Defaults to `textarea` for desktop and `contenteditable` for mobile. `contenteditable` option is necessary to enable nativeSpellcheck.
+- **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
 - **status**: If set to `false`, hide the status bar. Defaults to the array of built-in status bar items.
   - Optionally, you can set an array of status bar items to include, and in what order. You can even define your own custom status bar items.
 - **styleSelectedText**: If set to `false`, remove the `CodeMirror-selectedtext` class from selected lines. Defaults to `true`.
@@ -201,6 +204,7 @@ var editor = new EasyMDE({
 		enabled: true,
 		uniqueId: "MyUniqueID",
 		delay: 1000,
+		submit_delay: 5000,
 	},
 	blockStyles: {
 		bold: "__",
