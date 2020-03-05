@@ -20,6 +20,13 @@ var banner = ['/**',
     ' */',
     ''].join('\n');
 
+
+var css_files = [
+    './node_modules/codemirror/lib/codemirror.css',
+    './src/css/*.css',
+    './node_modules/codemirror-spell-checker/src/css/spell-checker.css',
+];
+
 function lint() {
     return gulp.src('./src/js/**/*.js')
         .pipe(eslint())
@@ -37,12 +44,6 @@ function scripts() {
 }
 
 function styles() {
-    var css_files = [
-        './node_modules/codemirror/lib/codemirror.css',
-        './src/css/*.css',
-        './node_modules/codemirror-spell-checker/src/css/spell-checker.css',
-    ];
-
     return gulp.src(css_files)
         .pipe(concat('easymde.css'))
         .pipe(cleanCSS())
@@ -52,7 +53,14 @@ function styles() {
         .pipe(gulp.dest('./dist/'));
 }
 
+// Watch for file changes
+function watch() {
+  gulp.watch('./src/js/**/*.js', scripts)
+  gulp.watch(css_files, styles)
+}
+
 var build = gulp.parallel(gulp.series(lint, scripts), styles);
 
 gulp.task('default', build);
+gulp.task('watch', gulp.series(build, watch));
 gulp.task('lint', lint);
