@@ -19,12 +19,12 @@
     "license": "MIT",
     "author": "Jeroen Akkerman",
     "dependencies": {
-        "codemirror": "^5.50.2",
+        "codemirror": "^5.51.0",
         "codemirror-spell-checker": "1.1.2",
         "marked": "^0.8.0"
     },
     "devDependencies": {
-        "@types/codemirror": "0.0.82",
+        "@types/codemirror": "0.0.85",
         "@types/marked": "^0.7.2",
         "browserify": "^16.5.0",
         "gulp": "^4.0.2",
@@ -35,7 +35,7 @@
         "gulp-rename": "^2.0.0",
         "gulp-terser": "^1.2.0",
         "gulp-uglify": "^3.0.2",
-        "typescript": "^3.7.4",
+        "typescript": "^3.7.5",
         "vinyl-buffer": "^1.0.0",
         "vinyl-source-stream": "^2.0.0"
     },

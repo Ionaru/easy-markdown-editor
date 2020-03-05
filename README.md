@@ -178,6 +178,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
   - **markedOptions**: Set the internal Markdown renderer's [options](https://marked.js.org/#/USING_ADVANCED.md#options). Other `renderingConfig` options will take precedence.
   - **singleLineBreaks**: If set to `false`, disable parsing GFM single line breaks. Defaults to `true`.
+  - **sanitizerFunction**: Custom function for sanitizing the HTML output of markdown renderer.
 - **shortcuts**: Keyboard shortcuts associated with this instance. Defaults to the [array of shortcuts](#keyboard-shortcuts).
 - **showIcons**: An array of icon names to show. Can be used to show specific icons hidden by default without completely customizing the toolbar.
 - **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.
@@ -251,6 +252,10 @@ var editor = new EasyMDE({
 	renderingConfig: {
 		singleLineBreaks: false,
 		codeSyntaxHighlighting: true,
+		sanitizerFunction: function(renderedHTML) {
+			// Using DOMPurify and only allowing <b> tags
+			return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
+		},
 	},
 	shortcuts: {
 		drawTable: "Cmd-Alt-T"

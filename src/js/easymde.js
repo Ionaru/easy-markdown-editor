@@ -1791,6 +1791,11 @@ EasyMDE.prototype.markdown = function (text) {
 
         // Convert the markdown to HTML
         var htmlText = marked(text);
+        
+        // Sanitize HTML
+        if (this.options.renderingConfig && typeof this.options.renderingConfig.sanitizerFunction === 'function') {
+            htmlText = this.options.renderingConfig.sanitizerFunction.call(this, htmlText);
+        }
 
         // Edit the HTML anchors to add 'target="_blank"' by default.
         htmlText = addAnchorTargetBlank(htmlText);
