@@ -55,7 +55,7 @@ function styles() {
 
 // Watch for file changes
 function watch() {
-  gulp.watch('./src/js/easymde.js', scripts)
+  gulp.watch('./src/js/**/*.js', scripts)
   gulp.watch(css_files, styles)
 }
 
