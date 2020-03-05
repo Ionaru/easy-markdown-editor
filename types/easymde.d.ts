@@ -58,6 +58,7 @@ declare namespace EasyMDE {
         codeSyntaxHighlighting?: boolean;
         hljs?: any;
         markedOptions?: marked.MarkedOptions;
+        sanitizerFunction?: (html: string) => string;
         singleLineBreaks?: boolean;
     }
 
