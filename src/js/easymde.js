@@ -110,15 +110,39 @@ function fixShortcut(name) {
     return name;
 }
 
+/**
+ * Create dropdown block
+ */
+function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
+    var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
+    el.className += ' easymde-dropdown';
+    var content = document.createElement('div');
+    content.className = 'easymde-dropdown-content';
+    for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
+
+        var child = options.children[childrenIndex];
+        var childElement;
+
+        if (typeof child === 'string' && child in toolbarBuiltInButtons) {
+            childElement = createToolbarButton(toolbarBuiltInButtons[child], true, enableTooltips, shortcuts, 'button', parent);
+        } else {
+            childElement = createToolbarButton(child, true, enableTooltips, shortcuts, 'button', parent);
+        }
+
+        content.appendChild(childElement);
+    }
+    el.appendChild(content);
+    return el;
+}
 
 /**
  * Create button element for toolbar.
  */
-function createToolbarButton(options, enableTooltips, shortcuts) {
+function createToolbarButton(options, enableActions, enableTooltips, shortcuts, markup, parent) {
     options = options || {};
-    var el = document.createElement('button');
+    var el = document.createElement(markup);
     el.className = options.name;
-    el.setAttribute('type', 'button');
+    el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
     // Properly hande custom shortcuts
@@ -166,6 +190,20 @@ function createToolbarButton(options, enableTooltips, shortcuts) {
         icon.classList.add(iconClass);
     }
     el.appendChild(icon);
+
+    if (options.action && enableActions) {
+        if (typeof options.action === 'function') {
+            el.onclick = function (e) {
+                e.preventDefault();
+                options.action(parent);
+            };
+        } else if (typeof options.action === 'string') {
+            el.onclick = function (e) {
+                e.preventDefault();
+                window.open(options.action, '_blank');
+            };
+        }
+    }
 
     return el;
 }
@@ -1762,7 +1800,7 @@ EasyMDE.prototype.markdown = function (text) {
 
         // Convert the markdown to HTML
         var htmlText = marked(text);
-        
+
         // Sanitize HTML
         if (this.options.renderingConfig && typeof this.options.renderingConfig.sanitizerFunction === 'function') {
             htmlText = this.options.renderingConfig.sanitizerFunction.call(this, htmlText);
@@ -2258,24 +2296,12 @@ EasyMDE.prototype.createToolbar = function (items) {
             var el;
             if (item === '|') {
                 el = createSep();
+            } else if (item.children) {
+                el = createToolbarDropdown(item, self.options.toolbarTips, self.options.shortcuts, self);
             } else {
-                el = createToolbarButton(item, self.options.toolbarTips, self.options.shortcuts);
+                el = createToolbarButton(item, true, self.options.toolbarTips, self.options.shortcuts, 'button', self);
             }
 
-            // bind events, special for info
-            if (item.action) {
-                if (typeof item.action === 'function') {
-                    el.onclick = function (e) {
-                        e.preventDefault();
-                        item.action(self);
-                    };
-                } else if (typeof item.action === 'string') {
-                    el.onclick = function (e) {
-                        e.preventDefault();
-                        window.open(item.action, '_blank');
-                    };
-                }
-            }
 
             toolbarData[item.name || item] = el;
             bar.appendChild(el);

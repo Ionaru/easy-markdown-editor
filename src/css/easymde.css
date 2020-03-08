@@ -22,7 +22,7 @@
     right: 0;
     bottom: 0;
     height: auto;
-    z-index: 9;
+    z-index: 8;
     border-right: none !important;
     border-bottom-right-radius: 0 !important;
 }
@@ -72,9 +72,6 @@
 .editor-toolbar.fullscreen {
     width: 100%;
     height: 50px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
     padding-top: 10px;
     padding-bottom: 10px;
     box-sizing: border-box;
@@ -119,18 +116,21 @@
     padding: 0;
 }
 
-.editor-toolbar button {
+.editor-toolbar button, .editor-toolbar .easymde-dropdown {
     background: transparent;
     display: inline-block;
     text-align: center;
     text-decoration: none !important;
-    width: 30px;
     height: 30px;
     margin: 0;
     padding: 0;
     border: 1px solid transparent;
     border-radius: 3px;
     cursor: pointer;
+}
+
+.editor-toolbar button {
+    width: 30px;
 }
 
 .editor-toolbar button.active,
@@ -315,4 +315,30 @@
 .cm-s-easymde .cm-quote {
     color: #7f8c8d;
     font-style: italic;
+}
+
+.editor-toolbar .easymde-dropdown {
+    position: relative;
+    background: linear-gradient(to bottom right, #fff 0%, #fff 84%, #333 50%, #333 100%);
+    border-radius: 0;
+    border: 1px solid #fff;
+}
+
+.editor-toolbar .easymde-dropdown:hover {
+    background: linear-gradient(to bottom right, #fff 0%, #fff 84%, #333 50%, #333 100%);
+}
+
+.easymde-dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+    padding: 8px;
+    z-index: 2;
+    top: 30px;
+}
+
+.easymde-dropdown:active .easymde-dropdown-content,
+.easymde-dropdown:focus .easymde-dropdown-content {
+    display: block;
 }

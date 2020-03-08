@@ -43,18 +43,18 @@ const editor2 = new EasyMDE({
         {
             name: 'bold',
             action: EasyMDE.toggleBold,
-            className: 'fa fa-bolt',
+            className: 'fa fas fa-bolt',
             title: 'Bold'
         },
         '|',
+        'undo',
         {
-            // Separator
             name: 'alert',
             action: (editor: EasyMDE) => {
                 alert('This is from a custom button action!');
                 // Custom functions have access to the `editor` instance.
             },
-            className: 'fa fa-star',
+            className: 'fa fas fa-star',
             title: 'A Custom Button',
             noDisable: undefined,
             noMobile: false
@@ -67,6 +67,29 @@ const editor2 = new EasyMDE({
             title: 'A Custom Link',
             noDisable: true,
             noMobile: true
+        },
+        'preview',
+        {
+            name: 'links',
+            className: 'fa fas fa-arrow-down',
+            title: 'A Custom Link',
+            children: [
+                {
+                    name: 'link',
+                    action: 'https://github.com/Ionaru/easy-markdown-editor',
+                    className: 'fa fab fa-github',
+                    title: 'A Custom Link',
+                    noDisable: true,
+                    noMobile: true
+                },
+                'preview',
+                {
+                    name: 'bold',
+                    action: EasyMDE.toggleBold,
+                    className: 'fa fas fa-bold',
+                    title: 'Bold'
+                },
+            ]
         }
     ]
 });
