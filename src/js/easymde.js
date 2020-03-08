@@ -1529,20 +1529,32 @@ function EasyMDE(options) {
 
     if (options.autoDownloadFontAwesome !== true) {
         var styleSheets = document.styleSheets;
-        for (var i = 0; i < styleSheets.length; i++) {
-            if (!styleSheets[i].href)
+        var urls = [
+            '//maxcdn.bootstrapcdn.com/font-awesome/',
+            '//cdnjs.cloudflare.com/ajax/libs/font-awesome/',
+        ];
+        for (var i = 0, href; i < styleSheets.length; i++) {
+            href = styleSheets[i].href;
+
+            if (!href)
                 continue;
 
-            if (styleSheets[i].href.indexOf('//maxcdn.bootstrapcdn.com/font-awesome/') > -1) {
-                autoDownloadFA = false;
-            }
+            if (!urls.filter(function (url) { return href.indexOf(url) > -1; }).length)
+                continue;
+
+            autoDownloadFA = false;
         }
     }
 
     if (autoDownloadFA) {
         var link = document.createElement('link');
+        var version = options.versionFontAwesome;
+
         link.rel = 'stylesheet';
-        link.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css';
+        if (typeof version === 'string') // cdnjs has the recent version
+            link.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/' + version + '/css/all.min.css';
+        else
+            link.href = 'https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css';
         document.getElementsByTagName('head')[0].appendChild(link);
     }
 

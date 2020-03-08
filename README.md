@@ -116,6 +116,7 @@ easyMDE.value('New input for **EasyMDE**');
 ### Options list
 
 - **autoDownloadFontAwesome**: If set to `true`, force downloads Font Awesome (used for icons). If set to `false`, prevents downloading. Defaults to `undefined`, which will intelligently check whether Font Awesome has already been included, then download accordingly.
+- **versionFontAwesome**: Got a specified version of Font Awesome. e.g.:`5.12.1`
 - **autofocus**: If set to `true`, focuses the editor automatically. Defaults to `false`.
 - **autosave**: *Saves the text that's being written and will load it back in the future. It will forget the text when the form it's contained in is submitted.*
   - **enabled**: If set to `true`, saves the text automatically. Defaults to `false`.
