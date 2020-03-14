@@ -172,7 +172,6 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         el.innerHTML = options.icon;
     } else {
         // Provide backwards compatibility with simple-markdown-editor by adding custom classes to the button.
-
         var classNameParts = options.className.split(' ');
         var iconClasses = [];
         for (var classNameIndex = 0; classNameIndex < classNameParts.length; classNameIndex++) {
