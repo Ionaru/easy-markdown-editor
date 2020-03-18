@@ -23,25 +23,27 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 
 ## Quick access
 
-- [Install EasyMDE](#install-easymde)
-- [How to use](#how-to-use)
-  - [Loading the editor](#loading-the-editor)
-  - [Editor functions](#editor-functions)
-- [Configuration](#configuration)
-  - [Options list](#options-list)
-  - [Options example](#options-example)
-  - [Toolbar icons](#toolbar-icons)
-  - [Toolbar customization](#toolbar-customization)
-  - [Keyboard shortcuts](#keyboard-shortcuts)
-- [Advanced use](#advanced-use)
-  - [Event handling](#event-handling)
-  - [Removing EasyMDE from text area](#removing-easymde-from-text-area)
-  - [Useful methods](#useful-methods)
-- [How it works](#how-it-works)
-- [SimpleMDE fork](#simplemde-fork)
-- [Hacking EasyMDE](#hacking-easymde)
-- [Contributing](#contributing)
-- [License](#license)
+- [EasyMDE - Markdown Editor](#easymde---markdown-editor)
+	- [Quick access](#quick-access)
+	- [Install EasyMDE](#install-easymde)
+	- [How to use](#how-to-use)
+		- [Loading the editor](#loading-the-editor)
+		- [Editor functions](#editor-functions)
+	- [Configuration](#configuration)
+		- [Options list](#options-list)
+		- [Options example](#options-example)
+		- [Toolbar icons](#toolbar-icons)
+		- [Toolbar customization](#toolbar-customization)
+		- [Keyboard shortcuts](#keyboard-shortcuts)
+	- [Advanced use](#advanced-use)
+		- [Event handling](#event-handling)
+		- [Removing EasyMDE from text area](#removing-easymde-from-text-area)
+		- [Useful methods](#useful-methods)
+	- [How it works](#how-it-works)
+	- [SimpleMDE fork](#simplemde-fork)
+	- [Hacking EasyMDE](#hacking-easymde)
+	- [Contributing](#contributing)
+	- [License](#license)
 
 
 ## Install EasyMDE
@@ -122,6 +124,8 @@ easyMDE.value('New input for **EasyMDE**');
   - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
+-  **timeFormat**: Time format 12/24. Defaults to 12.
+-  **text**: Set text for autosave.
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
@@ -206,6 +210,8 @@ var editor = new EasyMDE({
 		uniqueId: "MyUniqueID",
 		delay: 1000,
 		submit_delay: 5000,
+		timeFormat: 24,
+		text: "Autosaved: "
 	},
 	blockStyles: {
 		bold: "__",

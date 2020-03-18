@@ -2004,16 +2004,27 @@ EasyMDE.prototype.autosave = function () {
             var m = d.getMinutes();
             var dd = 'am';
             var h = hh;
-            if (h >= 12) {
-                h = hh - 12;
-                dd = 'pm';
-            }
-            if (h == 0) {
-                h = 12;
-            }
+            var html = '';
+            var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
+            
             m = m < 10 ? '0' + m : m;
 
-            el.innerHTML = 'Autosaved: ' + h + ':' + m + ' ' + dd;
+            if (this.options.autosave.timeFormat == undefined || this.options.autosave.timeFormat == 12) {
+                if (h >= 12) {
+                    h = hh - 12;
+                    dd = 'pm';
+                }
+                if (h == 0) {
+                    h = 12;
+                }
+
+                html = save + h + ':' + m + ' ' + dd;
+            }
+            if (this.options.autosave.timeFormat == 24) {
+                html = save + h + ':' + m;
+            }
+
+            el.innerHTML = html;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
