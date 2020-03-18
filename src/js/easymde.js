@@ -1482,7 +1482,7 @@ var promptTexts = {
 var statusTexts = {
     lines: 'lines',
     words: 'words',
-    autosave: 'Autosaved: '
+    autosave: 'Autosaved: ',
 };
 
 var blockStyles = {
