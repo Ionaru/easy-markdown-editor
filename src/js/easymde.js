@@ -2378,11 +2378,12 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, defaultValue, dataSet;
+    var i, onUpdate, onCursorActivity, defaultValue, dataSet;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
+        onCursorActivity = undefined;
         defaultValue = undefined;
         dataSet = undefined;
 
@@ -2394,6 +2395,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 dataSet: status[i].dataSet,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
+                onCursorActivity: status[i].onCursorActivity,
             });
         } else {
             var name = status[i];
@@ -2422,6 +2424,11 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
+                    el.innerHTML = pos.line + ':' + pos.ch;
+                };
+                onCursorActivity = function (el) {
+                    var pos = cm.getCursor();
+                    
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
@@ -2479,6 +2486,16 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 return function () {
                     item.onUpdate(el);
                 };
+            }(el, item)));
+        }
+
+        // Ensure the onCursorActivity is a function
+        if (typeof item.onCursorActivity === 'function') {
+            // Create a closure around the span of the current action, then execute the onCursorActivity handler
+            this.codemirror.on('cursorActivity', (function (el, item) {
+                    return function () {
+                        item.onCursorActivity(el);
+                    };
             }(el, item)));
         }
 
