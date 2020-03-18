@@ -2428,7 +2428,6 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
                 onCursorActivity = function (el) {
                     var pos = cm.getCursor();
-                    
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
@@ -2448,6 +2447,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 dataSet: dataSet,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
+                onCursorActivity: onCursorActivity,
             });
         }
     }
