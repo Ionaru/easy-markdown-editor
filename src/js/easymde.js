@@ -1479,6 +1479,12 @@ var promptTexts = {
     image: 'URL of the image:',
 };
 
+var statusTexts = {
+    lines: 'lines',
+    words: 'words',
+    autosave: 'Autosaved: '
+};
+
 var blockStyles = {
     'bold': '**',
     'code': '```',
@@ -1613,6 +1619,9 @@ function EasyMDE(options) {
 
     // Merging the promptTexts, with the given options
     options.promptTexts = extend({}, promptTexts, options.promptTexts || {});
+
+    // Merging the statusTexts, with the given options
+    options.statusTexts = extend({}, statusTexts, options.statusTexts || {});
 
 
     // Merging the blockStyles, with the given options
@@ -2004,16 +2013,27 @@ EasyMDE.prototype.autosave = function () {
             var m = d.getMinutes();
             var dd = 'am';
             var h = hh;
-            if (h >= 12) {
-                h = hh - 12;
-                dd = 'pm';
-            }
-            if (h == 0) {
-                h = 12;
-            }
+            var html = '';
+            var save = this.options.statusTexts.autosave;
+            
             m = m < 10 ? '0' + m : m;
 
-            el.innerHTML = 'Autosaved: ' + h + ':' + m + ' ' + dd;
+            if (this.options.autosave.timeFormat == undefined || this.options.autosave.timeFormat == 12) {
+                if (h >= 12) {
+                    h = hh - 12;
+                    dd = 'pm';
+                }
+                if (h == 0) {
+                    h = 12;
+                }
+
+                html = save + h + ':' + m + ' ' + dd;
+            }
+            if (this.options.autosave.timeFormat == 24) {
+                html = save + h + ':' + m;
+            }
+
+            el.innerHTML = html;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
@@ -2358,18 +2378,20 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, defaultValue;
+    var i, onUpdate, defaultValue, dataSet;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
         defaultValue = undefined;
+        dataSet = undefined;
 
 
         // Handle if custom or not
         if (typeof status[i] === 'object') {
             items.push({
                 className: status[i].className,
+                dataSet: status[i].dataSet,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
             });
@@ -2377,6 +2399,8 @@ EasyMDE.prototype.createStatusbar = function (status) {
             var name = status[i];
 
             if (name === 'words') {
+                dataSet = options.statusTexts[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
@@ -2384,6 +2408,8 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
             } else if (name === 'lines') {
+                dataSet = options.statusTexts[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = cm.lineCount();
                 };
@@ -2412,6 +2438,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
             items.push({
                 className: name,
+                dataSet: dataSet,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
             });
@@ -2433,6 +2460,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
         // Create span element
         var el = document.createElement('span');
         el.className = item.className;
+
+        if (item.dataSet != undefined) {
+            el.dataset.statusBarBefore = item.dataSet;
+        }
 
 
         // Ensure the defaultValue is a function

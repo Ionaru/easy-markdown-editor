@@ -25,18 +25,18 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 
 - [Install EasyMDE](#install-easymde)
 - [How to use](#how-to-use)
-  - [Loading the editor](#loading-the-editor)
-  - [Editor functions](#editor-functions)
+	- [Loading the editor](#loading-the-editor)
+	- [Editor functions](#editor-functions)
 - [Configuration](#configuration)
-  - [Options list](#options-list)
-  - [Options example](#options-example)
-  - [Toolbar icons](#toolbar-icons)
-  - [Toolbar customization](#toolbar-customization)
-  - [Keyboard shortcuts](#keyboard-shortcuts)
+	- [Options list](#options-list)
+	- [Options example](#options-example)
+	- [Toolbar icons](#toolbar-icons)
+	- [Toolbar customization](#toolbar-customization)
+	- [Keyboard shortcuts](#keyboard-shortcuts)
 - [Advanced use](#advanced-use)
-  - [Event handling](#event-handling)
-  - [Removing EasyMDE from text area](#removing-easymde-from-text-area)
-  - [Useful methods](#useful-methods)
+	- [Event handling](#event-handling)
+	- [Removing EasyMDE from text area](#removing-easymde-from-text-area)
+	- [Useful methods](#useful-methods)
 - [How it works](#how-it-works)
 - [SimpleMDE fork](#simplemde-fork)
 - [Hacking EasyMDE](#hacking-easymde)
@@ -122,6 +122,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
+  - **timeFormat**: Time format 12/24. Defaults to 12.
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
@@ -186,6 +187,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
 - **status**: If set to `false`, hide the status bar. Defaults to the array of built-in status bar items.
   - Optionally, you can set an array of status bar items to include, and in what order. You can even define your own custom status bar items.
+- **statusTexts**: Customize the text used to status bar.
 - **styleSelectedText**: If set to `false`, remove the `CodeMirror-selectedtext` class from selected lines. Defaults to `true`.
 - **syncSideBySidePreviewScroll**: If set to `false`, disable syncing scroll in side by side mode. Defaults to `true`.
 - **tabSize**: If set, customize the tab size. Defaults to `2`.
@@ -206,6 +208,7 @@ var editor = new EasyMDE({
 		uniqueId: "MyUniqueID",
 		delay: 1000,
 		submit_delay: 5000,
+		timeFormat: 24,
 	},
 	blockStyles: {
 		bold: "__",
@@ -274,6 +277,11 @@ var editor = new EasyMDE({
 			el.innerHTML = ++this.keystrokes + " Keystrokes";
 		},
 	}], // Another optional usage, with a custom status bar item that counts keystrokes
+	statusTexts: {
+		lines: "lines",
+		words: "words",
+		autosave: "Autosaved: ",
+	},
 	styleSelectedText: false,
 	syncSideBySidePreviewScroll: false,
 	tabSize: 4,
