@@ -1633,8 +1633,10 @@ function EasyMDE(options) {
     options.statusTexts = extend({}, statusTexts, options.statusTexts || {});
 
 
-    // Merging the Autosave timeFormat, with the given options
-    options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
+    if (options.autosave != undefined) {
+        // Merging the Autosave timeFormat, with the given options
+        options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
+    }
 
 
     // Merging the blockStyles, with the given options
