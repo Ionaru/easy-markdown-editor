@@ -122,7 +122,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
-  - **timeFormat**: Time format 12/24. Defaults to 12.
+  - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat).
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
@@ -208,7 +208,16 @@ var editor = new EasyMDE({
 		uniqueId: "MyUniqueID",
 		delay: 1000,
 		submit_delay: 5000,
-		timeFormat: 24,
+		timeFormat: {
+			locale: 'en-US',
+			format: {
+				year: 'numeric',
+				month: 'long',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+			},
+		},
 	},
 	blockStyles: {
 		bold: "__",

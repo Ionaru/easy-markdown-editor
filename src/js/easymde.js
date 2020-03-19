@@ -1485,6 +1485,14 @@ var statusTexts = {
     autosave: 'Autosaved: ',
 };
 
+var timeFormat = {
+    locale: 'en-US',
+    format: {
+        hour: '2-digit',
+        minute: '2-digit',
+    },
+};
+
 var blockStyles = {
     'bold': '**',
     'code': '```',
@@ -1620,8 +1628,13 @@ function EasyMDE(options) {
     // Merging the promptTexts, with the given options
     options.promptTexts = extend({}, promptTexts, options.promptTexts || {});
 
+
     // Merging the statusTexts, with the given options
     options.statusTexts = extend({}, statusTexts, options.statusTexts || {});
+
+
+    // Merging the Autosave timeFormat, with the given options
+    options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
 
 
     // Merging the blockStyles, with the given options
@@ -2009,31 +2022,10 @@ EasyMDE.prototype.autosave = function () {
         var el = document.getElementById('autosaved');
         if (el != null && el != undefined && el != '') {
             var d = new Date();
-            var hh = d.getHours();
-            var m = d.getMinutes();
-            var dd = 'am';
-            var h = hh;
-            var html = '';
+            var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
             var save = this.options.statusTexts.autosave;
-            
-            m = m < 10 ? '0' + m : m;
 
-            if (this.options.autosave.timeFormat == undefined || this.options.autosave.timeFormat == 12) {
-                if (h >= 12) {
-                    h = hh - 12;
-                    dd = 'pm';
-                }
-                if (h == 0) {
-                    h = 12;
-                }
-
-                html = save + h + ':' + m + ' ' + dd;
-            }
-            if (this.options.autosave.timeFormat == 24) {
-                html = save + h + ':' + m;
-            }
-
-            el.innerHTML = html;
+            el.innerHTML = save + dd;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
