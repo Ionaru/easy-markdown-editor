@@ -161,7 +161,7 @@ const editorImagesCustom = new EasyMDE({
         image: 'Insert URL'
     },
     syncSideBySidePreviewScroll: true
-  });
+});
 
 const editorAutosave = new EasyMDE({
     autosave: {
@@ -169,5 +169,12 @@ const editorAutosave = new EasyMDE({
         delay: 2000,
         submit_delay: 10000,
         uniqueId: 'abc',
+        timeFormat: {
+            locale: 'en-GB',
+            format: {
+                month: 'long',
+            }
+        },
+        text: 'Stored: ',
     }
 });
