@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Time formatting and custom text options for the autosave message (Thanks to [@dima-bzz], [#170]).
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
-- Add `watch` task for gulp.
+- Add `watch` task for gulp (Thanks to [@A-312], [#150].
 
 ## [2.9.0] - 2020-01-13
 ### Added
@@ -150,7 +150,10 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked PRs -->
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
+[#150]: https://github.com/Ionaru/easy-markdown-editor/pull/150
+[#147]: https://github.com/Ionaru/easy-markdown-editor/pull/147
 [#143]: https://github.com/Ionaru/easy-markdown-editor/pull/143
+[#141]: https://github.com/Ionaru/easy-markdown-editor/pull/141
 [#139]: https://github.com/Ionaru/easy-markdown-editor/pull/139
 [#132]: https://github.com/Ionaru/easy-markdown-editor/pull/132
 [#123]: https://github.com/Ionaru/easy-markdown-editor/pull/123
@@ -167,6 +170,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@A-312]: https://github.com/A-312
 [@dima-bzz]: https://github.com/dima-bzz
 [@firm1]: https://github.com/firm1
 [@Situphen]: https://github.com/Situphen
