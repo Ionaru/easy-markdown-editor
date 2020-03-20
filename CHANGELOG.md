@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
 - Add `watch` task for gulp (Thanks to [@A-312], [#150].
+### Fixed
+- Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
 
 ## [2.9.0] - 2020-01-13
 ### Added
@@ -150,6 +152,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked PRs -->
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
+[#169]: https://github.com/Ionaru/easy-markdown-editor/pull/169
 [#150]: https://github.com/Ionaru/easy-markdown-editor/pull/150
 [#147]: https://github.com/Ionaru/easy-markdown-editor/pull/147
 [#143]: https://github.com/Ionaru/easy-markdown-editor/pull/143
@@ -170,6 +173,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@felipefdl]: https://github.com/felipefdl
 [@A-312]: https://github.com/A-312
 [@dima-bzz]: https://github.com/dima-bzz
 [@firm1]: https://github.com/firm1

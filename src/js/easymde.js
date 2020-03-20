@@ -2016,7 +2016,7 @@ EasyMDE.prototype.autosave = function () {
             var d = new Date();
             var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
             var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
-            
+
             el.innerHTML = save + dd;
         }
 
