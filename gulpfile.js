@@ -55,8 +55,8 @@ function styles() {
 
 // Watch for file changes
 function watch() {
-  gulp.watch('./src/js/**/*.js', scripts)
-  gulp.watch(css_files, styles)
+    gulp.watch('./src/js/**/*.js', scripts);
+    gulp.watch(css_files, styles);
 }
 
 var build = gulp.parallel(gulp.series(lint, scripts), styles);
