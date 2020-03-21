@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add `watch` task for gulp (Thanks to [@A-312], [#150].
 ### Fixed
 - Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
-- Updated codemirror to version 5.52.2 ([#174]).
+- Updated codemirror to version 5.52.2 (Thanks to [@A-312], [#173]).
 
 ## [2.9.0] - 2020-01-13
 ### Added
