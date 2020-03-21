@@ -19,7 +19,7 @@
     "license": "MIT",
     "author": "Jeroen Akkerman",
     "dependencies": {
-        "codemirror": "^5.51.0",
+        "codemirror": "^5.52.2",
         "codemirror-spell-checker": "1.1.2",
         "marked": "^0.8.0"
     },
