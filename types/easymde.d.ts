@@ -46,11 +46,19 @@ type ToolbarButton =
     | 'guide';
 
 declare namespace EasyMDE {
+
+    interface TimeFormatOptions {
+        locale?: string | string[];
+        format?: Intl.DateTimeFormatOptions;
+    }
+
     interface AutoSaveOptions {
         enabled?: boolean;
         delay?: number;
         submit_delay?: number;
         uniqueId: string;
+        timeFormat?: TimeFormatOptions;
+        text?: string;
     }
 
     interface BlockStyleOptions {

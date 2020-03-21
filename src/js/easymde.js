@@ -11,7 +11,7 @@ require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
-var marked = require('marked');
+var marked = require('marked/lib/marked');
 
 
 // Some variables
@@ -1641,6 +1641,12 @@ function EasyMDE(options) {
 
     // Merging the blockStyles, with the given options
     options.blockStyles = extend({}, blockStyles, options.blockStyles || {});
+
+
+    if (options.autosave != undefined) {
+        // Merging the Autosave timeFormat, with the given options
+        options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
+    }
 
 
     // Merging the shortcuts, with the given options
