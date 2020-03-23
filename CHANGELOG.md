@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `inputStyle` and `nativeSpellcheck` options to manage the native language of the browser (Thanks to [@firm1], [#143]).
 - Group buttons in drop-down lists by adding a sub-option `children` for the items in the toolbar (Thanks to [@firm1], [#141]).
 - `sanitizerFunction` option to allow custom HTML sanitizing in the markdown preview (Thanks to [@adamb70], [#147]).
+- Time formatting and custom text options for the autosave message (Thanks to [@dima-bzz], [#170]).
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
-- Add `watch` task for gulp.
+- Add `watch` task for gulp (Thanks to [@A-312], [#150].
+### Fixed
+- Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
+- Updated codemirror to version 5.52.2 (Thanks to [@A-312], [#173]).
 
 ## [2.9.0] - 2020-01-13
 ### Added
@@ -148,7 +152,12 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
+[#169]: https://github.com/Ionaru/easy-markdown-editor/pull/169
+[#150]: https://github.com/Ionaru/easy-markdown-editor/pull/150
+[#147]: https://github.com/Ionaru/easy-markdown-editor/pull/147
 [#143]: https://github.com/Ionaru/easy-markdown-editor/pull/143
+[#141]: https://github.com/Ionaru/easy-markdown-editor/pull/141
 [#139]: https://github.com/Ionaru/easy-markdown-editor/pull/139
 [#132]: https://github.com/Ionaru/easy-markdown-editor/pull/132
 [#123]: https://github.com/Ionaru/easy-markdown-editor/pull/123
@@ -165,6 +174,9 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@felipefdl]: https://github.com/felipefdl
+[@A-312]: https://github.com/A-312
+[@dima-bzz]: https://github.com/dima-bzz
 [@firm1]: https://github.com/firm1
 [@Situphen]: https://github.com/Situphen
 [@t49tran]: https://github.com/t49tran

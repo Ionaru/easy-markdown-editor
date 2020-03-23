@@ -11,7 +11,7 @@ require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
-var marked = require('marked');
+var marked = require('marked/lib/marked');
 
 
 // Some variables
@@ -1484,6 +1484,14 @@ var promptTexts = {
     image: 'URL of the image:',
 };
 
+var timeFormat = {
+    locale: 'en-US',
+    format: {
+        hour: '2-digit',
+        minute: '2-digit',
+    },
+};
+
 var blockStyles = {
     'bold': '**',
     'code': '```',
@@ -1622,6 +1630,12 @@ function EasyMDE(options) {
 
     // Merging the blockStyles, with the given options
     options.blockStyles = extend({}, blockStyles, options.blockStyles || {});
+
+
+    if (options.autosave != undefined) {
+        // Merging the Autosave timeFormat, with the given options
+        options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
+    }
 
 
     // Merging the shortcuts, with the given options
@@ -2005,20 +2019,10 @@ EasyMDE.prototype.autosave = function () {
         var el = document.getElementById('autosaved');
         if (el != null && el != undefined && el != '') {
             var d = new Date();
-            var hh = d.getHours();
-            var m = d.getMinutes();
-            var dd = 'am';
-            var h = hh;
-            if (h >= 12) {
-                h = hh - 12;
-                dd = 'pm';
-            }
-            if (h == 0) {
-                h = 12;
-            }
-            m = m < 10 ? '0' + m : m;
+            var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
+            var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
 
-            el.innerHTML = 'Autosaved: ' + h + ':' + m + ' ' + dd;
+            el.innerHTML = save + dd;
         }
 
         this.autosaveTimeoutId = setTimeout(function () {
