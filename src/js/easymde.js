@@ -168,13 +168,12 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     }
 
     // Prevent errors if there is no class name in custom options
-    var className = '';
+    var classNameParts = [];
     if(typeof options.className !== 'undefined') {
-        className = options.className;
+        classNameParts = options.className.split(' ');
     }
 
     // Provide backwards compatibility with simple-markdown-editor by adding custom classes to the button.
-    var classNameParts = className.split(' ');
     var iconClasses = [];
     for (var classNameIndex = 0; classNameIndex < classNameParts.length; classNameIndex++) {
         var classNamePart = classNameParts[classNameIndex];
