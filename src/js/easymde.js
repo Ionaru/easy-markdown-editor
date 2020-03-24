@@ -167,8 +167,13 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         el.classList.add('no-mobile');
     }
 
+    // Prevent errors if there is no class name in custom options
+    var classNameParts = [];
+    if(typeof options.className !== 'undefined') {
+        classNameParts = options.className.split(' ');
+    }
+
     // Provide backwards compatibility with simple-markdown-editor by adding custom classes to the button.
-    var classNameParts = options.className.split(' ');
     var iconClasses = [];
     for (var classNameIndex = 0; classNameIndex < classNameParts.length; classNameIndex++) {
         var classNamePart = classNameParts[classNameIndex];
@@ -190,6 +195,11 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         icon.classList.add(iconClass);
     }
     el.appendChild(icon);
+
+    // If there is a custom icon markup set, use that
+    if (typeof options.icon !== 'undefined') {
+        el.innerHTML = options.icon;
+    }
 
     if (options.action && enableActions) {
         if (typeof options.action === 'function') {
