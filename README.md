@@ -30,6 +30,7 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 - [Configuration](#configuration)
 	- [Options list](#options-list)
 	- [Options example](#options-example)
+	- [Localization example](#localization-example)
 	- [Toolbar icons](#toolbar-icons)
 	- [Toolbar customization](#toolbar-customization)
 	- [Keyboard shortcuts](#keyboard-shortcuts)
@@ -115,6 +116,20 @@ easyMDE.value('New input for **EasyMDE**');
 
 ### Options list
 
+- **locale**: Set locale. Default `en`.
+- **localization**: Set custom translate.
+  - **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
+    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
+    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`.
+    - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
+    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`.
+    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`.
+    - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
+    - **noFileGiven**: The server did not receive any file from the user. Defaults to `You must select a file.`.
+    - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
+    - **fileTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
+    - **importError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
+  - **errorMessages**: Errors displayed to the user, using the `errorCallback` option, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
 - **autoDownloadFontAwesome**: If set to `true`, force downloads Font Awesome (used for icons). If set to `false`, prevents downloading. Defaults to `undefined`, which will intelligently check whether Font Awesome has already been included, then download accordingly.
 - **autofocus**: If set to `true`, focuses the editor automatically. Defaults to `false`.
 - **autosave**: *Saves the text that's being written and will load it back in the future. It will forget the text when the form it's contained in is submitted.*
@@ -123,7 +138,6 @@ easyMDE.value('New input for **EasyMDE**');
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
   - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). Default `locale: en-US, format: hour:minute`.
-  - **text**: Set text for autosave.
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
@@ -149,9 +163,6 @@ easyMDE.value('New input for **EasyMDE**');
 - **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
 - **promptURLs**: If set to `true`, a JS alert window appears asking for the link or image URL. Defaults to `false`.
-- **promptTexts**: Customize the text used to prompt for URLs.
-  - **image**: The text to use when prompting for an image's URL.  Defaults to `URL of the image:`.
-  - **link**: The text to use when prompting for a link's URL. Defaults to `URL for the link:`.
 - **uploadImage**: If set to `true`, enables the image upload functionality, which can be triggered by drag&drop, copy-paste and through the browse-file window (opened when the user click on the *upload-image* icon). Defaults to `false`.
 - **imageMaxSize**: Maximum image size in bytes, checked before upload (note: never trust client, always check image size at server-side). Defaults to `1024*1024*2` (2Mb).
 - **imageAccept**: A comma-separated list of mime-types used to check image type before upload (note: never trust client, always check file types at server-side). Defaults to `image/png, image/jpeg`.
@@ -162,18 +173,6 @@ easyMDE.value('New input for **EasyMDE**');
      - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400), `typeNotAllowed` (HTTP 415), `fileTooLarge` (HTTP 413) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server side error messages.
      No default value.
 - **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For instance used with Django backend.
-- **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
-    - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
-    - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`.
-    - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
-    - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`.
-    - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`.
-    - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
-- **errorMessages**: Errors displayed to the user, using the `errorCallback` option, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
-    - **noFileGiven**: The server did not receive any file from the user. Defaults to `You must select a file.`.
-    - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
-    - **fileTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
-    - **importError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
 - **errorCallback**: A callback function used to define how to display an error message. Defaults to `function(errorMessage) {alert(errorMessage);};`.
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
@@ -202,6 +201,14 @@ Most options demonstrate the non-default behavior:
 
 ```JavaScript
 var editor = new EasyMDE({
+	locale: 'en',
+	localization: {
+		"status": {
+			"lines": "lines",
+			"words": "words",
+			"autosave": "Autosaved: ",
+		},
+	},
 	autofocus: true,
 	autosave: {
 		enabled: true,
@@ -218,7 +225,6 @@ var editor = new EasyMDE({
 				minute: '2-digit',
 			},
 		},
-		text: "Autosaved: "
 	},
 	blockStyles: {
 		bold: "__",
@@ -258,10 +264,6 @@ var editor = new EasyMDE({
 		return "Loading...";
 	},
 	promptURLs: true,
-	promptTexts: {
-		image: "Custom prompt for URL:",
-		link: "Custom prompt for URL:",
-	},
 	renderingConfig: {
 		singleLineBreaks: false,
 		codeSyntaxHighlighting: true,
@@ -294,7 +296,66 @@ var editor = new EasyMDE({
 	toolbarTips: false,
 });
 ```
+### Localization example
 
+```JavaScript
+var editor = new EasyMDE({
+	locale: 'en',
+	localization: {
+		"promptTexts": {
+			"link": "URL for the link:",
+			"image": "URL of the image:"
+		},
+		"status": {
+			"lines": "lines",
+			"words": "words",
+			"autosave": "Autosaved: "
+		},
+		"errorMessages": {
+			"noFileGiven": "You must select a file.",
+			"typeNotAllowed": "This image type is not allowed.",
+			"fileTooLarge": "Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.",
+			"importError": "Something went wrong when uploading the image #image_name#."
+		},
+		"imageTexts": {
+			"sbInit": "Attach files by drag and dropping or pasting from clipboard.",
+			"sbOnDragEnter": "Drop image to upload it.",
+			"sbOnDrop": "Uploading image #images_names#...",
+			"sbProgress": "Uploading #file_name#: #progress#%",
+			"sbOnUploaded": "Uploaded #image_name#",
+			"sizeUnits": "b,Kb,Mb"
+		},
+		"toolbar": {
+			"bold": {"title": "Bold"},
+			"italic": {"title": "Italic"},
+			"strikethrough": {"title": "Strikethrough"},
+			"heading": {"title": "Heading"},
+			"heading-smaller": {"title": "Smaller Heading"},
+			"heading-bigger": {"title": "Bigger Heading"},
+			"heading-1": {"title": "Big Heading"},
+			"heading-2": {"title": "Medium Heading"},
+			"heading-3": {"title": "Small Heading"},
+			"code": {"title": "Code"},
+			"quote": {"title": "Quote"},
+			"unordered-list": {"title": "Generic List"},
+			"ordered-list": {"title": "Numbered List"},
+			"clean-block": {"title": "Clean block"},
+			"link": {"title": "Create Link"},
+			"image": {"title": "Insert Image"},
+			"upload-image": {"title": "Import an image"},
+			"table": {"title": "Insert Table"},
+			"horizontal-rule": {"title": "Insert Horizontal Line"},
+			"preview": {"title": "Toggle Preview"},
+			"side-by-side": {"title": "Toggle Side by Side"},
+			"fullscreen": {"title": "Toggle Fullscreen"},
+			"guide": {"title": "Markdown Guide"},
+			"undo": {"title": "Undo"},
+			"redo": {"title": "Redo"}
+		}
+	},
+	...
+});
+```
 
 ### Toolbar icons
 

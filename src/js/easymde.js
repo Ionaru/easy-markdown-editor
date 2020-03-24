@@ -11,7 +11,8 @@ require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
-var marked = require('marked/lib/marked');
+var marked = require('marked');
+var localization = require('./languages.json');
 
 
 // Some variables
@@ -730,7 +731,7 @@ function drawLink(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.link, 'https://');
+        url = prompt(options.locale.promptTexts.link, 'https://');
         if (!url) {
             return false;
         }
@@ -747,7 +748,7 @@ function drawImage(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.image, 'https://');
+        url = prompt(options.locale.promptTexts.image, 'https://');
         if (!url) {
             return false;
         }
@@ -776,9 +777,9 @@ function afterImageUploaded(editor, url) {
     var imageName = url.substr(url.lastIndexOf('/') + 1);
     _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     // show uploaded image filename for 1000ms
-    editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
+    editor.updateStatusBar('upload-image', editor.options.locale.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
     setTimeout(function () {
-        editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
+        editor.updateStatusBar('upload-image', editor.options.locale.imageTexts.sbInit);
     }, 1000);
 }
 
@@ -1292,58 +1293,49 @@ var toolbarBuiltInButtons = {
         name: 'bold',
         action: toggleBold,
         className: 'fa fa-bold',
-        title: 'Bold',
         default: true,
     },
     'italic': {
         name: 'italic',
         action: toggleItalic,
         className: 'fa fa-italic',
-        title: 'Italic',
         default: true,
     },
     'strikethrough': {
         name: 'strikethrough',
         action: toggleStrikethrough,
         className: 'fa fa-strikethrough',
-        title: 'Strikethrough',
     },
     'heading': {
         name: 'heading',
         action: toggleHeadingSmaller,
         className: 'fa fa-header fa-heading',
-        title: 'Heading',
         default: true,
     },
     'heading-smaller': {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
         className: 'fa fa-header fa-heading header-smaller',
-        title: 'Smaller Heading',
     },
     'heading-bigger': {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
         className: 'fa fa-header fa-heading header-bigger',
-        title: 'Bigger Heading',
     },
     'heading-1': {
         name: 'heading-1',
         action: toggleHeading1,
         className: 'fa fa-header fa-heading header-1',
-        title: 'Big Heading',
     },
     'heading-2': {
         name: 'heading-2',
         action: toggleHeading2,
         className: 'fa fa-header fa-heading header-2',
-        title: 'Medium Heading',
     },
     'heading-3': {
         name: 'heading-3',
         action: toggleHeading3,
         className: 'fa fa-header fa-heading header-3',
-        title: 'Small Heading',
     },
     'separator-1': {
         name: 'separator-1',
@@ -1352,34 +1344,29 @@ var toolbarBuiltInButtons = {
         name: 'code',
         action: toggleCodeBlock,
         className: 'fa fa-code',
-        title: 'Code',
     },
     'quote': {
         name: 'quote',
         action: toggleBlockquote,
         className: 'fa fa-quote-left',
-        title: 'Quote',
         default: true,
     },
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
         className: 'fa fa-list-ul',
-        title: 'Generic List',
         default: true,
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
         className: 'fa fa-list-ol',
-        title: 'Numbered List',
         default: true,
     },
     'clean-block': {
         name: 'clean-block',
         action: cleanBlock,
         className: 'fa fa-eraser',
-        title: 'Clean block',
     },
     'separator-2': {
         name: 'separator-2',
@@ -1388,33 +1375,28 @@ var toolbarBuiltInButtons = {
         name: 'link',
         action: drawLink,
         className: 'fa fa-link',
-        title: 'Create Link',
         default: true,
     },
     'image': {
         name: 'image',
         action: drawImage,
         className: 'fa fa-image',
-        title: 'Insert Image',
         default: true,
     },
     'upload-image': {
         name: 'upload-image',
         action: drawUploadedImage,
         className: 'fa fa-image',
-        title: 'Import an image',
     },
     'table': {
         name: 'table',
         action: drawTable,
         className: 'fa fa-table',
-        title: 'Insert Table',
     },
     'horizontal-rule': {
         name: 'horizontal-rule',
         action: drawHorizontalRule,
         className: 'fa fa-minus',
-        title: 'Insert Horizontal Line',
     },
     'separator-3': {
         name: 'separator-3',
@@ -1424,7 +1406,6 @@ var toolbarBuiltInButtons = {
         action: togglePreview,
         className: 'fa fa-eye',
         noDisable: true,
-        title: 'Toggle Preview',
         default: true,
     },
     'side-by-side': {
@@ -1433,7 +1414,6 @@ var toolbarBuiltInButtons = {
         className: 'fa fa-columns',
         noDisable: true,
         noMobile: true,
-        title: 'Toggle Side by Side',
         default: true,
     },
     'fullscreen': {
@@ -1442,7 +1422,6 @@ var toolbarBuiltInButtons = {
         className: 'fa fa-arrows-alt',
         noDisable: true,
         noMobile: true,
-        title: 'Toggle Fullscreen',
         default: true,
     },
     'separator-4': {
@@ -1453,7 +1432,6 @@ var toolbarBuiltInButtons = {
         action: 'https://www.markdownguide.org/basic-syntax/',
         className: 'fa fa-question-circle',
         noDisable: true,
-        title: 'Markdown Guide',
         default: true,
     },
     'separator-5': {
@@ -1464,14 +1442,12 @@ var toolbarBuiltInButtons = {
         action: undo,
         className: 'fa fa-undo',
         noDisable: true,
-        title: 'Undo',
     },
     'redo': {
         name: 'redo',
         action: redo,
         className: 'fa fa-repeat fa-redo',
         noDisable: true,
-        title: 'Redo',
     },
 };
 
@@ -1482,11 +1458,6 @@ var insertTexts = {
     // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
     horizontalRule: ['', '\n\n-----\n\n'],
-};
-
-var promptTexts = {
-    link: 'URL for the link:',
-    image: 'URL of the image:',
 };
 
 var timeFormat = {
@@ -1501,31 +1472,6 @@ var blockStyles = {
     'bold': '**',
     'code': '```',
     'italic': '*',
-};
-
-/**
- * Texts displayed to the user (mainly on the status bar) for the import image
- * feature. Can be used for customization or internationalization.
- */
-var imageTexts = {
-    sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
-    sbOnDragEnter: 'Drop image to upload it.',
-    sbOnDrop: 'Uploading image #images_names#...',
-    sbProgress: 'Uploading #file_name#: #progress#%',
-    sbOnUploaded: 'Uploaded #image_name#',
-    sizeUnits: 'b,Kb,Mb',
-};
-
-/**
- * Errors displayed to the user, using the `errorCallback` option. Can be used for
- * customization or internationalization.
- */
-var errorMessages = {
-    noFileGiven: 'You must select a file.',
-    typeNotAllowed: 'This image type is not allowed.',
-    fileTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
-        'Maximum file size is #image_max_size#.',
-    importError: 'Something went wrong when uploading the image #image_name#.',
 };
 
 /**
@@ -1625,22 +1571,20 @@ function EasyMDE(options) {
     }, options.parsingConfig || {});
 
 
-    // Merging the insertTexts, with the given options
+    // Merging localizations
+    options.locale = extend(localization['en'], localization[options.locale], options.localization || {});
+    
     options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
-
-
-    // Merging the promptTexts, with the given options
-    options.promptTexts = extend({}, promptTexts, options.promptTexts || {});
-
-
-    // Merging the blockStyles, with the given options
-    options.blockStyles = extend({}, blockStyles, options.blockStyles || {});
 
 
     if (options.autosave != undefined) {
         // Merging the Autosave timeFormat, with the given options
         options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
     }
+
+
+    // Merging the blockStyles, with the given options
+    options.blockStyles = extend({}, blockStyles, options.blockStyles || {});
 
 
     // Merging the shortcuts, with the given options
@@ -1656,8 +1600,6 @@ function EasyMDE(options) {
     options.uploadImage = options.uploadImage || false;
     options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
-    options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
-    options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -1684,23 +1626,23 @@ function EasyMDE(options) {
         var self = this;
 
         this.codemirror.on('dragenter', function (cm, event) {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
         this.codemirror.on('dragend', function (cm, event) {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbInit);
             event.stopPropagation();
             event.preventDefault();
         });
         this.codemirror.on('dragleave', function (cm, event) {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbInit);
             event.stopPropagation();
             event.preventDefault();
         });
 
         this.codemirror.on('dragover', function (cm, event) {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbOnDragEnter);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbOnDragEnter);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -1745,7 +1687,7 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
         names.push(files[i].name);
         this.uploadImage(files[i], onSuccess, onError);
     }
-    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+    this.updateStatusBar('upload-image', this.options.locale.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
 };
 
 /**
@@ -1767,7 +1709,7 @@ EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunctio
         names.push(files[i].name);
         this.uploadImageUsingCustomFunction(imageUploadFunction, files[i]);
     }
-    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+    this.updateStatusBar('upload-image', this.options.locale.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
 };
 
 /**
@@ -2025,7 +1967,7 @@ EasyMDE.prototype.autosave = function () {
         if (el != null && el != undefined && el != '') {
             var d = new Date();
             var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
-            var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
+            var save = this.options.locale.status.autosave;
 
             el.innerHTML = save + dd;
         }
@@ -2092,7 +2034,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
         self.updateStatusBar('upload-image', errorMessage);
 
         setTimeout(function () {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbInit);
         }, 10000);
 
         // run custom error handler
@@ -2104,7 +2046,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     }
 
     function fillErrorMessage(errorMessage) {
-        var units = self.options.imageTexts.sizeUnits.split(',');
+        var units = self.options.locale.imageTexts.sizeUnits.split(',');
         return errorMessage
             .replace('#image_name#', file.name)
             .replace('#image_size#', humanFileSize(file.size, units))
@@ -2112,7 +2054,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     }
 
     if (file.size > this.options.imageMaxSize) {
-        onErrorSup(fillErrorMessage(this.options.errorMessages.fileTooLarge));
+        onErrorSup(fillErrorMessage(this.options.locale.errorMessages.fileTooLarge));
         return;
     }
 
@@ -2127,7 +2069,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             var progress = '' + Math.round((event.loaded * 100) / event.total);
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
         }
     };
     request.open('POST', this.options.imageUploadEndpoint);
@@ -2137,20 +2079,20 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             var response = JSON.parse(this.responseText);
         } catch (error) {
             console.error('EasyMDE: The server did not return a valid json.');
-            onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
+            onErrorSup(fillErrorMessage(self.options.locale.errorMessages.importError));
             return;
         }
         if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
             onSuccess(window.location.origin + '/' + response.data.filePath);
         } else {
-            if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
-                onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
+            if (response.error && response.error in self.options.locale.errorMessages) {  // preformatted error message
+                onErrorSup(fillErrorMessage(self.options.locale.errorMessages[response.error]));
             } else if (response.error) {  // server side generated error message
                 onErrorSup(fillErrorMessage(response.error));
             } else {  //unknown error
                 console.error('EasyMDE: Received an unexpected response after uploading the image.'
                     + this.status + ' (' + this.statusText + ')');
-                onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
+                onErrorSup(fillErrorMessage(self.options.locale.errorMessages.importError));
             }
         }
     };
@@ -2158,7 +2100,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     request.onerror = function (event) {
         console.error('EasyMDE: An unexpected error occurred when trying to upload the image.'
             + event.target.status + ' (' + event.target.statusText + ')');
-        onErrorSup(self.options.errorMessages.importError);
+        onErrorSup(self.options.locale.errorMessages.importError);
     };
 
     request.send(formData);
@@ -2183,7 +2125,7 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
         self.updateStatusBar('upload-image', filledErrorMessage);
 
         setTimeout(function () {
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbInit);
+            self.updateStatusBar('upload-image', self.options.locale.imageTexts.sbInit);
         }, 10000);
 
         // run error handler from options, this alerts the message.
@@ -2191,7 +2133,7 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
     }
 
     function fillErrorMessage(errorMessage) {
-        var units = self.options.imageTexts.sizeUnits.split(',');
+        var units = self.options.locale.imageTexts.sizeUnits.split(',');
         return errorMessage
             .replace('#image_name#', file.name)
             .replace('#image_size#', humanFileSize(file.size, units))
@@ -2265,7 +2207,7 @@ EasyMDE.prototype.createToolbar = function (items) {
     var i;
     for (i = 0; i < items.length; i++) {
         if (toolbarBuiltInButtons[items[i]] != undefined) {
-            items[i] = toolbarBuiltInButtons[items[i]];
+            items[i] = extend({}, toolbarBuiltInButtons[items[i]], this.options.locale.toolbar[items[i]] || {});
         }
     }
 
@@ -2372,25 +2314,30 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, defaultValue;
+    var i, onUpdate, onCursorActivity, defaultValue, dataSet;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
+        onCursorActivity = undefined;
         defaultValue = undefined;
-
+        dataSet = undefined;
 
         // Handle if custom or not
         if (typeof status[i] === 'object') {
             items.push({
                 className: status[i].className,
+                dataSet: status[i].dataSet,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
+                onCursorActivity: status[i].onCursorActivity,
             });
         } else {
             var name = status[i];
 
             if (name === 'words') {
+                dataSet = options.locale.status[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
@@ -2398,6 +2345,8 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
             } else if (name === 'lines') {
+                dataSet = options.locale.status[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = cm.lineCount();
                 };
@@ -2410,6 +2359,12 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
+                    
+                    el.innerHTML = pos.line + ':' + pos.ch;
+                };
+                onCursorActivity = function (el) {
+                    var pos = cm.getCursor();
+                    
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
@@ -2420,14 +2375,16 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
             } else if (name === 'upload-image') {
                 defaultValue = function (el) {
-                    el.innerHTML = options.imageTexts.sbInit;
+                    el.innerHTML = options.locale.imageTexts.sbInit;
                 };
             }
 
             items.push({
                 className: name,
+                dataSet: dataSet,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
+                onCursorActivity: onCursorActivity,
             });
         }
     }
@@ -2448,6 +2405,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
         var el = document.createElement('span');
         el.className = item.className;
 
+        if (item.dataSet != undefined) {
+            el.dataset.statusBarBefore = item.dataSet;
+        }
+
 
         // Ensure the defaultValue is a function
         if (typeof item.defaultValue === 'function') {
@@ -2465,6 +2426,15 @@ EasyMDE.prototype.createStatusbar = function (status) {
             }(el, item)));
         }
 
+        // Ensure the onCursorActivity is a function
+        if (typeof item.onCursorActivity === 'function') {
+            // Create a closure around the span of the current action, then execute the onCursorActivity handler
+            this.codemirror.on('cursorActivity', (function (el, item) {
+                    return function () {
+                        item.onCursorActivity(el);
+                    };
+            }(el, item)));
+        }
 
         // Append the item to the status bar
         bar.appendChild(el);
