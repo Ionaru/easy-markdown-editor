@@ -202,15 +202,15 @@
 }
 
 .editor-statusbar .lines:before {
-    content: 'lines: '
-}
-
-.editor-statusbar .lines:before {
     content: attr(data-status-bar-before) ': ';
 }
 
 .editor-statusbar .words:before {
     content: attr(data-status-bar-before) ': ';
+}
+
+.editor-statusbar .characters:before {
+    content: 'characters: '
 }
 
 .editor-preview-full {
