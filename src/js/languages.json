@@ -6,8 +6,8 @@
             "image": "URL of the image:"
         },
         "status": {
-            "lines": "lines",
-            "words": "words",
+            "lines": "lines: ",
+            "words": "words: ",
             "autosave": "Autosaved: "
         },
         "errorMessages": {
@@ -58,9 +58,36 @@
             "image": "Вставьте ссылку на изображение:"
         },
         "status": {
-            "lines": "строк",
-            "words": "слов",
+            "lines": "строк: ",
+            "words": "слов: ",
             "autosave": "Автосохранение: "
+        },
+        "toolbar": {
+            "bold": {"title": "Полужирный"},
+            "italic": {"title": "Курсив"},
+            "strikethrough": {"title": "Зачёркнутый"},
+            "heading": {"title": "Заголовок"},
+            "heading-smaller": {"title": "Уменьшить заголовок"},
+            "heading-bigger": {"title": "Увеличеть заголовок"},
+            "heading-1": {"title": "Заголовок h1"},
+            "heading-2": {"title": "Заголовок h2"},
+            "heading-3": {"title": "Заголовок h3"},
+            "code": {"title": "Код"},
+            "quote": {"title": "Цитата"},
+            "unordered-list": {"title": "Маркированный список"},
+            "ordered-list": {"title": "Нумерованный список"},
+            "clean-block": {"title": "Очистить блок"},
+            "link": {"title": "Вставить ссылку"},
+            "image": {"title": "Вставить изображение"},
+            "upload-image": {"title": "Загрузка изображения"},
+            "table": {"title": "Вставить таблицу"},
+            "horizontal-rule": {"title": "Вставить горизонтальную линию"},
+            "preview": {"title": "Предварительный просмотр"},
+            "side-by-side": {"title": "Режим Side by Side"},
+            "fullscreen": {"title": "На весь экран"},
+            "guide": {"title": "Markdown Guide"},
+            "undo": {"title": "Отменить"},
+            "redo": {"title": "Повтор"}
         }
     }
 }
