@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
 - Updated codemirror to version 5.52.2 (Thanks to [@A-312], [#173]).
+- Editor displaying on top of other elements on a webpage (Thanks to [@StefKors], [#175]).
 
 ## [2.9.0] - 2020-01-13
 ### Added
@@ -152,6 +153,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#175]: https://github.com/Ionaru/easy-markdown-editor/pull/175
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
 [#169]: https://github.com/Ionaru/easy-markdown-editor/pull/169
 [#150]: https://github.com/Ionaru/easy-markdown-editor/pull/150
@@ -174,6 +176,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@StefKors]: https://github.com/StefKors
 [@felipefdl]: https://github.com/felipefdl
 [@A-312]: https://github.com/A-312
 [@dima-bzz]: https://github.com/dima-bzz
