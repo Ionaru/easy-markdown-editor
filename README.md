@@ -298,7 +298,6 @@ var editor = new EasyMDE({
 
 ```JavaScript
 var editor = new EasyMDE({
-	locale: 'en',
 	localization: {
 		"promptTexts": {
 			"link": "URL for the link:",
