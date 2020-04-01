@@ -116,7 +116,6 @@ easyMDE.value('New input for **EasyMDE**');
 
 ### Options list
 
-- **locale**: Set locale. Default `en`.
 - **localization**: Set custom translate.
   - **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
     - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
@@ -201,11 +200,10 @@ Most options demonstrate the non-default behavior:
 
 ```JavaScript
 var editor = new EasyMDE({
-	locale: 'en',
 	localization: {
-		"status": {
-			"lines": "lines",
-			"words": "words",
+		"statusTexts": {
+			"lines": "lines: ",
+			"words": "words: ",
 			"autosave": "Autosaved: ",
 		},
 	},
@@ -306,9 +304,9 @@ var editor = new EasyMDE({
 			"link": "URL for the link:",
 			"image": "URL of the image:"
 		},
-		"status": {
-			"lines": "lines",
-			"words": "words",
+		"statusTexts": {
+			"lines": "lines: ",
+			"words": "words: ",
 			"autosave": "Autosaved: "
 		},
 		"errorMessages": {
@@ -325,7 +323,7 @@ var editor = new EasyMDE({
 			"sbOnUploaded": "Uploaded #image_name#",
 			"sizeUnits": "b,Kb,Mb"
 		},
-		"toolbar": {
+		"toolbarTitle": {
 			"bold": {"title": "Bold"},
 			"italic": {"title": "Italic"},
 			"strikethrough": {"title": "Strikethrough"},
