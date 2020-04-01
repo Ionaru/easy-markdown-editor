@@ -1537,7 +1537,10 @@ function EasyMDE(options) {
     options.parent = this;
 
     // Merging localizations
-    options = extend(localization, options, options.localization || {});
+    // First, we clone the old parameters into new
+    var copyOptions = extend({}, localization, options);
+    // Then merge with the new parameters
+    options = extend({}, copyOptions, options.localization || {});
 
     // Check if Font Awesome needs to be auto downloaded
     var autoDownloadFA = true;
