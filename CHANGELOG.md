@@ -4,7 +4,8 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!--## [Unreleased]-->
+## [2.10.0] - 2020-04-02
 ### Added
 - `inputStyle` and `nativeSpellcheck` options to manage the native language of the browser (Thanks to [@firm1], [#143]).
 - Group buttons in drop-down lists by adding a sub-option `children` for the items in the toolbar (Thanks to [@firm1], [#141]).
@@ -12,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Time formatting and custom text options for the autosave message (Thanks to [@dima-bzz], [#170]).
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
-- Add `watch` task for gulp (Thanks to [@A-312], [#150].
+- Add `watch` task for gulp (Thanks to [@A-312], [#150]).
 ### Fixed
 - Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
 - Updated codemirror to version 5.52.2 (Thanks to [@A-312], [#173]).
@@ -154,6 +155,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked PRs -->
 [#175]: https://github.com/Ionaru/easy-markdown-editor/pull/175
+[#173]: https://github.com/Ionaru/easy-markdown-editor/pull/173
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
 [#169]: https://github.com/Ionaru/easy-markdown-editor/pull/169
 [#150]: https://github.com/Ionaru/easy-markdown-editor/pull/150
@@ -201,7 +203,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.9.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.0...HEAD
+[2.10.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.9.0...2.10.0
 [2.9.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.8.0...2.9.0
 [2.8.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.7.0...2.8.0
 [2.7.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.6.1...2.7.0
