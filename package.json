@@ -24,9 +24,9 @@
         "marked": "^0.8.2"
     },
     "devDependencies": {
-        "@types/codemirror": "0.0.88",
+        "@types/codemirror": "0.0.89",
         "@types/marked": "^0.7.2",
-        "browserify": "^16.5.0",
+        "browserify": "^16.5.1",
         "gulp": "^4.0.2",
         "gulp-clean-css": "^4.2.0",
         "gulp-concat": "^2.6.1",
