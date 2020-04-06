@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Fixed
+- Typescript error when entering certain strings for toolbar buttons ([#178]).
+
 ## [2.10.0] - 2020-04-02
 ### Added
 - `inputStyle` and `nativeSpellcheck` options to manage the native language of the browser (Thanks to [@firm1], [#143]).
@@ -141,6 +144,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
 [#126]: https://github.com/Ionaru/easy-markdown-editor/issues/126
 [#99]: https://github.com/Ionaru/easy-markdown-editor/issues/99
 [#45]: https://github.com/Ionaru/easy-markdown-editor/issues/45

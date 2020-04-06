@@ -163,7 +163,7 @@ const editorImagesCustom = new EasyMDE({
     syncSideBySidePreviewScroll: true
 });
 
-const editorAutosave = new EasyMDE({
+new EasyMDE({
     autosave: {
         enabled: true,
         delay: 2000,
@@ -177,4 +177,19 @@ const editorAutosave = new EasyMDE({
         },
         text: 'Stored: ',
     }
+});
+
+new EasyMDE({
+    toolbar: [
+        'bold',
+        'italic',
+        'heading',
+        '|',
+        'quote',
+        'unordered-list',
+        'ordered-list',
+        'table',
+        '|',
+        'link'
+    ]
 });

@@ -27,7 +27,14 @@ interface ArrayOneOrMore<T> extends Array<T> {
 }
 
 type ToolbarButton =
-    'strikethrough'
+    'bold'
+    | 'italic'
+    | 'quote'
+    | 'unordered-list'
+    | 'ordered-list'
+    | 'link'
+    | 'image'
+    | 'strikethrough'
     | 'code'
     | 'table'
     | 'redo'
@@ -172,7 +179,7 @@ declare namespace EasyMDE {
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;
         shortcuts?: Shortcuts;
-        showIcons?: ReadonlyArray<string>;
+        showIcons?: ReadonlyArray<ToolbarButton>;
         spellChecker?: boolean;
         inputStyle?: 'textarea' | 'contenteditable';
         nativeSpellcheck?: boolean;
