@@ -139,6 +139,7 @@ easyMDE.value('New input for **EasyMDE**');
   - table
 - **lineWrapping**: If set to `false`, disable line wrapping. Defaults to `true`.
 - **minHeight**: Sets the minimum height for the composition area, before it starts auto-growing. Should be a string containing a valid CSS value like `"500px"`. Defaults to `"300px"`.
+- **markdownUrl**: Customize url for guide.
 - **onToggleFullScreen**: A function that gets called when the editor's full screen mode is toggled. The function will be passed a boolean as parameter, `true` when the editor is currently going into full screen mode, or `false`.
 - **parsingConfig**: Adjust settings for parsing the Markdown during editing (not previewing).
   - **allowAtxHeaderWithoutSpace**: If set to `true`, will render headers without a space after the `#`. Defaults to `false`.
@@ -237,6 +238,7 @@ var editor = new EasyMDE({
 	},
 	lineWrapping: false,
 	minHeight: "500px",
+	markdownUrl: "https://www.markdownguide.org/basic-syntax/",
 	parsingConfig: {
 		allowAtxHeaderWithoutSpace: true,
 		strikethrough: false,
