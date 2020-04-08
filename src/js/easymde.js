@@ -1489,6 +1489,12 @@ var promptTexts = {
     image: 'URL of the image:',
 };
 
+var statusTexts = {
+    lines: 'lines: ',
+    words: 'words: ',
+    autosave: 'Autosaved: ',
+};
+
 var timeFormat = {
     locale: 'en-US',
     format: {
@@ -1564,6 +1570,10 @@ function EasyMDE(options) {
         document.getElementsByTagName('head')[0].appendChild(link);
     }
 
+    if (options.markdownUrl != undefined) {
+        toolbarBuiltInButtons.guide.action = options.markdownUrl;
+    }
+
 
     // Find the textarea to use
     if (options.element) {
@@ -1631,6 +1641,10 @@ function EasyMDE(options) {
 
     // Merging the promptTexts, with the given options
     options.promptTexts = extend({}, promptTexts, options.promptTexts || {});
+
+
+    // Merging the statusTexts, with the given options
+    options.statusTexts = extend({}, statusTexts, options.statusTexts || {});
 
 
     // Merging the blockStyles, with the given options
@@ -2025,7 +2039,7 @@ EasyMDE.prototype.autosave = function () {
         if (el != null && el != undefined && el != '') {
             var d = new Date();
             var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
-            var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
+            var save = this.options.statusTexts.autosave;
 
             el.innerHTML = save + dd;
         }
@@ -2265,7 +2279,11 @@ EasyMDE.prototype.createToolbar = function (items) {
     var i;
     for (i = 0; i < items.length; i++) {
         if (toolbarBuiltInButtons[items[i]] != undefined) {
-            items[i] = toolbarBuiltInButtons[items[i]];
+            if (this.options.toolbarTitles != undefined && this.options.toolbarTitles[items[i]] != undefined) {
+                items[i] = extend({}, toolbarBuiltInButtons[items[i]], this.options.toolbarTitles[items[i]]);
+            } else {
+                items[i] = toolbarBuiltInButtons[items[i]];
+            }
         }
     }
 
@@ -2372,25 +2390,31 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, defaultValue;
+    var i, onUpdate, onCursorActivity, defaultValue, dataSet;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
+        onCursorActivity = undefined;
         defaultValue = undefined;
+        dataSet = undefined;
 
 
         // Handle if custom or not
         if (typeof status[i] === 'object') {
             items.push({
                 className: status[i].className,
+                dataSet: status[i].dataSet,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
+                onCursorActivity: status[i].onCursorActivity,
             });
         } else {
             var name = status[i];
 
             if (name === 'words') {
+                dataSet = options.statusTexts[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
@@ -2398,6 +2422,8 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
             } else if (name === 'lines') {
+                dataSet = options.statusTexts[name];
+
                 defaultValue = function (el) {
                     el.innerHTML = cm.lineCount();
                 };
@@ -2410,6 +2436,11 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
                 onUpdate = function (el) {
                     var pos = cm.getCursor();
+                    el.innerHTML = pos.line + ':' + pos.ch;
+                };
+                onCursorActivity = function (el) {
+                    var pos = cm.getCursor();
+                    
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
             } else if (name === 'autosave') {
@@ -2426,8 +2457,10 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
             items.push({
                 className: name,
+                dataSet: dataSet,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
+                onCursorActivity: onCursorActivity,
             });
         }
     }
@@ -2449,6 +2482,11 @@ EasyMDE.prototype.createStatusbar = function (status) {
         el.className = item.className;
 
 
+        if (item.dataSet != undefined) {
+            el.dataset.statusBarBefore = item.dataSet;
+        }
+
+
         // Ensure the defaultValue is a function
         if (typeof item.defaultValue === 'function') {
             item.defaultValue(el);
@@ -2462,6 +2500,17 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 return function () {
                     item.onUpdate(el);
                 };
+            }(el, item)));
+        }
+
+
+        // Ensure the onCursorActivity is a function
+        if (typeof item.onCursorActivity === 'function') {
+            // Create a closure around the span of the current action, then execute the onCursorActivity handler
+            this.codemirror.on('cursorActivity', (function (el, item) {
+                    return function () {
+                        item.onCursorActivity(el);
+                    };
             }(el, item)));
         }
 

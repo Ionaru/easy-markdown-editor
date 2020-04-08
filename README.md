@@ -123,7 +123,6 @@ easyMDE.value('New input for **EasyMDE**');
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
   - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). Default `locale: en-US, format: hour:minute`.
-  - **text**: Set text for autosave.
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
@@ -188,11 +187,13 @@ easyMDE.value('New input for **EasyMDE**');
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
 - **status**: If set to `false`, hide the status bar. Defaults to the array of built-in status bar items.
   - Optionally, you can set an array of status bar items to include, and in what order. You can even define your own custom status bar items.
+- **statusTexts**: Customize the text used to status bar.
 - **styleSelectedText**: If set to `false`, remove the `CodeMirror-selectedtext` class from selected lines. Defaults to `true`.
 - **syncSideBySidePreviewScroll**: If set to `false`, disable syncing scroll in side by side mode. Defaults to `true`.
 - **tabSize**: If set, customize the tab size. Defaults to `2`.
 - **theme**: Override the theme. Defaults to `easymde`.
 - **toolbar**: If set to `false`, hide the toolbar. Defaults to the [array of icons](#toolbar-icons).
+- **toolbarTitles**: Customize the title used to toolbar.
 - **toolbarTips**: If set to `false`, disable toolbar button tips. Defaults to `true`.
 
 
@@ -218,7 +219,6 @@ var editor = new EasyMDE({
 				minute: '2-digit',
 			},
 		},
-		text: "Autosaved: "
 	},
 	blockStyles: {
 		bold: "__",
@@ -287,10 +287,18 @@ var editor = new EasyMDE({
 			el.innerHTML = ++this.keystrokes + " Keystrokes";
 		},
 	}], // Another optional usage, with a custom status bar item that counts keystrokes
+	statusTexts: {
+		lines: "lines: ",
+		words: "words: ",
+		autosave: "Autosaved: ",
+	},
 	styleSelectedText: false,
 	syncSideBySidePreviewScroll: false,
 	tabSize: 4,
 	toolbar: false,
+	toobarTitles: {
+		"bold": {"title": "Bold"},
+	},
 	toolbarTips: false,
 });
 ```
