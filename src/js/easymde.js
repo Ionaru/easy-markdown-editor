@@ -1656,6 +1656,9 @@ function EasyMDE(options) {
         options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
     }
 
+    // Merging the toolbar title, with the given options
+    toolbarBuiltInButtons = extend({}, toolbarBuiltInButtons, options.toolbarTitles || {});
+
 
     // Merging the shortcuts, with the given options
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
@@ -2279,11 +2282,7 @@ EasyMDE.prototype.createToolbar = function (items) {
     var i;
     for (i = 0; i < items.length; i++) {
         if (toolbarBuiltInButtons[items[i]] != undefined) {
-            if (this.options.toolbarTitles != undefined && this.options.toolbarTitles[items[i]] != undefined) {
-                items[i] = extend({}, toolbarBuiltInButtons[items[i]], this.options.toolbarTitles[items[i]]);
-            } else {
-                items[i] = toolbarBuiltInButtons[items[i]];
-            }
+            items[i] = toolbarBuiltInButtons[items[i]];
         }
     }
 
