@@ -306,12 +306,10 @@ function toggleFullScreen(editor) {
 
 
     // Update toolbar class
-    var wrap = cm.getWrapperElement();
-
-    if (!/fullscreen/.test(wrap.previousSibling.className)) {
-        wrap.previousSibling.className += ' fullscreen';
+    if (!/fullscreen/.test(editor.toolbar_div.className)) {
+        editor.toolbar_div.className += ' fullscreen';
     } else {
-        wrap.previousSibling.className = wrap.previousSibling.className.replace(/\s*fullscreen\b/, '');
+        editor.toolbar_div.className = editor.toolbar_div.className.replace(/\s*fullscreen\b/, '');
     }
 
 
@@ -859,7 +857,7 @@ function toggleSideBySide(editor) {
             /\s*editor-preview-active\s*/g, ''
         );
         var toolbar = editor.toolbarElements.preview;
-        var toolbar_div = wrapper.previousSibling;
+        var toolbar_div = editor.toolbar_div;
         toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
         toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
     }
@@ -896,7 +894,7 @@ function toggleSideBySide(editor) {
 function togglePreview(editor) {
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
-    var toolbar_div = wrapper.previousSibling;
+    var toolbar_div = editor.toolbar_div;
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
     if (!preview || !/editor-preview-full/.test(preview.className)) {
@@ -2336,6 +2334,7 @@ EasyMDE.prototype.createToolbar = function (items) {
         })(items[i]);
     }
 
+    self.toolbar_div = bar;
     self.toolbarElements = toolbarData;
 
     var cm = this.codemirror;
