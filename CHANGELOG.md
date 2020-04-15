@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Support for Node.js 14.
 - Preview without fullscreen (Thanks to [@nick-denry], [#196]).
+- `autosave.saveOnChangeText` option to save the text only when modifying the content of the easymde instance (Thanks to [@firm1], [#181]).
 
 ### Fixed
 - Fix cursor displayed position on activity ([#183]).
