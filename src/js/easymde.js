@@ -2372,11 +2372,12 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, defaultValue;
+    var i, onUpdate, onActivity, defaultValue;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
+        onActivity = undefined;
         defaultValue = undefined;
 
 
@@ -2386,6 +2387,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 className: status[i].className,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
+                onActivity: status[i].onActivity,
             });
         } else {
             var name = status[i];
@@ -2408,7 +2410,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 defaultValue = function (el) {
                     el.innerHTML = '0:0';
                 };
-                onUpdate = function (el) {
+                onActivity = function (el) {
                     var pos = cm.getCursor();
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
@@ -2428,6 +2430,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 className: name,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
+                onActivity: onActivity,
             });
         }
     }
@@ -2461,6 +2464,14 @@ EasyMDE.prototype.createStatusbar = function (status) {
             this.codemirror.on('update', (function (el, item) {
                 return function () {
                     item.onUpdate(el);
+                };
+            }(el, item)));
+        }
+        if (typeof item.onActivity === 'function') {
+            // Create a closure around the span of the current action, then execute the onActivity handler
+            this.codemirror.on('cursorActivity', (function (el, item) {
+                return function () {
+                    item.onActivity(el);
                 };
             }(el, item)));
         }
