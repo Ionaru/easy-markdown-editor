@@ -2035,16 +2035,12 @@ EasyMDE.prototype.render = function (el) {
         this.gui.statusbar = this.createStatusbar();
     }
     if (options.autosave != undefined && options.autosave.enabled === true) {
-        if(this.options.autosave.saveOnChangeText !== undefined && this.options.autosave.saveOnChangeText === true) {
-            this.autosave(false); // use to load localstorage content
-            this.codemirror.on('change', function () {
-                setTimeout(function () {
-                    self.autosave(false);
-                }, self.options.autosave.submit_delay || self.options.autosave.delay || 1000);
-            });
-        } else {
-            this.autosave(true);
-        }
+        this.autosave(); // use to load localstorage content
+        this.codemirror.on('change', function () {
+            setTimeout(function () {
+                self.autosave();
+            }, self.options.autosave.submit_delay || self.options.autosave.delay || 1000);
+        });
     }
 
     this.gui.sideBySide = this.createSideBySide();
@@ -2075,7 +2071,7 @@ function isLocalStorageAvailable() {
     return true;
 }
 
-EasyMDE.prototype.autosave = function (repeatSaving) {
+EasyMDE.prototype.autosave = function () {
     if (isLocalStorageAvailable()) {
         var easyMDE = this;
 
@@ -2091,13 +2087,6 @@ EasyMDE.prototype.autosave = function (repeatSaving) {
                     easyMDE.autosaveTimeoutId = undefined;
 
                     localStorage.removeItem('smde_' + easyMDE.options.autosave.uniqueId);
-
-                    // Restart autosaving in case the submit will be cancelled down the line
-                    if (repeatSaving === true) {
-                        setTimeout(function () {
-                            easyMDE.autosave(repeatSaving);
-                        }, easyMDE.options.autosave.submit_delay || easyMDE.options.autosave.delay || 10000);
-                    }
                 });
             }
 
@@ -2127,12 +2116,6 @@ EasyMDE.prototype.autosave = function (repeatSaving) {
             var save = this.options.autosave.text == undefined ? 'Autosaved: ' : this.options.autosave.text;
 
             el.innerHTML = save + dd;
-        }
-
-        if (repeatSaving === true) {
-           this.autosaveTimeoutId = setTimeout(function () {
-                easyMDE.autosave(repeatSaving);
-            }, this.options.autosave.delay || 10000);
         }
     } else {
         console.log('EasyMDE: localStorage not available, cannot autosave');

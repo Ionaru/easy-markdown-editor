@@ -121,7 +121,6 @@ easyMDE.value('New input for **EasyMDE**');
   - **enabled**: If set to `true`, saves the text automatically. Defaults to `false`.
   - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
   - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
-  - **saveOnChangeText**: Saves the text only when the content has been changed. Without this parameter, the text will be saved periodically according to the `autosave.delay` parameter.
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
   - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). Default `locale: en-US, format: hour:minute`.
   - **text**: Set text for autosave.
@@ -211,7 +210,6 @@ var editor = new EasyMDE({
 		uniqueId: "MyUniqueID",
 		delay: 1000,
 		submit_delay: 5000,
-		saveOnChangeText: true,
 		timeFormat: {
 			locale: 'en-US',
 			format: {
