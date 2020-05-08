@@ -97,6 +97,33 @@ function addAnchorTargetBlank(htmlText) {
     return htmlText;
 }
 
+/**
+ * Modify HTML to remove the list-style when rendering checkboxes.
+ * @param {string} htmlText - HTML to be modified.
+ * @return {string} The modified HTML text.
+ */
+function removeListStyleWhenCheckbox(htmlText) {
+
+    var parser = new DOMParser();
+    var htmlDoc = parser.parseFromString(htmlText, 'text/html');
+    var listItems = htmlDoc.getElementsByTagName('li');
+
+    for (var i = 0; i < listItems.length; i++) {
+        var listItem = listItems[i];
+
+        for (var j = 0; j < listItem.children.length; j++) {
+            var listItemChild = listItem.children[j];
+
+            if (listItemChild instanceof HTMLInputElement && listItemChild.type === 'checkbox') {
+                // From Github: margin: 0 .2em .25em -1.6em;
+                listItem.style.marginLeft = '-1.5em';
+                listItem.style.listStyleType = 'none';
+            }
+        }
+    }
+
+    return htmlDoc.documentElement.innerHTML;
+}
 
 /**
  * Fix shortcut. Mac use Command, others use Ctrl.
@@ -1830,6 +1857,9 @@ EasyMDE.prototype.markdown = function (text) {
 
         // Edit the HTML anchors to add 'target="_blank"' by default.
         htmlText = addAnchorTargetBlank(htmlText);
+
+        // Remove list-style when rendering checkboxes
+        htmlText = removeListStyleWhenCheckbox(htmlText);
 
         return htmlText;
     }
