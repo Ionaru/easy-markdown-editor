@@ -4,7 +4,14 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Added
+- Support for Node.js 14.
+
+### Fixed
+- Fix cursor displayed position on activity ([#183]).
+- Checkboxes always have bullets in front of them ([#136]).
+
 ## [2.10.1] - 2020-04-06
 ### Fixed
 - Typescript error when entering certain strings for toolbar buttons ([#178]).
@@ -145,7 +152,9 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#183]: https://github.com/Ionaru/easy-markdown-editor/issues/183
 [#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
+[#136]: https://github.com/Ionaru/easy-markdown-editor/issues/136
 [#126]: https://github.com/Ionaru/easy-markdown-editor/issues/126
 [#99]: https://github.com/Ionaru/easy-markdown-editor/issues/99
 [#45]: https://github.com/Ionaru/easy-markdown-editor/issues/45
