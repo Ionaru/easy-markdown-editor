@@ -1654,6 +1654,11 @@ function EasyMDE(options) {
     if (options.autosave != undefined) {
         // Merging the Autosave timeFormat, with the given options
         options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
+
+        // Merging the Autosave text, with the given options and saving to statusTexts
+        if (options.autosave.text != undefined) {
+            options.statusTexts.autosave = options.autosave.text;
+        }
     }
 
     // Merging the toolbar title, with the given options
@@ -2389,12 +2394,12 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
     // Set up the built-in items
     var items = [];
-    var i, onUpdate, onCursorActivity, defaultValue, dataSet;
+    var i, onUpdate, onActivity, defaultValue, dataSet;
 
     for (i = 0; i < status.length; i++) {
         // Reset some values
         onUpdate = undefined;
-        onCursorActivity = undefined;
+        onActivity = undefined;
         defaultValue = undefined;
         dataSet = undefined;
 
@@ -2406,7 +2411,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 dataSet: status[i].dataSet,
                 defaultValue: status[i].defaultValue,
                 onUpdate: status[i].onUpdate,
-                onCursorActivity: status[i].onCursorActivity,
+                onActivity: status[i].onActivity,
             });
         } else {
             var name = status[i];
@@ -2437,7 +2442,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                     var pos = cm.getCursor();
                     el.innerHTML = pos.line + ':' + pos.ch;
                 };
-                onCursorActivity = function (el) {
+                onActivity = function (el) {
                     var pos = cm.getCursor();
                     
                     el.innerHTML = pos.line + ':' + pos.ch;
@@ -2459,7 +2464,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 dataSet: dataSet,
                 defaultValue: defaultValue,
                 onUpdate: onUpdate,
-                onCursorActivity: onCursorActivity,
+                onActivity: onActivity,
             });
         }
     }
@@ -2503,12 +2508,12 @@ EasyMDE.prototype.createStatusbar = function (status) {
         }
 
 
-        // Ensure the onCursorActivity is a function
-        if (typeof item.onCursorActivity === 'function') {
-            // Create a closure around the span of the current action, then execute the onCursorActivity handler
+        // Ensure the onActivity is a function
+        if (typeof item.onActivity === 'function') {
+            // Create a closure around the span of the current action, then execute the onActivity handler
             this.codemirror.on('cursorActivity', (function (el, item) {
                     return function () {
-                        item.onCursorActivity(el);
+                        item.onActivity(el);
                     };
             }(el, item)));
         }
