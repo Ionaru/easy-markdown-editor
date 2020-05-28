@@ -32,6 +32,7 @@
 }
 
 .CodeMirror-sided--no-fullscreen {
+    border-right: none!important;
     position: relative;
     float: left;
 }
@@ -256,7 +257,6 @@
     height: auto;
     position: static;
     min-height: calc(300px + 22px);
-    width: calc(50% - 0px);
     float: right;
 }
 
