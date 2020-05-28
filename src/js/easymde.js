@@ -858,6 +858,18 @@ function toggleSideBySide(editor) {
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
     if (/editor-preview-active-side/.test(preview.className)) {
+        if (cm.getOption('sideBySideFullscreen')) {
+            cm.setOption('sideBySideFullscreen', false);
+            wrapper.className = wrapper.className.replace(
+                /\s*CodeMirror-sided--no-fullscreen\s*/g, ''
+            );
+            preview.className = preview.className.replace(
+                /\s*editor-preview-active-side--no-fullscreen\s*/g, ''
+            );
+            editor.gui.statusbar.className = editor.gui.statusbar.className.replace(
+                /\s*sided--no-fullscreen\s*/g, ''
+            );
+        }
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
         );
@@ -868,8 +880,16 @@ function toggleSideBySide(editor) {
         // give some time for the transition from editor.css to fire and the view to slide from right to left,
         // instead of just appearing.
         setTimeout(function () {
-            if (!cm.getOption('fullScreen'))
-                toggleFullScreen(editor);
+            if (!cm.getOption('fullScreen')) {
+                if (editor.options.sideBySideFullscreen === false) {
+                    cm.setOption('sideBySideFullscreen', true);
+                    wrapper.className += ' CodeMirror-sided--no-fullscreen';
+                    preview.className += ' editor-preview-active-side--no-fullscreen';
+                    editor.gui.statusbar.className += ' sided--no-fullscreen';
+                } else {
+                    toggleFullScreen(editor);
+                }
+            }
             preview.className += ' editor-preview-active-side';
         }, 1);
         if (toolbarButton) toolbarButton.className += ' active';

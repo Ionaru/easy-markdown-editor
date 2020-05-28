@@ -31,6 +31,11 @@
     width: 50% !important;
 }
 
+.CodeMirror-sided--no-fullscreen {
+    position: relative;
+    float: left;
+}
+
 .CodeMirror-placeholder {
     opacity: .5;
 }
@@ -195,6 +200,10 @@
     text-align: right;
 }
 
+.editor-statusbar.sided--no-fullscreen {
+    clear: both;
+}
+
 .editor-statusbar span {
     display: inline-block;
     min-width: 4em;
@@ -241,6 +250,14 @@
 
 .editor-preview-active-side {
     display: block
+}
+
+.editor-preview-active-side--no-fullscreen {
+    height: auto;
+    position: static;
+    min-height: calc(300px + 22px);
+    width: calc(50% - 0px);
+    float: right;
 }
 
 .editor-preview-active {
