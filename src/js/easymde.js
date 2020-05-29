@@ -2261,7 +2261,7 @@ EasyMDE.prototype.createSideBySide = function () {
         var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
         var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
         var minHeight = optionsMinHeight + paddingTop * 2 + borderTopWidth * 2;
-        preview.style.minHeight =  minHeight.toString() + 'px';
+        preview.style.minHeight = minHeight.toString() + 'px';
 
         if (this.options.previewClass) {
 
