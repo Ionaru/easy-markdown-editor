@@ -2257,6 +2257,11 @@ EasyMDE.prototype.createSideBySide = function () {
     if (!preview || !/editor-preview-side/.test(preview.className)) {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
+        var optionsMinHeight = parseInt(this.options.minHeight);
+        var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
+        var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
+        var minHeight = optionsMinHeight + paddingTop * 2 + borderTopWidth * 2;
+        preview.style.minHeight =  minHeight.toString() + 'px';
 
         if (this.options.previewClass) {
 

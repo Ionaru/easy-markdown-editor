@@ -256,7 +256,6 @@
 .editor-preview-active-side--no-fullscreen {
     height: auto;
     position: static;
-    min-height: calc(300px + 22px);
     float: right;
 }
 
