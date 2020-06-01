@@ -970,6 +970,12 @@ function togglePreview(editor) {
     var toolbar_div = editor.toolbar_div;
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
+
+    // Turn off side by side if needed
+    var sidebyside = cm.getWrapperElement().nextSibling;
+    if (/editor-preview-active-side/.test(sidebyside.className))
+        toggleSideBySide(editor);
+
     if (!preview || !/editor-preview-full/.test(preview.className)) {
 
         preview = document.createElement('div');
@@ -989,6 +995,7 @@ function togglePreview(editor) {
 
         wrapper.appendChild(preview);
     }
+
     if (/editor-preview-active/.test(preview.className)) {
         preview.className = preview.className.replace(
             /\s*editor-preview-active\s*/g, ''
@@ -1011,10 +1018,6 @@ function togglePreview(editor) {
     }
     preview.innerHTML = editor.options.previewRender(editor.value(), preview);
 
-    // Turn off side by side if needed
-    var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
-        toggleSideBySide(editor);
 }
 
 function _replaceSelection(cm, active, startEnd, url) {
