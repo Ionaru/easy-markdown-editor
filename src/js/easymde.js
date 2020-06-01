@@ -2312,10 +2312,6 @@ EasyMDE.prototype.createSideBySide = function () {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
 
-        if (this.options.maxHeight !== false) {
-            this.setPreviewMaxHeight();
-        }
-
         if (this.options.previewClass) {
 
             if (Array.isArray(this.options.previewClass)) {
@@ -2329,6 +2325,10 @@ EasyMDE.prototype.createSideBySide = function () {
         }
 
         wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
+    }
+
+    if (this.options.maxHeight !== false) {
+        this.setPreviewMaxHeight();
     }
 
     if (this.options.syncSideBySidePreviewScroll === false) return preview;
