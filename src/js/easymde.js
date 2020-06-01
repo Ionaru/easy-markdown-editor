@@ -332,6 +332,29 @@ function toggleFullScreen(editor) {
     }
 
 
+    // Hide side by side if needed
+    var sidebyside = cm.getWrapperElement().nextSibling;
+    if (/editor-preview-active-side/.test(sidebyside.className))
+        toggleSideBySide(editor);
+
+    if (editor.options.onToggleFullScreen) {
+        editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
+    }
+
+    // Remove or set maxHeight
+    if (cm.getOption('fullScreen')) {
+        if (editor.options.maxHeight !== false) {
+            cm.getScrollerElement().style.removeProperty('height');
+            sidebyside.style.removeProperty('height');
+        }
+    } else {
+        if (editor.options.maxHeight !== false) {
+            cm.getScrollerElement().style.height = editor.options.maxHeight;
+            editor.setPreviewMaxHeight();
+        }
+    }
+
+
     // Update toolbar class
     if (!/fullscreen/.test(editor.toolbar_div.className)) {
         editor.toolbar_div.className += ' fullscreen';
@@ -349,16 +372,6 @@ function toggleFullScreen(editor) {
         } else {
             toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
         }
-    }
-
-
-    // Hide side by side if needed
-    var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
-        toggleSideBySide(editor);
-
-    if (editor.options.onToggleFullScreen) {
-        editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
     }
 }
 
@@ -857,18 +870,31 @@ function toggleSideBySide(editor) {
     var preview = wrapper.nextSibling;
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
+
+    var noFullscreenItems = [
+        wrapper.parentNode, // easyMDEContainer
+        editor.gui.toolbar,
+        wrapper,
+        preview,
+        editor.gui.statusbar,
+    ];
+
+    function addNoFullscreenClass(el) {
+        el.className += ' sided--no-fullscreen';
+    }
+
+    function removeNoFullscreenClass(el) {
+        el.className = el.className.replace(
+            /\s*sided--no-fullscreen\s*/g, ''
+        );
+    }
+
     if (/editor-preview-active-side/.test(preview.className)) {
         if (cm.getOption('sideBySideFullscreen')) {
             cm.setOption('sideBySideFullscreen', false);
-            wrapper.className = wrapper.className.replace(
-                /\s*CodeMirror-sided--no-fullscreen\s*/g, ''
-            );
-            preview.className = preview.className.replace(
-                /\s*editor-preview-active-side--no-fullscreen\s*/g, ''
-            );
-            editor.gui.statusbar.className = editor.gui.statusbar.className.replace(
-                /\s*sided--no-fullscreen\s*/g, ''
-            );
+            noFullscreenItems.forEach(function (el) {
+                removeNoFullscreenClass(el);
+            });
         }
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
@@ -883,9 +909,9 @@ function toggleSideBySide(editor) {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
                     cm.setOption('sideBySideFullscreen', true);
-                    wrapper.className += ' CodeMirror-sided--no-fullscreen';
-                    preview.className += ' editor-preview-active-side--no-fullscreen';
-                    editor.gui.statusbar.className += ' sided--no-fullscreen';
+                    noFullscreenItems.forEach(function(el) {
+                        addNoFullscreenClass(el);
+                    });
                 } else {
                     toggleFullScreen(editor);
                 }
@@ -1692,6 +1718,7 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.minHeight = options.minHeight || '300px';
+    options.maxHeight = options.maxHeight || false;
 
     options.errorCallback = options.errorCallback || function (errorMessage) {
         alert(errorMessage);
@@ -1979,6 +2006,10 @@ EasyMDE.prototype.render = function (el) {
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
 
+    if (options.maxHeight !== false) {
+        this.codemirror.getScrollerElement().style.height = options.maxHeight;
+    }
+
     if (options.forceSync === true) {
         var cm = this.codemirror;
         cm.on('change', function () {
@@ -1987,6 +2018,14 @@ EasyMDE.prototype.render = function (el) {
     }
 
     this.gui = {};
+
+    // Wrap Codemirror with container before create toolbar, etc,
+    // to use with sideBySideFullscreen option.
+    var easyMDEContainer = document.createElement('div');
+    easyMDEContainer.classList.add('EasyMDEContainer');
+    var cmWrapper = this.codemirror.getWrapperElement();
+    cmWrapper.parentNode.insertBefore(easyMDEContainer, cmWrapper);
+    easyMDEContainer.appendChild(cmWrapper);
 
     if (options.toolbar !== false) {
         this.gui.toolbar = this.createToolbar();
@@ -2249,6 +2288,21 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
     imageUploadFunction(file, onSuccess, onError);
 };
 
+EasyMDE.prototype.setPreviewMaxHeight = function() {
+    var cm = this.codemirror;
+    var wrapper = cm.getWrapperElement();
+    var preview = wrapper.nextSibling;
+
+    // Calc preview max height
+    var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
+    var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
+    var optionsMaxHeight = parseInt(this.options.maxHeight);
+    var wrapperMaxHeight = optionsMaxHeight + paddingTop * 2 + borderTopWidth * 2;
+    var previewMaxHeight = wrapperMaxHeight.toString() + 'px';
+
+    preview.style.height =  previewMaxHeight;
+};
+
 EasyMDE.prototype.createSideBySide = function () {
     var cm = this.codemirror;
     var wrapper = cm.getWrapperElement();
@@ -2257,11 +2311,10 @@ EasyMDE.prototype.createSideBySide = function () {
     if (!preview || !/editor-preview-side/.test(preview.className)) {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
-        var optionsMinHeight = parseInt(this.options.minHeight);
-        var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
-        var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
-        var minHeight = optionsMinHeight + paddingTop * 2 + borderTopWidth * 2;
-        preview.style.minHeight = minHeight.toString() + 'px';
+
+        if (this.options.maxHeight !== false) {
+            this.setPreviewMaxHeight();
+        }
 
         if (this.options.previewClass) {
 
