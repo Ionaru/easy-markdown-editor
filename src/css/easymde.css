@@ -43,6 +43,7 @@
 
 .CodeMirror-sided.sided--no-fullscreen {
     border-right: none!important;
+    border-bottom-right-radius: 0px;
     position: relative;
     flex: 1 1 auto;
 }
