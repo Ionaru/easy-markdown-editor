@@ -890,8 +890,8 @@ function toggleSideBySide(editor) {
     }
 
     if (/editor-preview-active-side/.test(preview.className)) {
-        if (cm.getOption('sideBySideFullscreen')) {
-            cm.setOption('sideBySideFullscreen', false);
+        if (cm.getOption('sideBySideNoFullscreen')) {
+            cm.setOption('sideBySideNoFullscreen', false);
             noFullscreenItems.forEach(function (el) {
                 removeNoFullscreenClass(el);
             });
@@ -908,7 +908,7 @@ function toggleSideBySide(editor) {
         setTimeout(function () {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
-                    cm.setOption('sideBySideFullscreen', true);
+                    cm.setOption('sideBySideNoFullscreen', true);
                     noFullscreenItems.forEach(function(el) {
                         addNoFullscreenClass(el);
                     });
