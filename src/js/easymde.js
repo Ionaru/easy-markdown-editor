@@ -2291,7 +2291,7 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
     imageUploadFunction(file, onSuccess, onError);
 };
 
-EasyMDE.prototype.setPreviewMaxHeight = function() {
+EasyMDE.prototype.setPreviewMaxHeight = function () {
     var cm = this.codemirror;
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
