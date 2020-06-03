@@ -342,7 +342,7 @@ function toggleFullScreen(editor) {
     }
 
     // Remove or set maxHeight
-    if (editor.options.maxHeight !== false) {
+    if (typeof editor.options.maxHeight !== 'undefined') {
         if (cm.getOption('fullScreen')) {
             cm.getScrollerElement().style.removeProperty('height');
             sidebyside.style.removeProperty('height');
@@ -1719,7 +1719,7 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.minHeight = options.minHeight || '300px';
-    options.maxHeight = options.maxHeight || false;
+    options.maxHeight = options.maxHeight || undefined;
 
     options.errorCallback = options.errorCallback || function (errorMessage) {
         alert(errorMessage);
@@ -2007,7 +2007,7 @@ EasyMDE.prototype.render = function (el) {
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
 
-    if (options.maxHeight !== false) {
+    if (typeof options.maxHeight !== 'undefined') {
         this.codemirror.getScrollerElement().style.height = options.maxHeight;
     }
 
@@ -2328,7 +2328,7 @@ EasyMDE.prototype.createSideBySide = function () {
         wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
     }
 
-    if (this.options.maxHeight !== false) {
+    if (typeof this.options.maxHeight !== 'undefined') {
         this.setPreviewMaxHeight();
     }
 

@@ -172,7 +172,7 @@ declare namespace EasyMDE {
         insertTexts?: InsertTextOptions;
         lineWrapping?: boolean;
         minHeight?: string;
-        maxHeight?: boolean | string;
+        maxHeight?: string;
         parsingConfig?: ParsingOptions;
         placeholder?: string;
         previewClass?: string | ReadonlyArray<string>;
