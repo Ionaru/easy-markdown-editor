@@ -164,6 +164,7 @@ const editorImagesCustom = new EasyMDE({
 });
 
 new EasyMDE({
+    sideBySideFullscreen: true,
     autosave: {
         enabled: true,
         delay: 2000,
@@ -180,6 +181,7 @@ new EasyMDE({
 });
 
 new EasyMDE({
+    sideBySideFullscreen: false,
     toolbar: [
         'bold',
         'italic',

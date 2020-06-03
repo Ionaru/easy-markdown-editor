@@ -332,6 +332,29 @@ function toggleFullScreen(editor) {
     }
 
 
+    // Hide side by side if needed
+    var sidebyside = cm.getWrapperElement().nextSibling;
+    if (/editor-preview-active-side/.test(sidebyside.className))
+        toggleSideBySide(editor);
+
+    if (editor.options.onToggleFullScreen) {
+        editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
+    }
+
+    // Remove or set maxHeight
+    if (cm.getOption('fullScreen')) {
+        if (editor.options.maxHeight !== false) {
+            cm.getScrollerElement().style.removeProperty('height');
+            sidebyside.style.removeProperty('height');
+        }
+    } else {
+        if (editor.options.maxHeight !== false) {
+            cm.getScrollerElement().style.height = editor.options.maxHeight;
+            editor.setPreviewMaxHeight();
+        }
+    }
+
+
     // Update toolbar class
     if (!/fullscreen/.test(editor.toolbar_div.className)) {
         editor.toolbar_div.className += ' fullscreen';
@@ -349,16 +372,6 @@ function toggleFullScreen(editor) {
         } else {
             toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
         }
-    }
-
-
-    // Hide side by side if needed
-    var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
-        toggleSideBySide(editor);
-
-    if (editor.options.onToggleFullScreen) {
-        editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
     }
 }
 
@@ -857,7 +870,32 @@ function toggleSideBySide(editor) {
     var preview = wrapper.nextSibling;
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
+
+    var noFullscreenItems = [
+        wrapper.parentNode, // easyMDEContainer
+        editor.gui.toolbar,
+        wrapper,
+        preview,
+        editor.gui.statusbar,
+    ];
+
+    function addNoFullscreenClass(el) {
+        el.className += ' sided--no-fullscreen';
+    }
+
+    function removeNoFullscreenClass(el) {
+        el.className = el.className.replace(
+            /\s*sided--no-fullscreen\s*/g, ''
+        );
+    }
+
     if (/editor-preview-active-side/.test(preview.className)) {
+        if (cm.getOption('sideBySideNoFullscreen')) {
+            cm.setOption('sideBySideNoFullscreen', false);
+            noFullscreenItems.forEach(function (el) {
+                removeNoFullscreenClass(el);
+            });
+        }
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
         );
@@ -868,8 +906,16 @@ function toggleSideBySide(editor) {
         // give some time for the transition from editor.css to fire and the view to slide from right to left,
         // instead of just appearing.
         setTimeout(function () {
-            if (!cm.getOption('fullScreen'))
-                toggleFullScreen(editor);
+            if (!cm.getOption('fullScreen')) {
+                if (editor.options.sideBySideFullscreen === false) {
+                    cm.setOption('sideBySideNoFullscreen', true);
+                    noFullscreenItems.forEach(function(el) {
+                        addNoFullscreenClass(el);
+                    });
+                } else {
+                    toggleFullScreen(editor);
+                }
+            }
             preview.className += ' editor-preview-active-side';
         }, 1);
         if (toolbarButton) toolbarButton.className += ' active';
@@ -924,6 +970,12 @@ function togglePreview(editor) {
     var toolbar_div = editor.toolbar_div;
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
+
+    // Turn off side by side if needed
+    var sidebyside = cm.getWrapperElement().nextSibling;
+    if (/editor-preview-active-side/.test(sidebyside.className))
+        toggleSideBySide(editor);
+
     if (!preview || !/editor-preview-full/.test(preview.className)) {
 
         preview = document.createElement('div');
@@ -943,6 +995,7 @@ function togglePreview(editor) {
 
         wrapper.appendChild(preview);
     }
+
     if (/editor-preview-active/.test(preview.className)) {
         preview.className = preview.className.replace(
             /\s*editor-preview-active\s*/g, ''
@@ -965,10 +1018,6 @@ function togglePreview(editor) {
     }
     preview.innerHTML = editor.options.previewRender(editor.value(), preview);
 
-    // Turn off side by side if needed
-    var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
-        toggleSideBySide(editor);
 }
 
 function _replaceSelection(cm, active, startEnd, url) {
@@ -1672,6 +1721,7 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.minHeight = options.minHeight || '300px';
+    options.maxHeight = options.maxHeight || false;
 
     options.errorCallback = options.errorCallback || function (errorMessage) {
         alert(errorMessage);
@@ -1959,6 +2009,10 @@ EasyMDE.prototype.render = function (el) {
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
 
+    if (options.maxHeight !== false) {
+        this.codemirror.getScrollerElement().style.height = options.maxHeight;
+    }
+
     if (options.forceSync === true) {
         var cm = this.codemirror;
         cm.on('change', function () {
@@ -1967,6 +2021,14 @@ EasyMDE.prototype.render = function (el) {
     }
 
     this.gui = {};
+
+    // Wrap Codemirror with container before create toolbar, etc,
+    // to use with sideBySideFullscreen option.
+    var easyMDEContainer = document.createElement('div');
+    easyMDEContainer.classList.add('EasyMDEContainer');
+    var cmWrapper = this.codemirror.getWrapperElement();
+    cmWrapper.parentNode.insertBefore(easyMDEContainer, cmWrapper);
+    easyMDEContainer.appendChild(cmWrapper);
 
     if (options.toolbar !== false) {
         this.gui.toolbar = this.createToolbar();
@@ -2229,6 +2291,21 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
     imageUploadFunction(file, onSuccess, onError);
 };
 
+EasyMDE.prototype.setPreviewMaxHeight = function () {
+    var cm = this.codemirror;
+    var wrapper = cm.getWrapperElement();
+    var preview = wrapper.nextSibling;
+
+    // Calc preview max height
+    var paddingTop = parseInt(window.getComputedStyle(wrapper).paddingTop);
+    var borderTopWidth = parseInt(window.getComputedStyle(wrapper).borderTopWidth);
+    var optionsMaxHeight = parseInt(this.options.maxHeight);
+    var wrapperMaxHeight = optionsMaxHeight + paddingTop * 2 + borderTopWidth * 2;
+    var previewMaxHeight = wrapperMaxHeight.toString() + 'px';
+
+    preview.style.height =  previewMaxHeight;
+};
+
 EasyMDE.prototype.createSideBySide = function () {
     var cm = this.codemirror;
     var wrapper = cm.getWrapperElement();
@@ -2251,6 +2328,10 @@ EasyMDE.prototype.createSideBySide = function () {
         }
 
         wrapper.parentNode.insertBefore(preview, wrapper.nextSibling);
+    }
+
+    if (this.options.maxHeight !== false) {
+        this.setPreviewMaxHeight();
     }
 
     if (this.options.syncSideBySidePreviewScroll === false) return preview;

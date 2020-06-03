@@ -1,3 +1,13 @@
+.EasyMDEContainer {
+    display: block;
+}
+
+.EasyMDEContainer.sided--no-fullscreen {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
 .CodeMirror {
     box-sizing: border-box;
     height: auto;
@@ -29,6 +39,13 @@
 
 .CodeMirror-sided {
     width: 50% !important;
+}
+
+.CodeMirror-sided.sided--no-fullscreen {
+    border-right: none!important;
+    border-bottom-right-radius: 0px;
+    position: relative;
+    flex: 1 1 auto;
 }
 
 .CodeMirror-placeholder {
@@ -116,6 +133,10 @@
     padding: 0;
 }
 
+.editor-toolbar.sided--no-fullscreen {
+    width: 100%;
+}
+
 .editor-toolbar button, .editor-toolbar .easymde-dropdown {
     background: transparent;
     display: inline-block;
@@ -195,6 +216,10 @@
     text-align: right;
 }
 
+.editor-statusbar.sided--no-fullscreen {
+    width: 100%;
+}
+
 .editor-statusbar span {
     display: inline-block;
     min-width: 4em;
@@ -241,6 +266,12 @@
 
 .editor-preview-active-side {
     display: block
+}
+
+.editor-preview-active-side.sided--no-fullscreen {
+    flex: 1 1 auto;
+    height: auto;
+    position: static;
 }
 
 .editor-preview-active {

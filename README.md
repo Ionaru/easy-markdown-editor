@@ -186,6 +186,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.
 - **inputStyle**: `textarea` or `contenteditable`. Defaults to `textarea` for desktop and `contenteditable` for mobile. `contenteditable` option is necessary to enable nativeSpellcheck.
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
+- **sideBySideFullscreen**: If set to `false`, allows side-by-side editing without going into fullscreen. Defaults to `true`.
 - **status**: If set to `false`, hide the status bar. Defaults to the array of built-in status bar items.
   - Optionally, you can set an array of status bar items to include, and in what order. You can even define your own custom status bar items.
 - **styleSelectedText**: If set to `false`, remove the `CodeMirror-selectedtext` class from selected lines. Defaults to `true`.
@@ -288,6 +289,7 @@ var editor = new EasyMDE({
 		},
 	}], // Another optional usage, with a custom status bar item that counts keystrokes
 	styleSelectedText: false,
+	sideBySideFullscreen: false,
 	syncSideBySidePreviewScroll: false,
 	tabSize: 4,
 	toolbar: false,
