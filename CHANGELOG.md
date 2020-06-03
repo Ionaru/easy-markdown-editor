@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Support for Node.js 14.
+- Preview without fullscreen (Thanks to [@nick-denry], [#196]).
 
 ### Fixed
 - Fix cursor displayed position on activity ([#183]).
@@ -168,6 +169,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#196]: https://github.com/Ionaru/easy-markdown-editor/pull/196
 [#175]: https://github.com/Ionaru/easy-markdown-editor/pull/175
 [#173]: https://github.com/Ionaru/easy-markdown-editor/pull/173
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
@@ -192,6 +194,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@nick-denry]: https://github.com/nick-denry
 [@StefKors]: https://github.com/StefKors
 [@felipefdl]: https://github.com/felipefdl
 [@A-312]: https://github.com/A-312
