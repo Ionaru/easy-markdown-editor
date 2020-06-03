@@ -183,6 +183,7 @@ declare namespace EasyMDE {
         spellChecker?: boolean;
         inputStyle?: 'textarea' | 'contenteditable';
         nativeSpellcheck?: boolean;
+        sideBySideFullscreen?: boolean;
         status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;
