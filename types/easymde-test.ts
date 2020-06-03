@@ -182,6 +182,7 @@ new EasyMDE({
 
 new EasyMDE({
     sideBySideFullscreen: false,
+    maxHeight: '500px',
     toolbar: [
         'bold',
         'italic',
