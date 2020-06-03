@@ -342,13 +342,11 @@ function toggleFullScreen(editor) {
     }
 
     // Remove or set maxHeight
-    if (cm.getOption('fullScreen')) {
-        if (editor.options.maxHeight !== false) {
+    if (editor.options.maxHeight !== false) {
+        if (cm.getOption('fullScreen')) {
             cm.getScrollerElement().style.removeProperty('height');
             sidebyside.style.removeProperty('height');
-        }
-    } else {
-        if (editor.options.maxHeight !== false) {
+        } else {
             cm.getScrollerElement().style.height = editor.options.maxHeight;
             editor.setPreviewMaxHeight();
         }
