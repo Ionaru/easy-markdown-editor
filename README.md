@@ -289,7 +289,7 @@ var editor = new EasyMDE({
 		},
 	}], // Another optional usage, with a custom status bar item that counts keystrokes
 	styleSelectedText: false,
-    sideBySideFullscreen: false,
+	sideBySideFullscreen: false,
 	syncSideBySidePreviewScroll: false,
 	tabSize: 4,
 	toolbar: false,
