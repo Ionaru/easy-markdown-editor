@@ -2037,7 +2037,8 @@ EasyMDE.prototype.render = function (el) {
     if (options.autosave != undefined && options.autosave.enabled === true) {
         this.autosave(); // use to load localstorage content
         this.codemirror.on('change', function () {
-            setTimeout(function () {
+            clearTimeout(self._autosave_timeout);
+            self._autosave_timeout = setTimeout(function () {
                 self.autosave();
             }, self.options.autosave.submit_delay || self.options.autosave.delay || 1000);
         });
@@ -2072,6 +2073,7 @@ function isLocalStorageAvailable() {
 }
 
 EasyMDE.prototype.autosave = function () {
+    console.log('save');
     if (isLocalStorageAvailable()) {
         var easyMDE = this;
 
