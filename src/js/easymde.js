@@ -1886,8 +1886,12 @@ EasyMDE.prototype.markdown = function (text) {
 
             /* Check if HLJS loaded */
             if (hljs) {
-                markedOptions.highlight = function (code) {
+                markedOptions.highlight = function (code, language) {
+                    if (language && hljs.getLanguage(language)) {
+                      return hljs.highlight(language, code).value;
+                    } else {
                     return hljs.highlightAuto(code).value;
+                    }
                 };
             }
         }
