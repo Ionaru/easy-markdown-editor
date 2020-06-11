@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Fix cursor displayed position on activity ([#183]).
 - Checkboxes always have bullets in front of them ([#136]).
+- Save the text only when modifying the content of the easymde instance (Thanks to [@firm1], [#181]).
 
 ## [2.10.1] - 2020-04-06
 ### Fixed
