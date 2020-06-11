@@ -2077,7 +2077,6 @@ function isLocalStorageAvailable() {
 }
 
 EasyMDE.prototype.autosave = function () {
-    console.log('save');
     if (isLocalStorageAvailable()) {
         var easyMDE = this;
 
