@@ -172,6 +172,7 @@ declare namespace EasyMDE {
         insertTexts?: InsertTextOptions;
         lineWrapping?: boolean;
         minHeight?: string;
+        maxHeight?: string;
         parsingConfig?: ParsingOptions;
         placeholder?: string;
         previewClass?: string | ReadonlyArray<string>;
@@ -183,6 +184,7 @@ declare namespace EasyMDE {
         spellChecker?: boolean;
         inputStyle?: 'textarea' | 'contenteditable';
         nativeSpellcheck?: boolean;
+        sideBySideFullscreen?: boolean;
         status?: boolean | ReadonlyArray<string | StatusBarItem>;
         styleSelectedText?: boolean;
         tabSize?: number;

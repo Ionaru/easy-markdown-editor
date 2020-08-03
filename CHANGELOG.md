@@ -4,13 +4,16 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!--## [Unreleased]-->
+## [2.11.0] - 2020-07-16
 ### Added
 - Support for Node.js 14.
+- Preview without fullscreen (Thanks to [@nick-denry], [#196]).
 
 ### Fixed
-- Fix cursor displayed position on activity ([#183]).
+- Fix cursor displayed position on activity (Thanks to [@firm1], [#184]).
 - Checkboxes always have bullets in front of them ([#136]).
+- Save the text only when modifying the content of the easymde instance (Thanks to [@firm1], [#181]).
 
 ## [2.10.1] - 2020-04-06
 ### Fixed
@@ -152,7 +155,6 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
-[#183]: https://github.com/Ionaru/easy-markdown-editor/issues/183
 [#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
 [#136]: https://github.com/Ionaru/easy-markdown-editor/issues/136
 [#126]: https://github.com/Ionaru/easy-markdown-editor/issues/126
@@ -168,6 +170,9 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#196]: https://github.com/Ionaru/easy-markdown-editor/pull/196
+[#184]: https://github.com/Ionaru/easy-markdown-editor/pull/184
+[#181]: https://github.com/Ionaru/easy-markdown-editor/pull/181
 [#175]: https://github.com/Ionaru/easy-markdown-editor/pull/175
 [#173]: https://github.com/Ionaru/easy-markdown-editor/pull/173
 [#170]: https://github.com/Ionaru/easy-markdown-editor/pull/170
@@ -192,6 +197,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@nick-denry]: https://github.com/nick-denry
 [@StefKors]: https://github.com/StefKors
 [@felipefdl]: https://github.com/felipefdl
 [@A-312]: https://github.com/A-312
@@ -217,7 +223,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.1...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.11.0...HEAD
+[2.11.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.1...2.11.0
 [2.10.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.0...2.10.1
 [2.10.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.9.0...2.10.0
 [2.9.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.8.0...2.9.0

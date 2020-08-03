@@ -140,6 +140,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **lineWrapping**: If set to `false`, disable line wrapping. Defaults to `true`.
 - **minHeight**: Sets the minimum height for the composition area, before it starts auto-growing. Should be a string containing a valid CSS value like `"500px"`. Defaults to `"300px"`.
 - **markdownUrl**: Customize url for guide.
+- **maxHeight**: Sets fixed height for the composition area. `minHeight` option will be ignored. Should be a string containing a valid CSS value like `"500px"`. Defaults to `undefined`.
 - **onToggleFullScreen**: A function that gets called when the editor's full screen mode is toggled. The function will be passed a boolean as parameter, `true` when the editor is currently going into full screen mode, or `false`.
 - **parsingConfig**: Adjust settings for parsing the Markdown during editing (not previewing).
   - **allowAtxHeaderWithoutSpace**: If set to `true`, will render headers without a space after the `#`. Defaults to `false`.
@@ -186,6 +187,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.
 - **inputStyle**: `textarea` or `contenteditable`. Defaults to `textarea` for desktop and `contenteditable` for mobile. `contenteditable` option is necessary to enable nativeSpellcheck.
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
+- **sideBySideFullscreen**: If set to `false`, allows side-by-side editing without going into fullscreen. Defaults to `true`.
 - **status**: If set to `false`, hide the status bar. Defaults to the array of built-in status bar items.
   - Optionally, you can set an array of status bar items to include, and in what order. You can even define your own custom status bar items.
 - **statusTexts**: Customize the text used to status bar.
@@ -245,10 +247,10 @@ var editor = new EasyMDE({
 		underscoresBreakWords: true,
 	},
 	placeholder: "Type here...",
-	
+
 	previewClass: "my-custom-styling",
 	previewClass: ["my-custom-styling", "more-custom-styling"],
-	
+
 	previewRender: function(plainText) {
 		return customMarkdownParser(plainText); // Returns HTML from a custom parser
 	},
@@ -295,6 +297,7 @@ var editor = new EasyMDE({
 		autosave: "Autosaved: ",
 	},
 	styleSelectedText: false,
+	sideBySideFullscreen: false,
 	syncSideBySidePreviewScroll: false,
 	tabSize: 4,
 	toolbar: false,
