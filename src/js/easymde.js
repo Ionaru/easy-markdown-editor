@@ -1721,7 +1721,8 @@ function EasyMDE(options) {
     options.maxHeight = options.maxHeight || undefined;
 
     if (typeof options.maxHeight !== 'undefined') {
-        options.minHeight = options.maxHeight; // Min and max height are equal if maxHeight is set
+        // Min and max height are equal if maxHeight is set
+        options.minHeight = options.maxHeight;
     } else {
         options.minHeight = options.minHeight || '300px';
     }
