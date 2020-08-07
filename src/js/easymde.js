@@ -2743,6 +2743,7 @@ EasyMDE.prototype.getState = function () {
 EasyMDE.prototype.toTextArea = function () {
     var cm = this.codemirror;
     var wrapper = cm.getWrapperElement();
+    var easyMDEContainer = wrapper.parentNode;
 
     if (wrapper.parentNode) {
         if (this.gui.toolbar) {
@@ -2756,6 +2757,10 @@ EasyMDE.prototype.toTextArea = function () {
         }
     }
 
+    // Unwrap easyMDEcontainer before codemirror toTextArea() call
+    easyMDEContainer.parentNode.insertBefore(wrapper, easyMDEContainer);
+    easyMDEContainer.remove();
+    
     cm.toTextArea();
 
     if (this.autosaveTimeoutId) {
