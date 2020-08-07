@@ -1718,8 +1718,13 @@ function EasyMDE(options) {
     // Merging the shortcuts, with the given options
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
-    options.minHeight = options.minHeight || '300px';
     options.maxHeight = options.maxHeight || undefined;
+
+    if (typeof options.maxHeight !== 'undefined') {
+        options.minHeight = options.maxHeight; // Min and max height are equal if maxHeight is set
+    } else {
+        options.minHeight = options.minHeight || '300px';
+    }
 
     options.errorCallback = options.errorCallback || function (errorMessage) {
         alert(errorMessage);
