@@ -2287,7 +2287,7 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction,
             .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
     }
 
-    imageUploadFunction(file, onSuccess, onError);
+    imageUploadFunction.apply(this, [file, onSuccess, onError]);
 };
 
 EasyMDE.prototype.setPreviewMaxHeight = function () {
