@@ -2745,22 +2745,22 @@ EasyMDE.prototype.toTextArea = function () {
     var wrapper = cm.getWrapperElement();
     var easyMDEContainer = wrapper.parentNode;
 
-    if (wrapper.parentNode) {
+    if (easyMDEContainer) {
         if (this.gui.toolbar) {
-            wrapper.parentNode.removeChild(this.gui.toolbar);
+            easyMDEContainer.removeChild(this.gui.toolbar);
         }
         if (this.gui.statusbar) {
-            wrapper.parentNode.removeChild(this.gui.statusbar);
+            easyMDEContainer.removeChild(this.gui.statusbar);
         }
         if (this.gui.sideBySide) {
-            wrapper.parentNode.removeChild(this.gui.sideBySide);
+            easyMDEContainer.removeChild(this.gui.sideBySide);
         }
     }
 
     // Unwrap easyMDEcontainer before codemirror toTextArea() call
     easyMDEContainer.parentNode.insertBefore(wrapper, easyMDEContainer);
     easyMDEContainer.remove();
-    
+
     cm.toTextArea();
 
     if (this.autosaveTimeoutId) {
