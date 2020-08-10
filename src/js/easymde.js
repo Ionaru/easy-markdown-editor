@@ -1849,6 +1849,10 @@ EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunctio
  * @param content {string} the new content of the item to write in the status bar.
  */
 EasyMDE.prototype.updateStatusBar = function (itemName, content) {
+    if (!this.gui.statusbar) {
+        return;
+    }
+
     var matchingClasses = this.gui.statusbar.getElementsByClassName(itemName);
     if (matchingClasses.length === 1) {
         this.gui.statusbar.getElementsByClassName(itemName)[0].textContent = content;
