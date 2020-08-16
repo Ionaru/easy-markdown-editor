@@ -241,6 +241,7 @@ declare class EasyMDE {
     static cleanBlock: (editor: EasyMDE) => void;
     static drawLink: (editor: EasyMDE) => void;
     static drawImage: (editor: EasyMDE) => void;
+    static drawUploadedImage: (editor: EasyMDE) => void;
     static drawTable: (editor: EasyMDE) => void;
     static drawHorizontalRule: (editor: EasyMDE) => void;
     static togglePreview: (editor: EasyMDE) => void;

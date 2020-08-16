@@ -2644,6 +2644,7 @@ EasyMDE.toggleOrderedList = toggleOrderedList;
 EasyMDE.cleanBlock = cleanBlock;
 EasyMDE.drawLink = drawLink;
 EasyMDE.drawImage = drawImage;
+EasyMDE.drawUploadedImage = drawUploadedImage;
 EasyMDE.drawTable = drawTable;
 EasyMDE.drawHorizontalRule = drawHorizontalRule;
 EasyMDE.undo = undo;
@@ -2699,6 +2700,9 @@ EasyMDE.prototype.drawLink = function () {
 };
 EasyMDE.prototype.drawImage = function () {
     drawImage(this);
+};
+EasyMDE.prototype.drawUploadedImage = function () {
+    drawUploadedImage(this);
 };
 EasyMDE.prototype.drawTable = function () {
     drawTable(this);
