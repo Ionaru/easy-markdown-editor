@@ -2049,8 +2049,7 @@ EasyMDE.prototype.render = function (el) {
     if (options.status !== false) {
         this.gui.statusbar = this.createStatusbar();
     }
-    var autosaveEnabled = options.autosave != undefined && options.autosave.enabled === true;
-    if (autosaveEnabled) {
+    if (options.autosave != undefined && options.autosave.enabled === true) {
         this.autosave(); // use to load localstorage content
         this.codemirror.on('change', function () {
             clearTimeout(self._autosave_timeout);

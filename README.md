@@ -73,8 +73,6 @@ var easyMDE = new EasyMDE();
 </script>
 ```
 
-If you need to remove installed listeners (when editor not needed anymore), call `easyMDE.cleanup()`
-
 Alternatively you can select a specific TextArea, via Javascript:
 
 ```html
@@ -473,6 +471,8 @@ var easyMDE = new EasyMDE();
 easyMDE.toTextArea();
 easyMDE = null;
 ```
+
+If you need to remove installed listeners (when editor not needed anymore), call `easyMDE.cleanup()`
 
 
 ### Useful methods
