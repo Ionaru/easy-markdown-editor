@@ -1969,13 +1969,14 @@ EasyMDE.prototype.render = function (el) {
         if (cm.getOption('fullScreen')) toggleFullScreen(self);
     };
 
-    document.addEventListener('keydown', function (e) {
+    this.documentOnKeyDown = function (e) {
         e = e || window.event;
 
         if (e.keyCode == 27) {
             if (self.codemirror.getOption('fullScreen')) toggleFullScreen(self);
         }
-    }, false);
+    };
+    document.addEventListener('keydown', this.documentOnKeyDown, false);
 
     var mode, backdrop;
     if (options.spellChecker !== false) {
@@ -2057,17 +2058,70 @@ EasyMDE.prototype.render = function (el) {
             }, self.options.autosave.submit_delay || self.options.autosave.delay || 1000);
         });
     }
+    
+
+    function handleImages() {
+        if (options.previewImagesInEditor === false) {
+            return;
+        }
+        function calcHeight(naturalWidth, naturalHeight) {
+            var height;
+            var viewportWidth = window.getComputedStyle(document.querySelector('.CodeMirror-sizer')).width.replace('px', '');
+            if (naturalWidth < viewportWidth) {
+                height = naturalHeight + 'px';
+            } else {
+                height = (naturalHeight / naturalWidth * 100) + '%';
+            }
+            return height;
+        }
+        easyMDEContainer.querySelectorAll('.cm-formatting-image').forEach(function(e) {
+            var parentEl =  e.parentElement;
+            if (!parentEl.hasAttribute('data-img-src')) {
+                var srcAttr = parentEl.innerText.match('\\((.*)\\)'); // might require better parsing according to markdown spec
+                if (srcAttr && srcAttr.length >= 2) {
+                    var img = document.createElement('img');
+                    img.onload = function() {
+                        parentEl.setAttribute('data-img-src', srcAttr[1]);
+                        parentEl.setAttribute('data-img-width', img.naturalWidth);
+                        parentEl.setAttribute('data-img-height', img.naturalHeight);
+                        parentEl.setAttribute('style', '--bg-image:url('+srcAttr[1]+');--width:'+img.naturalWidth+'px;--height:'+calcHeight(img.naturalWidth, img.naturalHeight));
+                    };
+                    img.src = srcAttr[1];
+                }
+            } else {
+                // handle resizes case
+                var src = parentEl.getAttribute('data-img-src');
+                var naturalWidth = +parentEl.getAttribute('data-img-width');
+                var naturalHeight = +parentEl.getAttribute('data-img-height');
+                parentEl.setAttribute('style', '--bg-image:url('+src+');--width:'+naturalWidth+'px;--height:'+calcHeight(naturalWidth, naturalHeight));
+            }
+        });
+    }
+    this.codemirror.on('update', function () {
+        handleImages();
+    });
+
+    
+
+    this.onWindowResize = function() {
+        handleImages();
+    };
+
+    window.addEventListener('resize', this.onWindowResize, true);
 
     this.gui.sideBySide = this.createSideBySide();
-
     this._rendered = this.element;
-
 
     // Fixes CodeMirror bug (#344)
     var temp_cm = this.codemirror;
     setTimeout(function () {
         temp_cm.refresh();
     }.bind(temp_cm), 0);
+};
+
+EasyMDE.prototype.cleanup = function () {
+    window.removeEventListener(this.onWindowResize);
+    document.removeEventListener('keydown', this.documentOnKeyDown);
 };
 
 // Safari, in Private Browsing Mode, looks like it supports localStorage but all calls to setItem throw QuotaExceededError. We're going to detect this and set a variable accordingly.
