@@ -73,6 +73,8 @@ var easyMDE = new EasyMDE();
 </script>
 ```
 
+If you need to remove installed listeners (when editor not needed anymore), call `easyMDE.cleanup()`
+
 Alternatively you can select a specific TextArea, via Javascript:
 
 ```html
@@ -133,6 +135,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **hideIcons**: An array of icon names to hide. Can be used to hide specific icons shown by default without completely customizing the toolbar.
 - **indentWithTabs**: If set to `false`, indent using spaces instead of tabs. Defaults to `true`.
 - **initialValue**: If set, will customize the initial value of the editor.
+- **previewImagesInEditor**: - EasyMDE will show preview of images, `true` by default, use `false` to disable.
 - **insertTexts**: Customize how certain buttons that insert text behave. Takes an array with two elements. The first element will be the text inserted before the cursor or highlight, and the second element will be inserted after. For example, this is the default link value: `["[", "](http://)"]`.
   - horizontalRule
   - image

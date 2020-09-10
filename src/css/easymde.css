@@ -373,3 +373,16 @@
 .easymde-dropdown:focus .easymde-dropdown-content {
     display: block;
 }
+
+span[data-img-src]::before{
+    content: '';
+    background-image: var(--bg-image);
+    display: block;
+    max-height: 100%;
+    max-width: 100%;
+    background-size: contain;
+    height: 0;
+    padding-top: var(--height);
+    width: var(--width);
+    background-repeat: no-repeat;
+}
