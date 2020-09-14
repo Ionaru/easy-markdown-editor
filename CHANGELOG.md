@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Fixed
+- Corrected default size units from `b,Kb,Mb` to ` B, KB, MB` ([#239]).
+
 ## [2.11.0] - 2020-07-16
 ### Added
 - Support for Node.js 14.
@@ -155,6 +158,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#239]: https://github.com/Ionaru/easy-markdown-editor/issues/239
 [#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
 [#136]: https://github.com/Ionaru/easy-markdown-editor/issues/136
 [#126]: https://github.com/Ionaru/easy-markdown-editor/issues/126
