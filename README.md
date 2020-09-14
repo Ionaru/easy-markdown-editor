@@ -170,7 +170,7 @@ easyMDE.value('New input for **EasyMDE**');
     - **sbOnDrop**: Status message displayed when the user drops a file in the text area. Defaults to `Uploading images #images_names#`.
     - **sbProgress**: Status message displayed to show uploading progress. Defaults to `Uploading #file_name#: #progress#%`.
     - **sbOnUploaded**: Status message displayed when the image has been uploaded. Defaults to `Uploaded #image_name#`.
-    - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to `b,Kb,Mb`.
+    - **sizeUnits**: A comma-separated list of units used to display messages with human-readable file sizes. Defaults to ` B, KB, MB` (example: `218 KB`). You can use `B,KB,MB` instead if you prefer without whitespaces (`218KB`).
 - **errorMessages**: Errors displayed to the user, using the `errorCallback` option, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
     - **noFileGiven**: The server did not receive any file from the user. Defaults to `You must select a file.`.
     - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.

@@ -1296,10 +1296,12 @@ function _cleanBlock(cm) {
 }
 
 /**
- * Convert a number of bytes to a human-readable file size.
+ * Convert a number of bytes to a human-readable file size. If you desire
+ * to add a space between the value and the unit, you need to add this space
+ * to the given units.
  * @param bytes {integer} A number of bytes, as integer. Ex: 421137
- * @param units {number[]} An array of human-readable units, ie. ['b', 'Kb', 'Mb']
- * @returns string A human-readable file size. Ex: '412Kb'
+ * @param units {number[]} An array of human-readable units, ie. [' B', ' K', ' MB']
+ * @returns string A human-readable file size. Ex: '412 KB'
  */
 function humanFileSize(bytes, units) {
     if (Math.abs(bytes) < 1024) {
@@ -1585,7 +1587,7 @@ var imageTexts = {
     sbOnDrop: 'Uploading image #images_names#...',
     sbProgress: 'Uploading #file_name#: #progress#%',
     sbOnUploaded: 'Uploaded #image_name#',
-    sizeUnits: 'b,Kb,Mb',
+    sizeUnits: ' B, KB, MB',
 };
 
 /**
@@ -2058,7 +2060,7 @@ EasyMDE.prototype.render = function (el) {
             }, self.options.autosave.submit_delay || self.options.autosave.delay || 1000);
         });
     }
-    
+
 
     function handleImages() {
         if (options.previewImagesInEditor === false) {
@@ -2101,7 +2103,7 @@ EasyMDE.prototype.render = function (el) {
         handleImages();
     });
 
-    
+
 
     this.onWindowResize = function() {
         handleImages();
