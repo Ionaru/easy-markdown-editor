@@ -23,25 +23,27 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 
 ## Quick access
 
-- [Install EasyMDE](#install-easymde)
-- [How to use](#how-to-use)
-	- [Loading the editor](#loading-the-editor)
-	- [Editor functions](#editor-functions)
-- [Configuration](#configuration)
-	- [Options list](#options-list)
-	- [Options example](#options-example)
-	- [Toolbar icons](#toolbar-icons)
-	- [Toolbar customization](#toolbar-customization)
-	- [Keyboard shortcuts](#keyboard-shortcuts)
-- [Advanced use](#advanced-use)
-	- [Event handling](#event-handling)
-	- [Removing EasyMDE from text area](#removing-easymde-from-text-area)
-	- [Useful methods](#useful-methods)
-- [How it works](#how-it-works)
-- [SimpleMDE fork](#simplemde-fork)
-- [Hacking EasyMDE](#hacking-easymde)
-- [Contributing](#contributing)
-- [License](#license)
+- [EasyMDE - Markdown Editor](#easymde---markdown-editor)
+  - [Quick access](#quick-access)
+  - [Install EasyMDE](#install-easymde)
+  - [How to use](#how-to-use)
+    - [Loading the editor](#loading-the-editor)
+    - [Editor functions](#editor-functions)
+  - [Configuration](#configuration)
+    - [Options list](#options-list)
+    - [Options example](#options-example)
+    - [Toolbar icons](#toolbar-icons)
+    - [Toolbar customization](#toolbar-customization)
+    - [Keyboard shortcuts](#keyboard-shortcuts)
+  - [Advanced use](#advanced-use)
+    - [Event handling](#event-handling)
+    - [Removing EasyMDE from text area](#removing-easymde-from-text-area)
+    - [Useful methods](#useful-methods)
+  - [How it works](#how-it-works)
+  - [SimpleMDE fork](#simplemde-fork)
+  - [Hacking EasyMDE](#hacking-easymde)
+  - [Contributing](#contributing)
+  - [License](#license)
 
 
 ## Install EasyMDE
@@ -147,6 +149,9 @@ easyMDE.value('New input for **EasyMDE**');
   - **allowAtxHeaderWithoutSpace**: If set to `true`, will render headers without a space after the `#`. Defaults to `false`.
   - **strikethrough**: If set to `false`, will not process GFM strikethrough syntax. Defaults to `true`.
   - **underscoresBreakWords**: If set to `true`, let underscores be a delimiter for separating words. Defaults to `false`.
+- **overlayMode**: Pass a custom codemirror [overlay mode](https://codemirror.net/doc/manual.html#modeapi) to parse and style the Markdown during editing.
+  - **mode**: A codemirror mode object.
+  - **combine**: If set to `false`, will *replace* CSS classes returned by the default Markdown mode. Otherwise the classes returned by the custom mode will be combined with the classes returned by the default mode. Defaults to `true`. 
 - **placeholder**: If set, displays a custom placeholder message.
 - **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
