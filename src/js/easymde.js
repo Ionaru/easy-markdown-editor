@@ -1745,6 +1745,10 @@ function EasyMDE(options) {
     if (options.autosave != undefined && options.autosave.unique_id != undefined && options.autosave.unique_id != '')
         options.autosave.uniqueId = options.autosave.unique_id;
 
+    // If overlay mode is specified and combine is not provided, default it to true
+    if (options.overlayMode && options.overlayMode.combine === undefined) {
+      options.overlayMode.combine = true;
+    }
 
     // Update this options
     this.options = options;
@@ -1981,7 +1985,25 @@ EasyMDE.prototype.render = function (el) {
     document.addEventListener('keydown', this.documentOnKeyDown, false);
 
     var mode, backdrop;
-    if (options.spellChecker !== false) {
+
+    // CodeMirror overlay mode
+    if (options.overlayMode) {
+      CodeMirror.defineMode('overlay-mode', function(config) {
+        return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
+      });
+      
+      mode = 'overlay-mode';
+      backdrop = options.parsingConfig;
+      backdrop.gitHubSpice = false;
+
+      if (options.spellChecker !== false) {
+        backdrop.name = 'gfm';
+
+        CodeMirrorSpellChecker({
+          codeMirrorInstance: CodeMirror,
+        });
+
+      } else if (options.spellChecker !== false) {
         mode = 'spell-checker';
         backdrop = options.parsingConfig;
         backdrop.name = 'gfm';
@@ -1990,6 +2012,7 @@ EasyMDE.prototype.render = function (el) {
         CodeMirrorSpellChecker({
             codeMirrorInstance: CodeMirror,
         });
+      }
     } else {
         mode = options.parsingConfig;
         mode.name = 'gfm';

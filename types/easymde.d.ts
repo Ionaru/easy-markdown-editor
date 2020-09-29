@@ -159,6 +159,11 @@ declare namespace EasyMDE {
         importError?: string;
     }
 
+    interface OverlayModeOptions {
+      mode: CodeMirror.Mode<any>
+      combine?: boolean
+    }    
+
     interface Options {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
@@ -205,6 +210,8 @@ declare namespace EasyMDE {
 
         promptTexts?: PromptTexts;
         syncSideBySidePreviewScroll?: boolean;
+
+        overlayMode?: OverlayModeOptions
     }
 }
 
