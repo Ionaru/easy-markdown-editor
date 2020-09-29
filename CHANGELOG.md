@@ -4,13 +4,18 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
-
+<!--## [Unreleased]-->
+## [2.12.0] - 2020-09-29
 ### Added
-- `overlayMode` options to supply an additional codemirror mode ([#243]).
+- `this` context in imageUploadFunction (Thanks to [@JoshuaLicense], [#225]).
+- `previewImagesInEditor` option to display images in editor mode (Thanks to [@ivictbor], [#235]).
+- `overlayMode` options to supply an additional codemirror mode (Thanks to [@czynskee], [#244]).
 
 ### Fixed
 - Corrected default size units from `b,Kb,Mb` to ` B, KB, MB` ([#239]).
+- Max height less than min height (Thanks to [@nick-denry], [#222]).
+- toTextArea issue (Thanks to [@nick-denry], [#223]).
+- Error when updateStatusBar was called during image upload, but the status bar is disabled (Thanks to [@JoshuaLicense], [#224]).
 
 ## [2.11.0] - 2020-07-16
 ### Added
@@ -178,6 +183,12 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#244]: https://github.com/Ionaru/easy-markdown-editor/pull/244
+[#235]: https://github.com/Ionaru/easy-markdown-editor/pull/235
+[#225]: https://github.com/Ionaru/easy-markdown-editor/pull/225
+[#224]: https://github.com/Ionaru/easy-markdown-editor/pull/224
+[#223]: https://github.com/Ionaru/easy-markdown-editor/pull/223
+[#222]: https://github.com/Ionaru/easy-markdown-editor/pull/222
 [#196]: https://github.com/Ionaru/easy-markdown-editor/pull/196
 [#184]: https://github.com/Ionaru/easy-markdown-editor/pull/184
 [#181]: https://github.com/Ionaru/easy-markdown-editor/pull/181
@@ -205,6 +216,9 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@ivictbor]: https://github.com/ivictbor
+[@JoshuaLicense]: https://github.com/JoshuaLicense
+[@czynskee]: https://github.com/czynskee
 [@nick-denry]: https://github.com/nick-denry
 [@StefKors]: https://github.com/StefKors
 [@felipefdl]: https://github.com/felipefdl
@@ -231,7 +245,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.11.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.12.0...HEAD
+[2.12.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.11.0...2.12.0
 [2.11.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.1...2.11.0
 [2.10.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.10.0...2.10.1
 [2.10.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.9.0...2.10.0
