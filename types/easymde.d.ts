@@ -162,7 +162,7 @@ declare namespace EasyMDE {
     interface OverlayModeOptions {
       mode: CodeMirror.Mode<any>
       combine?: boolean
-    }    
+    }
 
     interface Options {
         autoDownloadFontAwesome?: boolean;
@@ -181,6 +181,7 @@ declare namespace EasyMDE {
         parsingConfig?: ParsingOptions;
         placeholder?: string;
         previewClass?: string | ReadonlyArray<string>;
+        previewImagesInEditor?: boolean;
         previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;

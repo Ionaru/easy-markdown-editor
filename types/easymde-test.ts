@@ -101,6 +101,7 @@ EasyMDE.toggleSideBySide(editor2);
 
 const editorImages = new EasyMDE({
     uploadImage: true,
+    previewImagesInEditor: false,
     imageAccept: 'image/png, image/bmp',
     imageCSRFToken: undefined,
     imageMaxSize: 10485760,
