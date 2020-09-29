@@ -96,6 +96,9 @@ const editor2 = new EasyMDE({
 
 editor2.clearAutosavedValue();
 
+EasyMDE.togglePreview(editor2);
+EasyMDE.toggleSideBySide(editor2);
+
 const editorImages = new EasyMDE({
     uploadImage: true,
     imageAccept: 'image/png, image/bmp',
