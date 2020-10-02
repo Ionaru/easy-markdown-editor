@@ -168,6 +168,7 @@ declare namespace EasyMDE {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
         autosave?: AutoSaveOptions;
+        autoRefresh?: boolean | { delay: number };
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
         forceSync?: boolean;

@@ -6,6 +6,7 @@ require('codemirror/addon/display/fullscreen.js');
 require('codemirror/mode/markdown/markdown.js');
 require('codemirror/addon/mode/overlay.js');
 require('codemirror/addon/display/placeholder.js');
+require('codemirror/addon/display/autorefresh.js');
 require('codemirror/addon/selection/mark-selection.js');
 require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
@@ -2043,6 +2044,7 @@ EasyMDE.prototype.render = function (el) {
         configureMouse: configureMouse,
         inputStyle: (options.inputStyle != undefined) ? options.inputStyle : isMobile() ? 'contenteditable' : 'textarea',
         spellcheck: (options.nativeSpellcheck != undefined) ? options.nativeSpellcheck : true,
+        autoRefresh: (options.autoRefresh != undefined) ? options.autoRefresh : false,
     });
 
     this.codemirror.getScrollerElement().style.minHeight = options.minHeight;
