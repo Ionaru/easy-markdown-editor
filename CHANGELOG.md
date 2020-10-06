@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Changed
+- Set `previewImagesInEditor` option to `false` by default ([#251]).
+
 ## [2.12.0] - 2020-09-29
 ### Added
 - `this` context in imageUploadFunction (Thanks to [@JoshuaLicense], [#225]).
@@ -167,6 +170,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#251]: https://github.com/Ionaru/easy-markdown-editor/issues/251
 [#239]: https://github.com/Ionaru/easy-markdown-editor/issues/239
 [#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
 [#136]: https://github.com/Ionaru/easy-markdown-editor/issues/136

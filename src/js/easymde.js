@@ -1991,7 +1991,7 @@ EasyMDE.prototype.render = function (el) {
       CodeMirror.defineMode('overlay-mode', function(config) {
         return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
       });
-      
+
       mode = 'overlay-mode';
       backdrop = options.parsingConfig;
       backdrop.gitHubSpice = false;
@@ -2084,11 +2084,11 @@ EasyMDE.prototype.render = function (el) {
         });
     }
 
-
     function handleImages() {
-        if (options.previewImagesInEditor === false) {
+        if (!options.previewImagesInEditor) {
             return;
         }
+
         function calcHeight(naturalWidth, naturalHeight) {
             var height;
             var viewportWidth = window.getComputedStyle(document.querySelector('.CodeMirror-sizer')).width.replace('px', '');
@@ -2125,8 +2125,6 @@ EasyMDE.prototype.render = function (el) {
     this.codemirror.on('update', function () {
         handleImages();
     });
-
-
 
     this.onWindowResize = function() {
         handleImages();
