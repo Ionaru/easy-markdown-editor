@@ -2105,7 +2105,7 @@ EasyMDE.prototype.render = function (el) {
     }
 
     function handleImages() {
-        if (options.previewImagesInEditor === false) {
+        if (!options.previewImagesInEditor) {
             return;
         }
 
