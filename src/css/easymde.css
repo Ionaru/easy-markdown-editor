@@ -227,11 +227,11 @@
 }
 
 .editor-statusbar .lines:before {
-    content: 'lines: '
+    content: attr(data-status-bar-before);
 }
 
 .editor-statusbar .words:before {
-    content: 'words: '
+    content: attr(data-status-bar-before);
 }
 
 .editor-statusbar .characters:before {
