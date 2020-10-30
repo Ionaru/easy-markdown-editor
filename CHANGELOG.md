@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - CodeMirror autorefresh plugin and autoRefresh option (Thanks to [@mbolli], [#249]).
 
+### Fixed
+- CSS scoping issues when the editor is used in combination with other CodeMirror instances ([#252]).
+
 ## [2.12.1] - 2020-10-06
 ### Changed
 - Set `previewImagesInEditor` option to `false` by default ([#251]).
@@ -174,6 +177,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#252]: https://github.com/Ionaru/easy-markdown-editor/issues/252
 [#251]: https://github.com/Ionaru/easy-markdown-editor/issues/251
 [#239]: https://github.com/Ionaru/easy-markdown-editor/issues/239
 [#178]: https://github.com/Ionaru/easy-markdown-editor/issues/178
