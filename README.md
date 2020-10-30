@@ -126,6 +126,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
   - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). Default `locale: en-US, format: hour:minute`.
   - **text**: Set text for autosave.
+- **autoRefresh**: Useful, when initializing the editor in a hidden DOM node. If set to `{ delay: 300 }`, it will check every 300 ms if the editor is visible and if positive, call CodeMirror's [`refresh()`](https://codemirror.net/doc/manual.html#refresh).
 - **blockStyles**: Customize how certain buttons that style blocks of text behave.
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
