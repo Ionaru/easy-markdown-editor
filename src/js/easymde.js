@@ -2863,4 +2863,6 @@ EasyMDE.prototype.toTextArea = function () {
     }
 };
 
+EasyMDE.CodeMirror = CodeMirror;
+
 module.exports = EasyMDE;
