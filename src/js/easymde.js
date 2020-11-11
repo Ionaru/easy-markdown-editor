@@ -2086,53 +2086,67 @@ EasyMDE.prototype.render = function (el) {
         });
     }
 
+    function calcHeight(naturalWidth, naturalHeight) {
+        var height;
+        var viewportWidth = window.getComputedStyle(document.querySelector('.CodeMirror-sizer')).width.replace('px', '');
+        if (naturalWidth < viewportWidth) {
+            height = naturalHeight + 'px';
+        } else {
+            height = (naturalHeight / naturalWidth * 100) + '%';
+        }
+        return height;
+    }
+
+    var _vm = this;
+
+
+    function assignImageBlockAttributes(parentEl, img) {
+        parentEl.setAttribute('data-img-src', img.url);
+        parentEl.setAttribute('style', '--bg-image:url('+img.url+');--width:'+img.naturalWidth+'px;--height:'+calcHeight(img.naturalWidth, img.naturalHeight));
+        _vm.codemirror.setSize();
+    }
+
     function handleImages() {
         if (!options.previewImagesInEditor) {
             return;
         }
 
-        function calcHeight(naturalWidth, naturalHeight) {
-            var height;
-            var viewportWidth = window.getComputedStyle(document.querySelector('.CodeMirror-sizer')).width.replace('px', '');
-            if (naturalWidth < viewportWidth) {
-                height = naturalHeight + 'px';
-            } else {
-                height = (naturalHeight / naturalWidth * 100) + '%';
-            }
-            return height;
-        }
-        easyMDEContainer.querySelectorAll('.cm-formatting-image').forEach(function(e) {
+        easyMDEContainer.querySelectorAll('.cm-image-marker').forEach(function(e) {
             var parentEl =  e.parentElement;
+            if (!parentEl.innerText.match(/^!\[.*?\]\(.*\)/g)) {
+                // if img pasted on the same line with other text, don't preview, preview only images on separate line
+                return;
+            }
             if (!parentEl.hasAttribute('data-img-src')) {
                 var srcAttr = parentEl.innerText.match('\\((.*)\\)'); // might require better parsing according to markdown spec
-                if (srcAttr && srcAttr.length >= 2) {
-                    var img = document.createElement('img');
-                    img.onload = function() {
-                        parentEl.setAttribute('data-img-src', srcAttr[1]);
-                        parentEl.setAttribute('data-img-width', img.naturalWidth);
-                        parentEl.setAttribute('data-img-height', img.naturalHeight);
-                        parentEl.setAttribute('style', '--bg-image:url('+srcAttr[1]+');--width:'+img.naturalWidth+'px;--height:'+calcHeight(img.naturalWidth, img.naturalHeight));
-                    };
-                    img.src = srcAttr[1];
+                if (!window.EMDEimagesCache) {
+                    window.EMDEimagesCache = {};
                 }
-            } else {
-                // handle resizes case
-                var src = parentEl.getAttribute('data-img-src');
-                var naturalWidth = +parentEl.getAttribute('data-img-width');
-                var naturalHeight = +parentEl.getAttribute('data-img-height');
-                parentEl.setAttribute('style', '--bg-image:url('+src+');--width:'+naturalWidth+'px;--height:'+calcHeight(naturalWidth, naturalHeight));
-            }
+
+                if (srcAttr && srcAttr.length >= 2) {
+                    var keySrc = srcAttr[1];
+
+                    if (! window.EMDEimagesCache[keySrc]) {
+                        var img = document.createElement('img');
+                        img.onload = function() {
+                            window.EMDEimagesCache[keySrc] = {
+                                naturalWidth: img.naturalWidth,
+                                naturalHeight: img.naturalHeight,
+                                url: keySrc,
+                            };
+                            assignImageBlockAttributes(parentEl, window.EMDEimagesCache[keySrc]);
+                        };
+                        img.src = keySrc;
+                    } else {
+                        assignImageBlockAttributes(parentEl, window.EMDEimagesCache[keySrc]);
+                    }
+                }
+            } 
         });
     }
     this.codemirror.on('update', function () {
         handleImages();
     });
-
-    this.onWindowResize = function() {
-        handleImages();
-    };
-
-    window.addEventListener('resize', this.onWindowResize, true);
 
     this.gui.sideBySide = this.createSideBySide();
     this._rendered = this.element;

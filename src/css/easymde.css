@@ -374,7 +374,7 @@
     display: block;
 }
 
-span[data-img-src]::before{
+span[data-img-src]::after{
     content: '';
     background-image: var(--bg-image);
     display: block;
