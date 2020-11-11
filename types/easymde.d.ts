@@ -176,6 +176,7 @@ declare namespace EasyMDE {
         indentWithTabs?: boolean;
         initialValue?: string;
         insertTexts?: InsertTextOptions;
+        lineNumbers?: boolean;
         lineWrapping?: boolean;
         minHeight?: string;
         maxHeight?: string;

@@ -2034,7 +2034,7 @@ EasyMDE.prototype.render = function (el) {
         tabSize: (options.tabSize != undefined) ? options.tabSize : 2,
         indentUnit: (options.tabSize != undefined) ? options.tabSize : 2,
         indentWithTabs: (options.indentWithTabs === false) ? false : true,
-        lineNumbers: false,
+        lineNumbers: (options.lineNumbers === true) ? true : false,
         autofocus: (options.autofocus === true) ? true : false,
         extraKeys: keyMaps,
         lineWrapping: (options.lineWrapping === false) ? false : true,

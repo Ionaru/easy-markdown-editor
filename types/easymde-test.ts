@@ -169,6 +169,7 @@ const editorImagesCustom = new EasyMDE({
 
 new EasyMDE({
     sideBySideFullscreen: true,
+    lineNumbers: false,
     autosave: {
         enabled: true,
         delay: 2000,
@@ -186,6 +187,7 @@ new EasyMDE({
 
 new EasyMDE({
     sideBySideFullscreen: false,
+    lineNumbers: true,
     maxHeight: '500px',
     toolbar: [
         'bold',

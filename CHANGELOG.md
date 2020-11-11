@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - CodeMirror autorefresh plugin and autoRefresh option (Thanks to [@mbolli], [#249]).
+- `lineNumbers` option to display line numbers in the editor (Thanks to [@nhymxu], [#267]).
 
 ### Fixed
 - CSS scoping issues when the editor is used in combination with other CodeMirror instances ([#252]).
@@ -195,6 +196,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#267]: https://github.com/Ionaru/easy-markdown-editor/pull/267
 [#249]: https://github.com/Ionaru/easy-markdown-editor/pull/249
 [#244]: https://github.com/Ionaru/easy-markdown-editor/pull/244
 [#235]: https://github.com/Ionaru/easy-markdown-editor/pull/235
@@ -229,6 +231,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@nhymxu]: https://github.com/nhymxu
 [@mbolli]: https://github.com/mbolli
 [@ivictbor]: https://github.com/ivictbor
 [@JoshuaLicense]: https://github.com/JoshuaLicense
