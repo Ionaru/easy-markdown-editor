@@ -142,6 +142,7 @@ easyMDE.value('New input for **EasyMDE**');
   - image
   - link
   - table
+- **lineNumbers**: If set to `true`, enables line numbers in the editor.
 - **lineWrapping**: If set to `false`, disable line wrapping. Defaults to `true`.
 - **minHeight**: Sets the minimum height for the composition area, before it starts auto-growing. Should be a string containing a valid CSS value like `"500px"`. Defaults to `"300px"`.
 - **maxHeight**: Sets fixed height for the composition area. `minHeight` option will be ignored. Should be a string containing a valid CSS value like `"500px"`. Defaults to `undefined`.
