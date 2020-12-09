@@ -883,9 +883,11 @@ function toggleSideBySide(editor) {
     }
 
     function removeNoFullscreenClass(el) {
-        el.className = el.className.replace(
-            /\s*sided--no-fullscreen\s*/g, ''
-        );
+        if (el != null) {
+            el.className = el.className.replace(
+                /\s*sided--no-fullscreen\s*/g, ''
+            );
+        }
     }
 
     if (/editor-preview-active-side/.test(preview.className)) {
@@ -909,9 +911,9 @@ function toggleSideBySide(editor) {
                 if (editor.options.sideBySideFullscreen === false) {
                     cm.setOption('sideBySideNoFullscreen', true);
                     noFullscreenItems.forEach(function(el) {
-                        if (el) {
+                        if (el != null) {
                             addNoFullscreenClass(el);
-                        };
+                        }
                     });
                 } else {
                     toggleFullScreen(editor);
