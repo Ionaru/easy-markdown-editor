@@ -909,7 +909,9 @@ function toggleSideBySide(editor) {
                 if (editor.options.sideBySideFullscreen === false) {
                     cm.setOption('sideBySideNoFullscreen', true);
                     noFullscreenItems.forEach(function(el) {
-                        addNoFullscreenClass(el);
+                        if (el) {
+                            addNoFullscreenClass(el);
+                        };
                     });
                 } else {
                     toggleFullScreen(editor);
@@ -2142,7 +2144,7 @@ EasyMDE.prototype.render = function (el) {
                         assignImageBlockAttributes(parentEl, window.EMDEimagesCache[keySrc]);
                     }
                 }
-            } 
+            }
         });
     }
     this.codemirror.on('update', function () {
