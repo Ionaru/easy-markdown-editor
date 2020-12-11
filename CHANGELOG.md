@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!--## [Unreleased]-->
+## [Unreleased]
+### Fixed
+- An error when both `sideBySideFullscreen` and `status` were set to `false` (Thanks to [@joahim], [#272]).
+
 ## [2.13.0] - 2020-11-11
 ### Added
 - CodeMirror autorefresh plugin and autoRefresh option (Thanks to [@mbolli], [#249]).
@@ -197,6 +200,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#272]: https://github.com/Ionaru/easy-markdown-editor/pull/272
 [#267]: https://github.com/Ionaru/easy-markdown-editor/pull/267
 [#249]: https://github.com/Ionaru/easy-markdown-editor/pull/249
 [#244]: https://github.com/Ionaru/easy-markdown-editor/pull/244
@@ -232,6 +236,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@joahim]: https://github.com/joahim
 [@nhymxu]: https://github.com/nhymxu
 [@mbolli]: https://github.com/mbolli
 [@ivictbor]: https://github.com/ivictbor
