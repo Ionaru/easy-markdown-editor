@@ -811,7 +811,7 @@ function afterImageUploaded(editor, url) {
     var stat = getState(cm);
     var options = editor.options;
     var imageName = url.substr(url.lastIndexOf('/') + 1);
-    var ext = imageName.substring(imageName.lastIndexOf('.') + 1);
+    // var ext = imageName.substring(imageName.lastIndexOf('.') + 1);
 
     _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
 
