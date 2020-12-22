@@ -2174,7 +2174,6 @@ EasyMDE.prototype.render = function (el) {
 };
 
 EasyMDE.prototype.cleanup = function () {
-    window.removeEventListener(this.onWindowResize);
     document.removeEventListener('keydown', this.documentOnKeyDown);
 };
 
