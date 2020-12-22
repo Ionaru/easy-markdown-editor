@@ -813,14 +813,7 @@ function afterImageUploaded(editor, url) {
     var imageName = url.substr(url.lastIndexOf('/') + 1);
     var ext = imageName.substring(imageName.lastIndexOf('.') + 1);
 
-    // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
-      _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
-    } else {
-      var text_link = options.insertTexts.link;
-      text_link[0] = '[' + imageName;
-      _replaceSelection(cm, stat.link, text_link, url);
-    }
+    _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
 
     // show uploaded image filename for 1000ms
     editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
