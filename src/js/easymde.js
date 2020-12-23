@@ -300,9 +300,9 @@ function getState(cm, pos) {
             ret.strikethrough = true;
         } else if (data === 'comment') {
             ret.code = true;
-        } else if (data === 'link') {
+        } else if (data === 'link' && !ret.image) {
             ret.link = true;
-        } else if (data === 'tag') {
+        } else if (data === 'image') {
             ret.image = true;
         } else if (data.match(/^header(-[1-6])?$/)) {
             ret[data.replace('header', 'heading')] = true;
@@ -763,7 +763,6 @@ function cleanBlock(editor) {
  */
 function drawLink(editor) {
     var cm = editor.codemirror;
-    var stat = getState(cm);
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
@@ -772,7 +771,7 @@ function drawLink(editor) {
             return false;
         }
     }
-    _replaceSelection(cm, stat.link, options.insertTexts.link, url);
+    _toggleLink(cm, 'link', options.insertTexts.link, url);
 }
 
 /**
@@ -780,7 +779,6 @@ function drawLink(editor) {
  */
 function drawImage(editor) {
     var cm = editor.codemirror;
-    var stat = getState(cm);
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
@@ -789,7 +787,7 @@ function drawImage(editor) {
             return false;
         }
     }
-    _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+    _toggleLink(cm, 'image', options.insertTexts.image, url);
 }
 
 /**
@@ -1219,6 +1217,46 @@ function _toggleLine(cm, name) {
     cm.focus();
 }
 
+function _toggleLink(cm, type, startEnd, url) {
+    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+        return;
+
+    var stat = getState(cm);
+    var active = stat[type]
+    if (!active) {
+        _replaceSelection(cm, active, startEnd, url);
+        return;
+    }
+
+    var startPoint = cm.getCursor('start');
+    var endPoint = cm.getCursor('end');
+    var text = cm.getLine(startPoint.line);
+    var start = text.slice(0, startPoint.ch);
+    var end = text.slice(startPoint.ch);
+
+    if (type == 'link') {
+        start = start.replace(/(.*(?<![!]))\[/, '$1');
+    } else if (type == 'image') {
+        start = start.replace(/(.*)!\[$/, '$1');
+    }
+    end = end.replace(/]\(.*?\)/, '');
+
+    cm.replaceRange(start + end, {
+        line: startPoint.line,
+        ch: 0,
+    }, {
+        line: startPoint.line,
+        ch: 99999999999999,
+    });
+
+    startPoint.ch -= startEnd[0].length;
+    if (startPoint !== endPoint) {
+        endPoint.ch -= startEnd[0].length;
+    }
+    cm.setSelection(startPoint, endPoint);
+    cm.focus();
+}
+
 function _toggleBlock(editor, type, start_chars, end_chars) {
     if (/editor-preview-active/.test(editor.codemirror.getWrapperElement().lastChild.className))
         return;
@@ -1566,7 +1604,7 @@ var toolbarBuiltInButtons = {
 
 var insertTexts = {
     link: ['[', '](#url#)'],
-    image: ['![](', '#url#)'],
+    image: ['![', '](#url#)'],
     uploadedImage: ['![](#url#)', ''],
     // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
