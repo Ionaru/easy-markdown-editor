@@ -16,9 +16,9 @@ In addition, the syntax is rendered while editing to clearly show the expected r
 EasyMDE also features both built-in auto saving and spell checking.
 The editor is entirely customizable, from theming to toolbar buttons and javascript hooks.
 
-[**Try the demo**](https://easymde.tk/)
+[**Try the demo**](https://easy-markdown-editor.tk/)
 
-[![Preview](https://user-images.githubusercontent.com/3472373/51319377-26fe6e00-1a5d-11e9-8cc6-3137a566796d.png)](https://easymde.tk/)
+[![Preview](https://user-images.githubusercontent.com/3472373/51319377-26fe6e00-1a5d-11e9-8cc6-3137a566796d.png)](https://easy-markdown-editor.tk/)
 
 
 ## Quick access
