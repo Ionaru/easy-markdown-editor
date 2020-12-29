@@ -2010,15 +2010,12 @@ EasyMDE.prototype.render = function (el) {
       mode = 'overlay-mode';
       backdrop = options.parsingConfig;
       backdrop.gitHubSpice = false;
-
-      if (options.spellChecker !== false) {
-        backdrop.name = 'gfm';
-
-        CodeMirrorSpellChecker({
-          codeMirrorInstance: CodeMirror,
-        });
-
-      } else if (options.spellChecker !== false) {
+    } else {
+        mode = options.parsingConfig;
+        mode.name = 'gfm';
+        mode.gitHubSpice = false;
+    }
+    if (options.spellChecker !== false) {
         mode = 'spell-checker';
         backdrop = options.parsingConfig;
         backdrop.name = 'gfm';
@@ -2027,11 +2024,6 @@ EasyMDE.prototype.render = function (el) {
         CodeMirrorSpellChecker({
             codeMirrorInstance: CodeMirror,
         });
-      }
-    } else {
-        mode = options.parsingConfig;
-        mode.name = 'gfm';
-        mode.gitHubSpice = false;
     }
 
     // eslint-disable-next-line no-unused-vars
