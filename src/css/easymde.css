@@ -360,7 +360,8 @@
 }
 
 .easymde-dropdown-content {
-    display: none;
+    display: block;
+    visibility: hidden;
     position: absolute;
     background-color: #f9f9f9;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
@@ -371,7 +372,7 @@
 
 .easymde-dropdown:active .easymde-dropdown-content,
 .easymde-dropdown:focus .easymde-dropdown-content {
-    display: block;
+    visibility: visible;
 }
 
 span[data-img-src]::after{
