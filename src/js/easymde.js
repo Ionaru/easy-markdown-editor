@@ -332,11 +332,12 @@ function toggleFullScreen(editor) {
         document.body.style.overflow = saved_overflow;
     }
 
-
-    // Hide side by side if needed
-    var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
-        toggleSideBySide(editor);
+    // Hide side by side if needed, retain current state if sideBySideFullscreen is disabled
+    if (editor.options.sideBySideFullscreen !== false) {
+        var sidebyside = cm.getWrapperElement().nextSibling;
+        if (/editor-preview-active-side/.test(sidebyside.className))
+            toggleSideBySide(editor);
+    }
 
     if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
