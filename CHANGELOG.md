@@ -4,9 +4,21 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+[comment]: <> (## [Unreleased])
+## [2.14.0] - 2021-02-14
+### Added
+- The `scrollbarStyle` option to change the style of the scrollbar (Thanks to [@danice], [#250]).
+
 ### Fixed
+- Issues with images not displaying correctly in the preview screen (Thanks to [@ivictbor], [#253]).
 - An error when both `sideBySideFullscreen` and `status` were set to `false` (Thanks to [@joahim], [#272]).
+- Editor trying to display non-image files (Thanks to [@Juupaa], [#277])
+- Unneeded call to `window.removeEventListener` (Thanks to [@emirotin], [#280])
+- Spell checker (Thanks to [@Fanvadar], [#284]).
+- Focus issues with toolbar dropdown menus (Thanks to [@Situphen], [#285]).
+- Interaction between the `sideBySideFullscreen` and the preview state (Thanks to [@smundro], [#286])
+- Refactored strange method of padding the toolbar into regular padding (Thanks to [@sn3p], [#293]).
+- Security issue in `marked` dependency (Thanks to [@dependabot], [#298]).
 
 ## [2.13.0] - 2020-11-11
 ### Added
@@ -200,8 +212,16 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#298]: https://github.com/Ionaru/easy-markdown-editor/pull/298
+[#293]: https://github.com/Ionaru/easy-markdown-editor/pull/293
+[#286]: https://github.com/Ionaru/easy-markdown-editor/pull/286
+[#285]: https://github.com/Ionaru/easy-markdown-editor/pull/285
+[#284]: https://github.com/Ionaru/easy-markdown-editor/pull/284
+[#280]: https://github.com/Ionaru/easy-markdown-editor/pull/280
+[#277]: https://github.com/Ionaru/easy-markdown-editor/pull/277
 [#272]: https://github.com/Ionaru/easy-markdown-editor/pull/272
 [#267]: https://github.com/Ionaru/easy-markdown-editor/pull/267
+[#250]: https://github.com/Ionaru/easy-markdown-editor/pull/250
 [#249]: https://github.com/Ionaru/easy-markdown-editor/pull/249
 [#244]: https://github.com/Ionaru/easy-markdown-editor/pull/244
 [#235]: https://github.com/Ionaru/easy-markdown-editor/pull/235
@@ -236,6 +256,12 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#19]: https://github.com/Ionaru/easy-markdown-editor/pull/19
 
 <!-- Linked users -->
+[@dependabot]: https://github.com/dependabot
+[@emirotin]: https://github.com/emirotin
+[@smundro]: https://github.com/smundro
+[@Juupaa]: https://github.com/Juupaa
+[@Fanvadar]: https://github.com/Fanvadar
+[@danice]: https://github.com/danice
 [@joahim]: https://github.com/joahim
 [@nhymxu]: https://github.com/nhymxu
 [@mbolli]: https://github.com/mbolli
