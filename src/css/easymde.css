@@ -63,27 +63,12 @@
     -ms-user-select: none;
     -o-user-select: none;
     user-select: none;
-    padding: 0 10px;
+    padding: 9px 10px;
     border-top: 1px solid #bbb;
     border-left: 1px solid #bbb;
     border-right: 1px solid #bbb;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
-}
-
-.editor-toolbar:after,
-.editor-toolbar:before {
-    display: block;
-    content: ' ';
-    height: 1px;
-}
-
-.editor-toolbar:before {
-    margin-bottom: 8px
-}
-
-.editor-toolbar:after {
-    margin-top: 8px
 }
 
 .editor-toolbar.fullscreen {
