@@ -141,6 +141,7 @@ declare namespace EasyMDE {
         title: string;
         noDisable?: boolean;
         noMobile?: boolean;
+        icon?: string;
     }
 
     interface ImageTextsOptions {
