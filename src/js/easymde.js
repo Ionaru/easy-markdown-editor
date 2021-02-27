@@ -812,16 +812,9 @@ function afterImageUploaded(editor, url) {
     var stat = getState(cm);
     var options = editor.options;
     var imageName = url.substr(url.lastIndexOf('/') + 1);
-    var ext = imageName.substring(imageName.lastIndexOf('.') + 1);
+    // var ext = imageName.substring(imageName.lastIndexOf('.') + 1);
 
-    // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
-      _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
-    } else {
-      var text_link = options.insertTexts.link;
-      text_link[0] = '[' + imageName;
-      _replaceSelection(cm, stat.link, text_link, url);
-    }
+    _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
 
     // show uploaded image filename for 1000ms
     editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
@@ -2320,7 +2313,8 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
 
     // insert CSRF token if provided in config.
     if (self.options.imageCSRFToken) {
-        formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
+        var csrfName = self.options.imageCSRFName || 'csrfmiddlewaretoken';
+        formData.append(csrfName, self.options.imageCSRFToken);
     }
     var request = new XMLHttpRequest();
     request.upload.onprogress = function (event) {
@@ -2339,8 +2333,14 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
             return;
         }
-        if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
-            onSuccess(window.location.origin + '/' + response.data.filePath);
+        if ((this.status === 200 || this.status === 201) && response && !response.error && response.data && response.data.filePath) {
+            var filePath = response.data.filePath;
+            if (/https?:\/\//i.test(filePath)) {
+                onSuccess(filePath);
+            } else {
+                onSuccess(window.location.origin + '/' + filePath);
+            }
+            
         } else {
             if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
                 onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
