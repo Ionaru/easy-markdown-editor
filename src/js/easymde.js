@@ -323,6 +323,7 @@ function toggleFullScreen(editor) {
     var cm = editor.codemirror;
     cm.setOption('fullScreen', !cm.getOption('fullScreen'));
 
+
     // Prevent scrolling on body during fullscreen active
     if (cm.getOption('fullScreen')) {
         saved_overflow = document.body.style.overflow;
@@ -873,7 +874,7 @@ function redo(editor) {
 
 
 /**
- * Toggle side by side preview.
+ * Toggle side by side preview
  * @param {EasyMDE} editor - The EasyMDE object
  * @param {boolean} onlyCleanup Flag for only cleaning up side effects of fullScreen toggle.
  */
@@ -932,7 +933,6 @@ function toggleSideBySide(editor, onlyCleanup) {
         wrapper.className += ' CodeMirror-sided';
         useSideBySideListener = true;
     }
-    
 
     // Hide normal (full-pane) preview if active
     var previewNormal = wrapper.lastChild;
@@ -989,6 +989,7 @@ function togglePreview(editor) {
 
     // Construct preview element if it doesn't exist
     if (!preview || !/editor-preview-full/.test(preview.className)) {
+
         preview = document.createElement('div');
         preview.className = 'editor-preview-full';
 
