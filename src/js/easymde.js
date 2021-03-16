@@ -333,9 +333,12 @@ function toggleFullScreen(editor) {
 
     var sidebyside = cm.getWrapperElement().nextSibling;
 
-    // if (/editor-preview-active-side/.test(sidebyside.className)) {
-        toggleSideBySide(editor, true);
-    // }
+    // if non-fullscreen side-by-side is allowed, then pass along "dontToggle" flag
+    var dontToggleSideBySide = editor.options.sideBySideFullscreen === false;
+
+    if (/editor-preview-active-side/.test(sidebyside.className) || dontToggleSideBySide) {
+        toggleSideBySide(editor, dontToggleSideBySide);
+    }
 
     if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
@@ -871,20 +874,15 @@ function redo(editor) {
 
 /**
  * Toggle side by side preview.
- * Note: If triggered by fullscreen toggle and sideBySideFullscreen === false,
- *       `sideBySide` is not actually toggled, but classes are reapplied as needed.
  * @param {EasyMDE} editor - The EasyMDE object
- * @param {boolean} triggeredByFullscreenToggle If triggered by fullscreen toggle.
+ * @param {boolean} dontToggle Flag for cleaning up side effects of fullScreen toggle.
  */
-function toggleSideBySide(editor, triggeredByFullscreenToggle) {
+function toggleSideBySide(editor, dontToggle) {
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
-
-    // if triggered by fullscreen toggle and sideBySideFullscreen === false, don't toggle
-    var dontToggle = editor.options.sideBySideFullscreen === false && triggeredByFullscreenToggle;
 
     var noFullscreenItems = [
         wrapper.parentNode, // easyMDEContainer
