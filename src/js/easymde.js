@@ -935,11 +935,10 @@ function toggleSideBySide(editor, onlyCleanup) {
         wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
     } else {
         // open side-by-side, and setup noFullscreen classes as needed
+        // When the preview button is clicked for the first time,
+        // give some time for the transition from editor.css to fire and the view to slide from right to left,
+        // instead of just appearing.
         setTimeout(function () {
-            // When the preview button is clicked for the first time,
-            // give some time for the transition from editor.css to 
-            // fire and the view to slide from right to left,
-            // instead of just appearing.
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
                     setupNoFullscreenClasses(true);
