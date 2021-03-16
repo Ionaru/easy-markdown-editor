@@ -323,7 +323,6 @@ function toggleFullScreen(editor) {
     var cm = editor.codemirror;
     cm.setOption('fullScreen', !cm.getOption('fullScreen'));
 
-
     // Prevent scrolling on body during fullscreen active
     if (cm.getOption('fullScreen')) {
         saved_overflow = document.body.style.overflow;
@@ -334,11 +333,9 @@ function toggleFullScreen(editor) {
 
     var sidebyside = cm.getWrapperElement().nextSibling;
 
-    // Hide side by side if needed, retain current state if sideBySideFullscreen is disabled
-    if (editor.options.sideBySideFullscreen !== false) {
-        if (/editor-preview-active-side/.test(sidebyside.className))
-            toggleSideBySide(editor);
-    }
+    // if (/editor-preview-active-side/.test(sidebyside.className)) {
+        toggleSideBySide(editor, true);
+    // }
 
     if (editor.options.onToggleFullScreen) {
         editor.options.onToggleFullScreen(cm.getOption('fullScreen') || false);
@@ -873,14 +870,21 @@ function redo(editor) {
 
 
 /**
- * Toggle side by side preview
+ * Toggle side by side preview.
+ * Note: If triggered by fullscreen toggle and sideBySideFullscreen === false,
+ *       `sideBySide` is not actually toggled, but classes are reapplied as needed.
+ * @param {EasyMDE} editor - The EasyMDE object
+ * @param {boolean} triggeredByFullscreenToggle If triggered by fullscreen toggle.
  */
-function toggleSideBySide(editor) {
+function toggleSideBySide(editor, triggeredByFullscreenToggle) {
     var cm = editor.codemirror;
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
+
+    // if triggered by fullscreen toggle and sideBySideFullscreen === false, don't toggle
+    var dontToggle = editor.options.sideBySideFullscreen === false && triggeredByFullscreenToggle;
 
     var noFullscreenItems = [
         wrapper.parentNode, // easyMDEContainer
@@ -891,56 +895,81 @@ function toggleSideBySide(editor) {
     ];
 
     function addNoFullscreenClass(el) {
-        el.className += ' sided--no-fullscreen';
+        if (el != null) {
+            el.className += ' sided--no-fullscreen';
+        }
     }
 
     function removeNoFullscreenClass(el) {
         if (el != null) {
             el.className = el.className.replace(
-                /\s*sided--no-fullscreen\s*/g, ''
+                // retain spaces after the class
+                // in case there are subsequent classes
+                /\s*sided--no-fullscreen(\s*)/g, '$1'
             );
         }
     }
 
-    if (/editor-preview-active-side/.test(preview.className)) {
-        if (cm.getOption('sideBySideNoFullscreen')) {
-            cm.setOption('sideBySideNoFullscreen', false);
-            noFullscreenItems.forEach(function (el) {
-                removeNoFullscreenClass(el);
-            });
-        }
-        preview.className = preview.className.replace(
-            /\s*editor-preview-active-side\s*/g, ''
-        );
-        if (toolbarButton) toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
-        wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
-    } else {
-        // When the preview button is clicked for the first time,
-        // give some time for the transition from editor.css to fire and the view to slide from right to left,
-        // instead of just appearing.
-        setTimeout(function () {
-            if (!cm.getOption('fullScreen')) {
-                if (editor.options.sideBySideFullscreen === false) {
-                    cm.setOption('sideBySideNoFullscreen', true);
-                    noFullscreenItems.forEach(function(el) {
-                        if (el != null) {
-                            addNoFullscreenClass(el);
-                        }
-                    });
-                } else {
-                    toggleFullScreen(editor);
-                }
+    // helper method to add/remove no-fullscreen classes as appropriate
+    function setupNoFullscreenClasses(previewActive) {
+        if (editor.options.sideBySideFullscreen === false) {
+            if (!cm.getOption('fullScreen') && previewActive) {
+                noFullscreenItems.forEach(function(el) {
+                    addNoFullscreenClass(el);
+                });
+            } else {
+                noFullscreenItems.forEach(function (el) {
+                    removeNoFullscreenClass(el);
+                });
             }
-            preview.className += ' editor-preview-active-side';
-        }, 1);
-        if (toolbarButton) toolbarButton.className += ' active';
-        wrapper.className += ' CodeMirror-sided';
-        useSideBySideListener = true;
+        }
     }
 
-    // Hide normal preview if active
+    if (/editor-preview-active-side/.test(preview.className)) {
+        // If side-by-side active...
+        if (dontToggle) {
+            // if not toggling, cleanup noFullscreen classes as needed
+            setupNoFullscreenClasses(true);
+        } else {
+            // otherwise close side-by-side, and cleanup noFullscreen classes as needed
+            setupNoFullscreenClasses(false);
+            preview.className = preview.className.replace(
+                /\s*editor-preview-active-side\s*/g, ''
+            );
+            if (toolbarButton) toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
+            wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
+        }
+    } else {
+        // If side-by-side not active...
+        if (dontToggle) {
+            // if not toggling, cleanup noFullscreen classes as needed
+            setupNoFullscreenClasses(false);
+        } else {
+            // otherwise open side-by-side, and setup noFullscreen classes as needed
+            setTimeout(function () {
+                // When the preview button is clicked for the first time,
+                // give some time for the transition from editor.css to 
+                // fire and the view to slide from right to left,
+                // instead of just appearing.
+                if (!cm.getOption('fullScreen')) {
+                    if (editor.options.sideBySideFullscreen === false) {
+                        setupNoFullscreenClasses(true);
+                    } else {
+                        toggleFullScreen(editor);
+                    }
+                }
+                preview.className += ' editor-preview-active-side';
+            }, 1);
+            if (toolbarButton) toolbarButton.className += ' active';
+            wrapper.className += ' CodeMirror-sided';
+            useSideBySideListener = true;
+        }
+    }
+    
+
+    // Hide normal (full-pane) preview if active
     var previewNormal = wrapper.lastChild;
-    if (/editor-preview-active/.test(previewNormal.className)) {
+    if (!dontToggle && /editor-preview-active/.test(previewNormal.className)) {
         previewNormal.className = previewNormal.className.replace(
             /\s*editor-preview-active\s*/g, ''
         );
@@ -991,8 +1020,8 @@ function togglePreview(editor) {
     if (/editor-preview-active-side/.test(sidebyside.className))
         toggleSideBySide(editor);
 
+    // Construct preview element if it doesn't exist
     if (!preview || !/editor-preview-full/.test(preview.className)) {
-
         preview = document.createElement('div');
         preview.className = 'editor-preview-full';
 
@@ -1011,6 +1040,7 @@ function togglePreview(editor) {
         wrapper.appendChild(preview);
     }
 
+    // Toggle display of preview depending on current state
     if (/editor-preview-active/.test(preview.className)) {
         preview.className = preview.className.replace(
             /\s*editor-preview-active\s*/g, ''
