@@ -884,38 +884,18 @@ function toggleSideBySide(editor, onlyCleanup) {
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
 
-    var noFullscreenItems = [
-        wrapper.parentNode, // easyMDEContainer
-        editor.gui.toolbar,
-        wrapper,
-        preview,
-        editor.gui.statusbar,
-    ];
-
-    function addNoFullscreenClass(el) {
-        if (el != null) {
-            el.className += ' sided--no-fullscreen';
-        }
-    }
-
-    function removeNoFullscreenClass(el) {
-        if (el != null) {
-            el.className = el.className.replace(
-                // retain spaces after the class
-                // in case there are subsequent classes
-                /\s*sided--no-fullscreen(\s*)/g, '$1'
-            );
-        }
-    }
+    var easyMDEContainer = wrapper.parentNode;
 
     // helper method to add/remove no-fullscreen classes as appropriate
-    function setupNoFullscreenClasses(sidePreviewActive) {
+    function setNoFullscreenClass (sidePreviewActive) {
         if (editor.options.sideBySideFullscreen === false) {
             if (!cm.getOption('fullScreen') && sidePreviewActive) {
+                easyMDEContainer.className += ' sided--no-fullscreen';
                 // only apply classes if !fullScreen and side preview is (or will be) active
-                noFullscreenItems.forEach(addNoFullscreenClass);
             } else {
-                noFullscreenItems.forEach(removeNoFullscreenClass);
+                // retain spaces after the class
+                // in case there are subsequent classes
+                easyMDEContainer.className = easyMDEContainer.className.replace(/\s*sided--no-fullscreen(\s*)/g, '$1');
             }
         }
     }
@@ -924,10 +904,10 @@ function toggleSideBySide(editor, onlyCleanup) {
 
     if (onlyCleanup) {
         // if not toggling, handle noFullscreen classes as needed
-        setupNoFullscreenClasses(sidePreviewActive);
+        setNoFullscreenClass(sidePreviewActive);
     } else if (sidePreviewActive) {
         // close side-by-side, and cleanup noFullscreen classes as needed
-        setupNoFullscreenClasses(false);
+        setNoFullscreenClass(false);
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
         );
@@ -941,7 +921,7 @@ function toggleSideBySide(editor, onlyCleanup) {
         setTimeout(function () {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
-                    setupNoFullscreenClasses(true);
+                    setNoFullscreenClass(true);
                 } else {
                     toggleFullScreen(editor);
                 }
@@ -956,7 +936,7 @@ function toggleSideBySide(editor, onlyCleanup) {
 
     // Hide normal (full-pane) preview if active
     var previewNormal = wrapper.lastChild;
-    if (!dontToggle && /editor-preview-active/.test(previewNormal.className)) {
+    if (/editor-preview-active/.test(previewNormal.className)) {
         previewNormal.className = previewNormal.className.replace(
             /\s*editor-preview-active\s*/g, ''
         );
