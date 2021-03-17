@@ -336,7 +336,8 @@ function toggleFullScreen(editor) {
     var sidebyside = wrapper.nextSibling;
 
     if (/editor-preview-active-side/.test(sidebyside.className)) {
-        if(editor.options.sideBySideFullscreen === false) {
+        if (editor.options.sideBySideFullscreen === false) {
+            // if side-by-side not-fullscreen ok, apply classes as needed
             var easyMDEContainer = wrapper.parentNode;
             if (cm.getOption('fullScreen')) {
                 easyMDEContainer.className = easyMDEContainer.className.replace(/\s*sided--no-fullscreen(\s*)/g, '$1');
@@ -893,8 +894,8 @@ function toggleSideBySide(editor) {
     var easyMDEContainer = wrapper.parentNode;
 
     if (/editor-preview-active-side/.test(preview.className)) {
-        // close side-by-side, and cleanup noFullscreen classes as needed
         if (editor.options.sideBySideFullscreen === false) {
+            // if side-by-side not-fullscreen ok, remove classes when hiding side
             easyMDEContainer.className = easyMDEContainer.className.replace(/\s*sided--no-fullscreen(\s*)/g, '$1');
         }
         preview.className = preview.className.replace(
@@ -909,6 +910,7 @@ function toggleSideBySide(editor) {
         setTimeout(function () {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
+                    // if side-by-side not-fullscreen ok, add classes when not fullscreen and showing side
                     easyMDEContainer.className += ' sided--no-fullscreen';
                 } else {
                     toggleFullScreen(editor);
