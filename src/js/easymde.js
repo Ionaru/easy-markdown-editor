@@ -923,6 +923,7 @@ function toggleSideBySide(editor) {
         useSideBySideListener = true;
     }
 
+    // Hide normal preview if active
     var previewNormal = wrapper.lastChild;
     if (/editor-preview-active/.test(previewNormal.className)) {
         previewNormal.className = previewNormal.className.replace(
