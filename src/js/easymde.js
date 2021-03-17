@@ -139,6 +139,50 @@ function fixShortcut(name) {
 }
 
 /**
+ * Class handling utility methods.
+ */
+var CLASS_REGEX = {};
+
+/**
+ * Convert a className string into a regex for matching (and cache).
+ * Note that the RegExp includes trailing spaces for replacement
+ * (to ensure that removing a class from the middle of the string will retain
+ *  spacing between other classes.)
+ * @param {String} className Class name to convert to regex for matching.
+ * @returns {RegExp} Regular expression option that will match className.
+ */
+function getClassRegex (className) {
+    return CLASS_REGEX[className] || (CLASS_REGEX[className] = new RegExp('\\s*' + className + '(\\s*)', 'g'));
+}
+
+/**
+ * Add a class string to an element.
+ * @param {Element} el DOM element on which to add className.
+ * @param {String} className Class string to apply
+ * @returns {void}
+ */
+function addClass (el, className) {
+    if (!el || !className) return;
+    var classRegex = getClassRegex(className);
+    if (el.className.match(classRegex)) return; // already applied
+    el.className += ' ' + className;
+}
+
+/**
+ * Remove a class string from an element.
+ * @param {Element} el DOM element from which to remove className.
+ * @param {String} className Class string to remove
+ * @returns {void}
+ */
+ function removeClass (el, className) {
+    if (!el || !className) return;
+    var classRegex = getClassRegex(className);
+    if (!el.className.match(classRegex)) return; // not available to remove
+    el.className = el.className.replace(classRegex, '$1');
+}
+
+
+/**
  * Create dropdown block
  */
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
@@ -340,9 +384,9 @@ function toggleFullScreen(editor) {
             // if side-by-side not-fullscreen ok, apply classes as needed
             var easyMDEContainer = wrapper.parentNode;
             if (cm.getOption('fullScreen')) {
-                easyMDEContainer.className = easyMDEContainer.className.replace(/\s*sided--no-fullscreen(\s*)/g, '$1');
+                removeClass(easyMDEContainer, 'sided--no-fullscreen');
             } else {
-                easyMDEContainer.className += ' sided--no-fullscreen';
+                addClass(easyMDEContainer, 'sided--no-fullscreen');
             }
         } else {
             toggleSideBySide(editor);
@@ -896,7 +940,7 @@ function toggleSideBySide(editor) {
     if (/editor-preview-active-side/.test(preview.className)) {
         if (editor.options.sideBySideFullscreen === false) {
             // if side-by-side not-fullscreen ok, remove classes when hiding side
-            easyMDEContainer.className = easyMDEContainer.className.replace(/\s*sided--no-fullscreen(\s*)/g, '$1');
+            removeClass(easyMDEContainer, 'sided--no-fullscreen');
         }
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
@@ -911,7 +955,7 @@ function toggleSideBySide(editor) {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
                     // if side-by-side not-fullscreen ok, add classes when not fullscreen and showing side
-                    easyMDEContainer.className += ' sided--no-fullscreen';
+                    addClass(easyMDEContainer, 'sided--no-fullscreen');
                 } else {
                     toggleFullScreen(editor);
                 }
