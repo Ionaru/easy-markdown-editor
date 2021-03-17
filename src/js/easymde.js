@@ -880,9 +880,9 @@ function redo(editor) {
     cm.focus();
 }
 
+
 /**
  * Toggle side by side preview
- * @param {EasyMDE} editor - The EasyMDE object
  */
 function toggleSideBySide(editor) {
     var cm = editor.codemirror;
@@ -962,8 +962,7 @@ function toggleSideBySide(editor) {
 
 
 /**
- * Toggle display of normal (full-pane) preview.
- * @param {EasyMDE} editor - The EasyMDE object
+ * Preview action.
  */
 function togglePreview(editor) {
     var cm = editor.codemirror;
@@ -972,12 +971,11 @@ function togglePreview(editor) {
     var toolbar = editor.options.toolbar ? editor.toolbarElements.preview : false;
     var preview = wrapper.lastChild;
 
-    // Turn off side by side, if needed
+    // Turn off side by side if needed
     var sidebyside = cm.getWrapperElement().nextSibling;
     if (/editor-preview-active-side/.test(sidebyside.className))
         toggleSideBySide(editor);
 
-    // Construct normal (full-pane) preview element if it doesn't exist
     if (!preview || !/editor-preview-full/.test(preview.className)) {
 
         preview = document.createElement('div');
@@ -998,7 +996,6 @@ function togglePreview(editor) {
         wrapper.appendChild(preview);
     }
 
-    // Toggle display of normal (full-pane) preview depending on current state
     if (/editor-preview-active/.test(preview.className)) {
         preview.className = preview.className.replace(
             /\s*editor-preview-active\s*/g, ''
