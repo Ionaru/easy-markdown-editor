@@ -139,6 +139,50 @@ function fixShortcut(name) {
 }
 
 /**
+ * Class handling utility methods.
+ */
+var CLASS_REGEX = {};
+
+/**
+ * Convert a className string into a regex for matching (and cache).
+ * Note that the RegExp includes trailing spaces for replacement
+ * (to ensure that removing a class from the middle of the string will retain
+ *  spacing between other classes.)
+ * @param {String} className Class name to convert to regex for matching.
+ * @returns {RegExp} Regular expression option that will match className.
+ */
+function getClassRegex (className) {
+    return CLASS_REGEX[className] || (CLASS_REGEX[className] = new RegExp('\\s*' + className + '(\\s*)', 'g'));
+}
+
+/**
+ * Add a class string to an element.
+ * @param {Element} el DOM element on which to add className.
+ * @param {String} className Class string to apply
+ * @returns {void}
+ */
+function addClass (el, className) {
+    if (!el || !className) return;
+    var classRegex = getClassRegex(className);
+    if (el.className.match(classRegex)) return; // already applied
+    el.className += ' ' + className;
+}
+
+/**
+ * Remove a class string from an element.
+ * @param {Element} el DOM element from which to remove className.
+ * @param {String} className Class string to remove
+ * @returns {void}
+ */
+ function removeClass (el, className) {
+    if (!el || !className) return;
+    var classRegex = getClassRegex(className);
+    if (!el.className.match(classRegex)) return; // not available to remove
+    el.className = el.className.replace(classRegex, '$1');
+}
+
+
+/**
  * Create dropdown block
  */
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
@@ -332,11 +376,21 @@ function toggleFullScreen(editor) {
         document.body.style.overflow = saved_overflow;
     }
 
-    // Hide side by side if needed, retain current state if sideBySideFullscreen is disabled
-    if (editor.options.sideBySideFullscreen !== false) {
-        var sidebyside = cm.getWrapperElement().nextSibling;
-        if (/editor-preview-active-side/.test(sidebyside.className))
+    var wrapper = cm.getWrapperElement();
+    var sidebyside = wrapper.nextSibling;
+
+    if (/editor-preview-active-side/.test(sidebyside.className)) {
+        if (editor.options.sideBySideFullscreen === false) {
+            // if side-by-side not-fullscreen ok, apply classes as needed
+            var easyMDEContainer = wrapper.parentNode;
+            if (cm.getOption('fullScreen')) {
+                removeClass(easyMDEContainer, 'sided--no-fullscreen');
+            } else {
+                addClass(easyMDEContainer, 'sided--no-fullscreen');
+            }
+        } else {
             toggleSideBySide(editor);
+        }
     }
 
     if (editor.options.onToggleFullScreen) {
@@ -881,32 +935,12 @@ function toggleSideBySide(editor) {
     var toolbarButton = editor.toolbarElements && editor.toolbarElements['side-by-side'];
     var useSideBySideListener = false;
 
-    var noFullscreenItems = [
-        wrapper.parentNode, // easyMDEContainer
-        editor.gui.toolbar,
-        wrapper,
-        preview,
-        editor.gui.statusbar,
-    ];
-
-    function addNoFullscreenClass(el) {
-        el.className += ' sided--no-fullscreen';
-    }
-
-    function removeNoFullscreenClass(el) {
-        if (el != null) {
-            el.className = el.className.replace(
-                /\s*sided--no-fullscreen\s*/g, ''
-            );
-        }
-    }
+    var easyMDEContainer = wrapper.parentNode;
 
     if (/editor-preview-active-side/.test(preview.className)) {
-        if (cm.getOption('sideBySideNoFullscreen')) {
-            cm.setOption('sideBySideNoFullscreen', false);
-            noFullscreenItems.forEach(function (el) {
-                removeNoFullscreenClass(el);
-            });
+        if (editor.options.sideBySideFullscreen === false) {
+            // if side-by-side not-fullscreen ok, remove classes when hiding side
+            removeClass(easyMDEContainer, 'sided--no-fullscreen');
         }
         preview.className = preview.className.replace(
             /\s*editor-preview-active-side\s*/g, ''
@@ -920,12 +954,8 @@ function toggleSideBySide(editor) {
         setTimeout(function () {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
-                    cm.setOption('sideBySideNoFullscreen', true);
-                    noFullscreenItems.forEach(function(el) {
-                        if (el != null) {
-                            addNoFullscreenClass(el);
-                        }
-                    });
+                    // if side-by-side not-fullscreen ok, add classes when not fullscreen and showing side
+                    addClass(easyMDEContainer, 'sided--no-fullscreen');
                 } else {
                     toggleFullScreen(editor);
                 }
