@@ -2370,7 +2370,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             return;
         }
         if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
-            onSuccess(window.location.origin + '/' + response.data.filePath);
+            onSuccess(response.data.filePath);
         } else {
             if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
                 onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
