@@ -54,6 +54,16 @@ Via [npm](https://www.npmjs.com/package/easymde):
 npm install easymde --save
 ```
 
+Note, if you have issues with editor not working as expected (e.g. lines not wrapping, etc), you may have to also import CodeMirror styles into your project
+
+```bash
+npm install codemirror --save
+```
+
+```scss
+@import "~codemirror/lib/codemirror.css";
+```
+
 Via the *UNPKG* CDN:
 
 ```html
