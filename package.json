@@ -19,13 +19,13 @@
     "license": "MIT",
     "author": "Jeroen Akkerman",
     "dependencies": {
+        "@types/codemirror": "0.0.108",
+        "@types/marked": "^2.0.1",
         "codemirror": "^5.60.0",
         "codemirror-spell-checker": "1.1.2",
         "marked": "^2.0.1"
     },
     "devDependencies": {
-        "@types/codemirror": "0.0.108",
-        "@types/marked": "^2.0.1",
         "browserify": "^17.0.0",
         "gulp": "^4.0.2",
         "gulp-clean-css": "^4.2.0",
