@@ -19,11 +19,11 @@
     "license": "MIT",
     "author": "Jeroen Akkerman",
     "dependencies": {
-        "@types/codemirror": "0.0.108",
-        "@types/marked": "^2.0.1",
-        "codemirror": "^5.60.0",
+        "@types/codemirror": "0.0.109",
+        "@types/marked": "^2.0.2",
+        "codemirror": "^5.61.0",
         "codemirror-spell-checker": "1.1.2",
-        "marked": "^2.0.1"
+        "marked": "^2.0.3"
     },
     "devDependencies": {
         "browserify": "^17.0.0",
