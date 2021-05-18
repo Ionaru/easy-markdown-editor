@@ -165,6 +165,10 @@ declare namespace EasyMDE {
       combine?: boolean
     }
 
+    interface SpellCheckerOptions {
+        codeMirrorInstance: CodeMirror.Editor
+    }
+
     interface Options {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
@@ -190,7 +194,7 @@ declare namespace EasyMDE {
         renderingConfig?: RenderingOptions;
         shortcuts?: Shortcuts;
         showIcons?: ReadonlyArray<ToolbarButton>;
-        spellChecker?: boolean;
+        spellChecker?: boolean | ((options: SpellCheckerOptions) => void);
         inputStyle?: 'textarea' | 'contenteditable';
         nativeSpellcheck?: boolean;
         sideBySideFullscreen?: boolean;

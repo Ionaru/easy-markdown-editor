@@ -2052,9 +2052,15 @@ EasyMDE.prototype.render = function (el) {
         backdrop.name = 'gfm';
         backdrop.gitHubSpice = false;
 
-        CodeMirrorSpellChecker({
-            codeMirrorInstance: CodeMirror,
-        });
+        if (typeof options.spellChecker === 'function') {
+            options.spellChecker({
+                codeMirrorInstance: CodeMirror,
+            });
+        } else {
+            CodeMirrorSpellChecker({
+                codeMirrorInstance: CodeMirror,
+            });
+        }
     }
 
     // eslint-disable-next-line no-unused-vars
