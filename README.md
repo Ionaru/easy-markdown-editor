@@ -194,7 +194,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **sanitizerFunction**: Custom function for sanitizing the HTML output of markdown renderer.
 - **shortcuts**: Keyboard shortcuts associated with this instance. Defaults to the [array of shortcuts](#keyboard-shortcuts).
 - **showIcons**: An array of icon names to show. Can be used to show specific icons hidden by default without completely customizing the toolbar.
-- **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.  Optionally pass a CodeMirrorSpellChecker compliant function.
+- **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.  Optionally pass a CodeMirrorSpellChecker-compliant function.
 - **inputStyle**: `textarea` or `contenteditable`. Defaults to `textarea` for desktop and `contenteditable` for mobile. `contenteditable` option is necessary to enable nativeSpellcheck.
 - **nativeSpellcheck**: If set to `false`, disable native spell checker. Defaults to `true`.
 - **sideBySideFullscreen**: If set to `false`, allows side-by-side editing without going into fullscreen. Defaults to `true`.
