@@ -233,6 +233,8 @@ declare class EasyMDE {
 
     codemirror: CodeMirror.Editor;
 
+    cleanup(): void;
+
     toTextArea(): void;
 
     isPreviewActive(): boolean;
