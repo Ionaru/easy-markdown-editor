@@ -982,7 +982,7 @@ function toggleSideBySide(editor) {
     var sideBySideRenderingFunction = function () {
         var newValue = editor.options.previewRender(editor.value(), preview);
         if (newValue != null) {
-            preview.innerHTML = newValue;
+            editor.options.setPreviewRender(preview, newValue);
         }
     };
 
@@ -993,7 +993,7 @@ function toggleSideBySide(editor) {
     if (useSideBySideListener) {
         var newValue = editor.options.previewRender(editor.value(), preview);
         if (newValue != null) {
-            preview.innerHTML = newValue;
+            editor.options.setPreviewRender(preview, newValue);
         }
         cm.on('update', cm.sideBySideRenderingFunction);
     } else {
@@ -1060,8 +1060,7 @@ function togglePreview(editor) {
             toolbar_div.className += ' disabled-for-preview';
         }
     }
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
-
+    editor.options.setPreviewRender(preview, editor.options.previewRender(editor.value(), preview));
 }
 
 function _replaceSelection(cm, active, startEnd, url) {
@@ -1736,6 +1735,12 @@ function EasyMDE(options) {
             // Note: "this" refers to the options object
             return this.parent.markdown(plainText);
         };
+    }
+
+    if (!options.setPreviewRender) {
+      options.setPreviewRender = function (preview, html) {
+        preview.innerHTML = html;
+      };
     }
 
 
@@ -2755,7 +2760,7 @@ EasyMDE.prototype.value = function (val) {
         if (this.isPreviewActive()) {
             var wrapper = cm.getWrapperElement();
             var preview = wrapper.lastChild;
-            preview.innerHTML = this.options.previewRender(val, preview);
+            this.options.setPreviewRender(preview, this.options.previewRender(val, preview));
         }
         return this;
     }
