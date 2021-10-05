@@ -190,7 +190,7 @@ easyMDE.value('New input for **EasyMDE**');
     - **typeNotAllowed**: The user send a file type which doesn't match the `imageAccept` list, or the server returned this error code. Defaults to `This image type is not allowed.`.
     - **fileTooLarge**: The size of the image being imported is bigger than the `imageMaxSize`, or if the server returned this error code. Defaults to `Image #image_name# is too big (#image_size#).\nMaximum file size is #image_max_size#.`.
     - **importError**: An unexpected error occurred when uploading the image. Defaults to `Something went wrong when uploading the image #image_name#.`.
-- **errorCallback**: A callback function used to define how to display an error message. Defaults to `function(errorMessage) {alert(errorMessage);};`.
+- **errorCallback**: A callback function used to define how to display an error message. Defaults to `(errorMessage) => alert(errorMessage)`.
 - **renderingConfig**: Adjust settings for parsing the Markdown during previewing (not editing).
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
@@ -218,83 +218,83 @@ easyMDE.value('New input for **EasyMDE**');
 
 Most options demonstrate the non-default behavior:
 
-```JavaScript
+```js
 const editor = new EasyMDE({
-	autofocus: true,
-	autosave: {
-		enabled: true,
-		uniqueId: "MyUniqueID",
-		delay: 1000,
-		submit_delay: 5000,
-		timeFormat: {
-			locale: 'en-US',
-			format: {
-				year: 'numeric',
-				month: 'long',
-				day: '2-digit',
-				hour: '2-digit',
-				minute: '2-digit',
-			},
-		},
-		text: "Autosaved: "
-	},
-	blockStyles: {
-		bold: "__",
-		italic: "_",
-	},
-	element: document.getElementById("MyID"),
-	forceSync: true,
-	hideIcons: ["guide", "heading"],
-	indentWithTabs: false,
-	initialValue: "Hello world!",
-	insertTexts: {
-		horizontalRule: ["", "\n\n-----\n\n"],
-		image: ["![](http://", ")"],
-		link: ["[", "](https://)"],
-		table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
-	},
-	lineWrapping: false,
-	minHeight: "500px",
-	parsingConfig: {
-		allowAtxHeaderWithoutSpace: true,
-		strikethrough: false,
-		underscoresBreakWords: true,
-	},
-	placeholder: "Type here...",
+    autofocus: true,
+    autosave: {
+        enabled: true,
+        uniqueId: "MyUniqueID",
+        delay: 1000,
+        submit_delay: 5000,
+        timeFormat: {
+            locale: 'en-US',
+            format: {
+                year: 'numeric',
+                month: 'long',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+            },
+        },
+        text: "Autosaved: "
+    },
+    blockStyles: {
+        bold: "__",
+        italic: "_",
+    },
+    element: document.getElementById("MyID"),
+    forceSync: true,
+    hideIcons: ["guide", "heading"],
+    indentWithTabs: false,
+    initialValue: "Hello world!",
+    insertTexts: {
+        horizontalRule: ["", "\n\n-----\n\n"],
+        image: ["![](http://", ")"],
+        link: ["[", "](https://)"],
+        table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
+    },
+    lineWrapping: false,
+    minHeight: "500px",
+    parsingConfig: {
+        allowAtxHeaderWithoutSpace: true,
+        strikethrough: false,
+        underscoresBreakWords: true,
+    },
+    placeholder: "Type here...",
 
-	previewClass: "my-custom-styling",
-	previewClass: ["my-custom-styling", "more-custom-styling"],
+    previewClass: "my-custom-styling",
+    previewClass: ["my-custom-styling", "more-custom-styling"],
 
-	previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
-	previewRender: (plainText, preview) => { // Async method
-		setTimeout(() => {
-			preview.innerHTML = customMarkdownParser(plainText);
-		}, 250);
+    previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
+    previewRender: (plainText, preview) => { // Async method
+        setTimeout(() => {
+            preview.innerHTML = customMarkdownParser(plainText);
+        }, 250);
 
-		return "Loading...";
-	},
-	promptURLs: true,
-	promptTexts: {
-		image: "Custom prompt for URL:",
-		link: "Custom prompt for URL:",
-	},
-	renderingConfig: {
-		singleLineBreaks: false,
-		codeSyntaxHighlighting: true,
-		sanitizerFunction: (renderedHTML) => {
-			// Using DOMPurify and only allowing <b> tags
-			return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
-		},
-	},
-	shortcuts: {
-		drawTable: "Cmd-Alt-T"
-	},
-	showIcons: ["code", "table"],
-	spellChecker: false,
-	status: false,
-	status: ["autosave", "lines", "words", "cursor"], // Optional usage
-	status: ["autosave", "lines", "words", "cursor", {
-		className: "keystrokes",
+        return "Loading...";
+    },
+    promptURLs: true,
+    promptTexts: {
+        image: "Custom prompt for URL:",
+        link: "Custom prompt for URL:",
+    },
+    renderingConfig: {
+        singleLineBreaks: false,
+        codeSyntaxHighlighting: true,
+        sanitizerFunction: (renderedHTML) => {
+            // Using DOMPurify and only allowing <b> tags
+            return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
+        },
+    },
+    shortcuts: {
+        drawTable: "Cmd-Alt-T"
+    },
+    showIcons: ["code", "table"],
+    spellChecker: false,
+    status: false,
+    status: ["autosave", "lines", "words", "cursor"], // Optional usage
+    status: ["autosave", "lines", "words", "cursor", {
+        className: "keystrokes",
         defaultValue: (el) => {
             el.setAttribute('data-keystrokes', 0);
         },
@@ -303,13 +303,13 @@ const editor = new EasyMDE({
             el.innerHTML = keystrokes + " Keystrokes";
             el.setAttribute('data-keystrokes', keystrokes);
         },
-	}], // Another optional usage, with a custom status bar item that counts keystrokes
-	styleSelectedText: false,
-	sideBySideFullscreen: false,
-	syncSideBySidePreviewScroll: false,
-	tabSize: 4,
-	toolbar: false,
-	toolbarTips: false,
+    }], // Another optional usage, with a custom status bar item that counts keystrokes
+    styleSelectedText: false,
+    sideBySideFullscreen: false,
+    syncSideBySidePreviewScroll: false,
+    tabSize: 4,
+    toolbar: false,
+    toolbarTips: false,
 });
 ```
 
@@ -352,41 +352,42 @@ Customize the toolbar using the `toolbar` option.
 
 Only the order of existing buttons:
 
-```JavaScript
+```js
 const easyMDE = new EasyMDE({
-	toolbar: ["bold", "italic", "heading", "|", "quote"]
+    toolbar: ["bold", "italic", "heading", "|", "quote"]
 });
 ```
 
 All information and/or add your own icons
 
-```Javascript
+```js
 const easyMDE = new EasyMDE({
-	toolbar: [{
-			name: "bold",
-			action: EasyMDE.toggleBold,
-			className: "fa fa-bold",
-			title: "Bold",
-		},
-		{
-			name: "custom",
-			action: function customFunction(editor){
-				// Add your own code
-			},
-			className: "fa fa-star",
-			title: "Custom Button",
-		},
-		"|" // Separator
-		// [, ...]
-	]
+    toolbar: [
+        {
+            name: "bold",
+            action: EasyMDE.toggleBold,
+            className: "fa fa-bold",
+            title: "Bold",
+        },
+        {
+            name: "custom",
+            action: function customFunction(editor) {
+                // Add your own code
+            },
+            className: "fa fa-star",
+            title: "Custom Button",
+        },
+        "|" // Separator
+        // [, ...]
+    ]
 });
 ```
 
 Put some buttons on dropdown menu
 
-```Javascript
+```js
 const easyMDE = new EasyMDE({
-	toolbar: [{
+    toolbar: [{
                 name: "heading",
                 action: EasyMDE.toggleHeadingSmaller,
                 className: "fa fa-header",
@@ -418,8 +419,8 @@ const easyMDE = new EasyMDE({
                     }
                 ]
             },
-		// [, ...]
-	]
+        // [, ...]
+    ]
 });
 ```
 
@@ -446,13 +447,13 @@ Shortcut (Windows / Linux) | Shortcut (macOS) | Action
 
 Here is how you can change a few, while leaving others untouched:
 
-```JavaScript
+```js
 const editor = new EasyMDE({
-	shortcuts: {
-		"toggleOrderedList": "Ctrl-Alt-K", // alter the shortcut for toggleOrderedList
-		"toggleCodeBlock": null, // unbind Ctrl-Alt-C
-		"drawTable": "Cmd-Alt-T", // bind Cmd-Alt-T to drawTable action, which doesn't come with a default shortcut
-	}
+    shortcuts: {
+        "toggleOrderedList": "Ctrl-Alt-K", // alter the shortcut for toggleOrderedList
+        "toggleCodeBlock": null, // unbind Ctrl-Alt-C
+        "drawTable": "Cmd-Alt-T", // bind Cmd-Alt-T to drawTable action, which doesn't come with a default shortcut
+    }
 });
 ```
 
@@ -467,10 +468,10 @@ The list of actions that can be bound is the same as the list of built-in action
 
 You can catch the following list of events: https://codemirror.net/doc/manual.html#events
 
-```JavaScript
+```js
 const easyMDE = new EasyMDE();
-easyMDE.codemirror.on("change", function(){
-	console.log(easyMDE.value());
+easyMDE.codemirror.on("change", () => {
+    console.log(easyMDE.value());
 });
 ```
 
@@ -479,7 +480,7 @@ easyMDE.codemirror.on("change", function(){
 
 You can revert to the initial text area by calling the `toTextArea` method. Note that this clears up the autosave (if enabled) associated with it. The text area will retain any text from the destroyed EasyMDE instance.
 
-```JavaScript
+```js
 const easyMDE = new EasyMDE();
 // ...
 easyMDE.toTextArea();
