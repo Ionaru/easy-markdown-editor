@@ -1767,6 +1767,8 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.maxHeight = options.maxHeight || undefined;
+    
+    options.direction = options.direction || 'ltr';
 
     if (typeof options.maxHeight !== 'undefined') {
         // Min and max height are equal if maxHeight is set
@@ -2080,6 +2082,7 @@ EasyMDE.prototype.render = function (el) {
         lineNumbers: (options.lineNumbers === true) ? true : false,
         autofocus: (options.autofocus === true) ? true : false,
         extraKeys: keyMaps,
+        direction: options.direction,
         lineWrapping: (options.lineWrapping === false) ? false : true,
         allowDropFileTypes: ['text/plain'],
         placeholder: options.placeholder || el.getAttribute('placeholder') || '',

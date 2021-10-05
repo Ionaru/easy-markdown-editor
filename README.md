@@ -154,7 +154,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **underscoresBreakWords**: If set to `true`, let underscores be a delimiter for separating words. Defaults to `false`.
 - **overlayMode**: Pass a custom codemirror [overlay mode](https://codemirror.net/doc/manual.html#modeapi) to parse and style the Markdown during editing.
   - **mode**: A codemirror mode object.
-  - **combine**: If set to `false`, will *replace* CSS classes returned by the default Markdown mode. Otherwise the classes returned by the custom mode will be combined with the classes returned by the default mode. Defaults to `true`. 
+  - **combine**: If set to `false`, will *replace* CSS classes returned by the default Markdown mode. Otherwise the classes returned by the custom mode will be combined with the classes returned by the default mode. Defaults to `true`.
 - **placeholder**: If set, displays a custom placeholder message.
 - **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
@@ -206,6 +206,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **theme**: Override the theme. Defaults to `easymde`.
 - **toolbar**: If set to `false`, hide the toolbar. Defaults to the [array of icons](#toolbar-icons).
 - **toolbarTips**: If set to `false`, disable toolbar button tips. Defaults to `true`.
+- **direction**: `rtl` or `ltr`. Changes text direction to support right-to-left languages. Defaults to `ltr`.
 
 
 ### Options example
