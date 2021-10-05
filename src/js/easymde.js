@@ -866,7 +866,7 @@ function afterImageUploaded(editor, url) {
     var stat = getState(cm);
     var options = editor.options;
     var imageName = url.substr(url.lastIndexOf('/') + 1);
-    var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '');
+    var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
 
     // Check if media is an image
     if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
