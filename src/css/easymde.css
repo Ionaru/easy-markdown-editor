@@ -2,8 +2,8 @@
     display: block;
 }
 
-.CodeMirror-rtl pre { 
-    direction: rtl; 
+.CodeMirror-rtl pre {
+    direction: rtl;
 }
 
 .EasyMDEContainer.sided--no-fullscreen {
@@ -46,8 +46,8 @@
 }
 
 .EasyMDEContainer.sided--no-fullscreen .CodeMirror-sided {
-    border-right: none!important;
-    border-bottom-right-radius: 0px;
+    border-right: none !important;
+    border-bottom-right-radius: 0;
     position: relative;
     flex: 1 1 auto;
 }
@@ -364,15 +364,18 @@
     visibility: visible;
 }
 
-span[data-img-src]::after{
+span[data-img-src]::after {
     content: '';
+    /*noinspection CssUnresolvedCustomProperty, added through JS*/
     background-image: var(--bg-image);
     display: block;
     max-height: 100%;
     max-width: 100%;
     background-size: contain;
     height: 0;
+    /*noinspection CssUnresolvedCustomProperty, added through JS*/
     padding-top: var(--height);
+    /*noinspection CssUnresolvedCustomProperty, added through JS*/
     width: var(--width);
     background-repeat: no-repeat;
 }

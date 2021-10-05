@@ -16,8 +16,7 @@ CodeMirror.commands.tabAndIndentMarkdownList = function (cm) {
 
     if (cm.options.indentWithTabs) {
         cm.execCommand('insertTab');
-    }
-    else {
+    } else {
         var spaces = Array(cm.options.tabSize + 1).join(' ');
         cm.replaceSelection(spaces);
     }
@@ -36,8 +35,7 @@ CodeMirror.commands.shiftTabAndUnindentMarkdownList = function (cm) {
 
     if (cm.options.indentWithTabs) {
         cm.execCommand('insertTab');
-    }
-    else {
+    } else {
         var spaces = Array(cm.options.tabSize + 1).join(' ');
         cm.replaceSelection(spaces);
     }

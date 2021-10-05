@@ -151,7 +151,7 @@ var CLASS_REGEX = {};
  * @param {String} className Class name to convert to regex for matching.
  * @returns {RegExp} Regular expression option that will match className.
  */
-function getClassRegex (className) {
+function getClassRegex(className) {
     return CLASS_REGEX[className] || (CLASS_REGEX[className] = new RegExp('\\s*' + className + '(\\s*)', 'g'));
 }
 
@@ -161,7 +161,7 @@ function getClassRegex (className) {
  * @param {String} className Class string to apply
  * @returns {void}
  */
-function addClass (el, className) {
+function addClass(el, className) {
     if (!el || !className) return;
     var classRegex = getClassRegex(className);
     if (el.className.match(classRegex)) return; // already applied
@@ -174,7 +174,7 @@ function addClass (el, className) {
  * @param {String} className Class string to remove
  * @returns {void}
  */
- function removeClass (el, className) {
+function removeClass(el, className) {
     if (!el || !className) return;
     var classRegex = getClassRegex(className);
     if (!el.className.match(classRegex)) return; // not available to remove
@@ -241,7 +241,7 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     // Prevent errors if there is no class name in custom options
     var classNameParts = [];
-    if(typeof options.className !== 'undefined') {
+    if (typeof options.className !== 'undefined') {
         classNameParts = options.className.split(' ');
     }
 
@@ -870,11 +870,11 @@ function afterImageUploaded(editor, url) {
 
     // Check if media is an image
     if (['png', 'jpg', 'jpeg', 'gif', 'svg'].includes(ext)) {
-      _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
+        _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     } else {
-      var text_link = options.insertTexts.link;
-      text_link[0] = '[' + imageName;
-      _replaceSelection(cm, stat.link, text_link, url);
+        var text_link = options.insertTexts.link;
+        text_link[0] = '[' + imageName;
+        _replaceSelection(cm, stat.link, text_link, url);
     }
 
     // show uploaded image filename for 1000ms
@@ -1767,7 +1767,7 @@ function EasyMDE(options) {
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
 
     options.maxHeight = options.maxHeight || undefined;
-    
+
     options.direction = options.direction || 'ltr';
 
     if (typeof options.maxHeight !== 'undefined') {
@@ -1795,7 +1795,7 @@ function EasyMDE(options) {
 
     // If overlay mode is specified and combine is not provided, default it to true
     if (options.overlayMode && options.overlayMode.combine === undefined) {
-      options.overlayMode.combine = true;
+        options.overlayMode.combine = true;
     }
 
     // Update this options
@@ -1871,7 +1871,7 @@ function EasyMDE(options) {
  */
 EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
     if (files.length === 0) {
-      return;
+        return;
     }
     var names = [];
     for (var i = 0; i < files.length; i++) {
@@ -1893,7 +1893,7 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
  */
 EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunction, files) {
     if (files.length === 0) {
-      return;
+        return;
     }
     var names = [];
     for (var i = 0; i < files.length; i++) {
@@ -1952,9 +1952,9 @@ EasyMDE.prototype.markdown = function (text) {
             if (hljs) {
                 markedOptions.highlight = function (code, language) {
                     if (language && hljs.getLanguage(language)) {
-                      return hljs.highlight(language, code).value;
+                        return hljs.highlight(language, code).value;
                     } else {
-                    return hljs.highlightAuto(code).value;
+                        return hljs.highlightAuto(code).value;
                     }
                 };
             }
@@ -2036,13 +2036,13 @@ EasyMDE.prototype.render = function (el) {
 
     // CodeMirror overlay mode
     if (options.overlayMode) {
-      CodeMirror.defineMode('overlay-mode', function(config) {
-        return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
-      });
+        CodeMirror.defineMode('overlay-mode', function (config) {
+            return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
+        });
 
-      mode = 'overlay-mode';
-      backdrop = options.parsingConfig;
-      backdrop.gitHubSpice = false;
+        mode = 'overlay-mode';
+        backdrop = options.parsingConfig;
+        backdrop.gitHubSpice = false;
     } else {
         mode = options.parsingConfig;
         mode.name = 'gfm';
@@ -2149,7 +2149,7 @@ EasyMDE.prototype.render = function (el) {
 
     function assignImageBlockAttributes(parentEl, img) {
         parentEl.setAttribute('data-img-src', img.url);
-        parentEl.setAttribute('style', '--bg-image:url('+img.url+');--width:'+img.naturalWidth+'px;--height:'+calcHeight(img.naturalWidth, img.naturalHeight));
+        parentEl.setAttribute('style', '--bg-image:url(' + img.url + ');--width:' + img.naturalWidth + 'px;--height:' + calcHeight(img.naturalWidth, img.naturalHeight));
         _vm.codemirror.setSize();
     }
 
@@ -2158,8 +2158,8 @@ EasyMDE.prototype.render = function (el) {
             return;
         }
 
-        easyMDEContainer.querySelectorAll('.cm-image-marker').forEach(function(e) {
-            var parentEl =  e.parentElement;
+        easyMDEContainer.querySelectorAll('.cm-image-marker').forEach(function (e) {
+            var parentEl = e.parentElement;
             if (!parentEl.innerText.match(/^!\[.*?\]\(.*\)/g)) {
                 // if img pasted on the same line with other text, don't preview, preview only images on separate line
                 return;
@@ -2173,9 +2173,9 @@ EasyMDE.prototype.render = function (el) {
                 if (srcAttr && srcAttr.length >= 2) {
                     var keySrc = srcAttr[1];
 
-                    if (! window.EMDEimagesCache[keySrc]) {
+                    if (!window.EMDEimagesCache[keySrc]) {
                         var img = document.createElement('img');
-                        img.onload = function() {
+                        img.onload = function () {
                             window.EMDEimagesCache[keySrc] = {
                                 naturalWidth: img.naturalWidth,
                                 naturalHeight: img.naturalHeight,
@@ -2191,6 +2191,7 @@ EasyMDE.prototype.render = function (el) {
             }
         });
     }
+
     this.codemirror.on('update', function () {
         handleImages();
     });
@@ -2300,9 +2301,9 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         if (self.options.imageUploadFunction) {
-          self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
+            self.uploadImagesUsingCustomFunction(self.options.imageUploadFunction, event.target.files);
         } else {
-          self.uploadImages(event.target.files, onSuccess, onError);
+            self.uploadImages(event.target.files, onSuccess, onError);
         }
         imageInput.removeEventListener('change', onChange);
     }
@@ -2409,8 +2410,9 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
  * @param imageUploadFunction {Function} The custom function to upload the image passed in options
  * @param file {File} The image to upload, as a HTML5 File object (https://developer.mozilla.org/en-US/docs/Web/API/File).
  */
-EasyMDE.prototype.uploadImageUsingCustomFunction = function(imageUploadFunction, file) {
+EasyMDE.prototype.uploadImageUsingCustomFunction = function (imageUploadFunction, file) {
     var self = this;
+
     function onSuccess(imageUrl) {
         afterImageUploaded(self, imageUrl);
     }
@@ -2451,7 +2453,7 @@ EasyMDE.prototype.setPreviewMaxHeight = function () {
     var wrapperMaxHeight = optionsMaxHeight + paddingTop * 2 + borderTopWidth * 2;
     var previewMaxHeight = wrapperMaxHeight.toString() + 'px';
 
-    preview.style.height =  previewMaxHeight;
+    preview.style.height = previewMaxHeight;
 };
 
 EasyMDE.prototype.createSideBySide = function () {

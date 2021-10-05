@@ -8,7 +8,7 @@ const editor = new EasyMDE({
     inputStyle: 'textarea',
     shortcuts: {
         drawTable: 'Cmd-Alt-T',
-        toggleFullScreen: null
+        toggleFullScreen: null,
     },
     previewClass: 'my-custom-class',
     spellChecker: false,
@@ -16,7 +16,7 @@ const editor = new EasyMDE({
         console.log('FullscreenToggled', full);
     },
     theme: 'someOtherTheme',
-    minHeight: '200px'
+    minHeight: '200px',
 });
 
 // Editor functions
@@ -44,7 +44,7 @@ const editor2 = new EasyMDE({
             name: 'bold',
             action: EasyMDE.toggleBold,
             className: 'fa fas fa-bolt',
-            title: 'Bold'
+            title: 'Bold',
         },
         '|',
         'undo',
@@ -57,7 +57,7 @@ const editor2 = new EasyMDE({
             className: 'fa fas fa-star',
             title: 'A Custom Button',
             noDisable: undefined,
-            noMobile: false
+            noMobile: false,
         },
         '|',
         {
@@ -66,7 +66,7 @@ const editor2 = new EasyMDE({
             className: 'fa fab fa-github',
             title: 'A Custom Link',
             noDisable: true,
-            noMobile: true
+            noMobile: true,
         },
         'preview',
         {
@@ -80,18 +80,18 @@ const editor2 = new EasyMDE({
                     className: 'fa fab fa-github',
                     title: 'A Custom Link',
                     noDisable: true,
-                    noMobile: true
+                    noMobile: true,
                 },
                 'preview',
                 {
                     name: 'bold',
                     action: EasyMDE.toggleBold,
                     className: 'fa fas fa-bold',
-                    title: 'Bold'
+                    title: 'Bold',
                 },
-            ]
-        }
-    ]
+            ],
+        },
+    ],
 });
 
 editor2.clearAutosavedValue();
@@ -112,17 +112,17 @@ const editorImages = new EasyMDE({
         sbOnDrop: 'Uploading...',
         sbProgress: 'Uploading... (#progress#)',
         sbOnUploaded: 'Upload complete!',
-        sizeUnits: 'b,Kb,Mb'
+        sizeUnits: 'b,Kb,Mb',
     },
     errorMessages: {
         noFileGiven: 'Please select a file',
         typeNotAllowed: 'This file type is not allowed!',
         fileTooLarge: 'Image too big',
-        importError: 'Something went oops!'
+        importError: 'Something went oops!',
     },
     errorCallback: errorMessage => {
         console.error(errorMessage);
-    }
+    },
 });
 
 const editorImagesCustom = new EasyMDE({
@@ -141,13 +141,13 @@ const editorImagesCustom = new EasyMDE({
         sbOnDrop: 'Uploading...',
         sbProgress: 'Uploading... (#progress#)',
         sbOnUploaded: 'Upload complete!',
-        sizeUnits: 'b,Kb,Mb'
+        sizeUnits: 'b,Kb,Mb',
     },
     errorMessages: {
         noFileGiven: 'Please select a file',
         typeNotAllowed: 'This file type is not allowed!',
         fileTooLarge: 'Image too big',
-        importError: 'Something went oops!'
+        importError: 'Something went oops!',
     },
     errorCallback: errorMessage => {
         console.error(errorMessage);
@@ -157,14 +157,14 @@ const editorImagesCustom = new EasyMDE({
         markedOptions: {
             silent: true,
             highlight(code: string, lang: string, callback?: (error: (any | undefined), code: string) => void): string {
-                return 'something'
+                return 'something';
             },
         },
     },
     promptTexts: {
-        image: 'Insert URL'
+        image: 'Insert URL',
     },
-    syncSideBySidePreviewScroll: true
+    syncSideBySidePreviewScroll: true,
 });
 
 new EasyMDE({
@@ -179,10 +179,10 @@ new EasyMDE({
             locale: 'en-GB',
             format: {
                 month: 'long',
-            }
+            },
         },
         text: 'Stored: ',
-    }
+    },
 });
 
 new EasyMDE({
@@ -199,6 +199,6 @@ new EasyMDE({
         'ordered-list',
         'table',
         '|',
-        'link'
-    ]
+        'link',
+    ],
 });

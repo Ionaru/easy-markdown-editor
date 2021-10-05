@@ -23,7 +23,7 @@
 /// <reference types="marked"/>
 
 interface ArrayOneOrMore<T> extends Array<T> {
-    0: T
+    0: T;
 }
 
 type ToolbarButton =
@@ -161,12 +161,12 @@ declare namespace EasyMDE {
     }
 
     interface OverlayModeOptions {
-      mode: CodeMirror.Mode<any>
-      combine?: boolean
+        mode: CodeMirror.Mode<any>;
+        combine?: boolean;
     }
 
     interface SpellCheckerOptions {
-        codeMirrorInstance: CodeMirror.Editor
+        codeMirrorInstance: CodeMirror.Editor;
     }
 
     interface Options {
@@ -221,7 +221,7 @@ declare namespace EasyMDE {
         promptTexts?: PromptTexts;
         syncSideBySidePreviewScroll?: boolean;
 
-        overlayMode?: OverlayModeOptions
+        overlayMode?: OverlayModeOptions;
     }
 }
 
