@@ -4,7 +4,13 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[comment]: <> (## [Unreleased])
+## [Unreleased]
+### Added
+- `direction` option to enable RTL mode (Thanks to [@souljuse], [#358]).
+
+### Fixed
+- Image extension detection when extension is uppercase (Thanks to [@ukjinjang], [#357]).
+
 ## [2.15.0] - 2021-04-22
 ### Added
 - `imagePathAbsolute` option to return the absolute path when uploading an image (Thanks to [@wwsalmon], [#313]).
@@ -74,9 +80,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Group buttons in drop-down lists by adding a sub-option `children` for the items in the toolbar (Thanks to [@firm1], [#141]).
 - `sanitizerFunction` option to allow custom HTML sanitizing in the markdown preview (Thanks to [@adamb70], [#147]).
 - Time formatting and custom text options for the autosave message (Thanks to [@dima-bzz], [#170]).
+
 ### Changed
 - Delay before assuming that submit of the form as failed is `autosave.submit_delay` instead of `autosave.delay` (Thanks to [@Situphen], [#139]).
 - Add `watch` task for gulp (Thanks to [@A-312], [#150]).
+
 ### Fixed
 - Issue with Marked when using IE11 and webpack (Thanks to [@felipefdl], [#169]).
 - Updated codemirror to version 5.52.2 (Thanks to [@A-312], [#173]).
@@ -222,6 +230,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#358]: https://github.com/Ionaru/easy-markdown-editor/pull/358
+[#357]: https://github.com/Ionaru/easy-markdown-editor/pull/357
 [#322]: https://github.com/Ionaru/easy-markdown-editor/pull/322
 [#316]: https://github.com/Ionaru/easy-markdown-editor/pull/316
 [#313]: https://github.com/Ionaru/easy-markdown-editor/pull/313
@@ -312,6 +322,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@n-3-0]: https://github.com/n-3-0
 [@aphitiel]: https://github.com/aphitiel
 [@sne11ius]: https://github.com/sne11ius
+[@souljuse]: https://github.com/souljuse
+[@ukjinjang]: https://github.com/ukjinjang
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.15.0...HEAD
