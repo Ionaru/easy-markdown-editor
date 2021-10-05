@@ -51,7 +51,7 @@ The editor is entirely customizable, from theming to toolbar buttons and javascr
 Via [npm](https://www.npmjs.com/package/easymde):
 
 ```
-npm install easymde --save
+npm install easymde
 ```
 
 Via the *UNPKG* CDN:
@@ -61,6 +61,11 @@ Via the *UNPKG* CDN:
 <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
 ```
 
+Or *jsDelivr*:
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+<script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+```
 
 ## How to use
 
@@ -71,7 +76,7 @@ After installing and/or importing the module, you can load EasyMDE onto the firs
 ```html
 <textarea></textarea>
 <script>
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 </script>
 ```
 
@@ -80,7 +85,7 @@ Alternatively you can select a specific TextArea, via Javascript:
 ```html
 <textarea id="my-text-area"></textarea>
 <script>
-var easyMDE = new EasyMDE({element: document.getElementById('my-text-area')});
+const easyMDE = new EasyMDE({element: document.getElementById('my-text-area')});
 </script>
 ```
 
@@ -89,7 +94,7 @@ Or via jQuery:
 ```html
 <textarea id="my-text-area"></textarea>
 <script>
-var easyMDE = new EasyMDE({element: $('#my-text-area')[0]});
+const easyMDE = new EasyMDE({element: $('#my-text-area')[0]});
 </script>
 ```
 
@@ -214,7 +219,7 @@ easyMDE.value('New input for **EasyMDE**');
 Most options demonstrate the non-default behavior:
 
 ```JavaScript
-var editor = new EasyMDE({
+const editor = new EasyMDE({
 	autofocus: true,
 	autosave: {
 		enabled: true,
@@ -245,7 +250,7 @@ var editor = new EasyMDE({
 	insertTexts: {
 		horizontalRule: ["", "\n\n-----\n\n"],
 		image: ["![](http://", ")"],
-		link: ["[", "](http://)"],
+		link: ["[", "](https://)"],
 		table: ["", "\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text      | Text     |\n\n"],
 	},
 	lineWrapping: false,
@@ -260,11 +265,9 @@ var editor = new EasyMDE({
 	previewClass: "my-custom-styling",
 	previewClass: ["my-custom-styling", "more-custom-styling"],
 
-	previewRender: function(plainText) {
-		return customMarkdownParser(plainText); // Returns HTML from a custom parser
-	},
-	previewRender: function(plainText, preview) { // Async method
-		setTimeout(function(){
+	previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
+	previewRender: (plainText, preview) => { // Async method
+		setTimeout(() => {
 			preview.innerHTML = customMarkdownParser(plainText);
 		}, 250);
 
@@ -278,7 +281,7 @@ var editor = new EasyMDE({
 	renderingConfig: {
 		singleLineBreaks: false,
 		codeSyntaxHighlighting: true,
-		sanitizerFunction: function(renderedHTML) {
+		sanitizerFunction: (renderedHTML) => {
 			// Using DOMPurify and only allowing <b> tags
 			return DOMPurify.sanitize(renderedHTML, {ALLOWED_TAGS: ['b']})
 		},
@@ -292,13 +295,14 @@ var editor = new EasyMDE({
 	status: ["autosave", "lines", "words", "cursor"], // Optional usage
 	status: ["autosave", "lines", "words", "cursor", {
 		className: "keystrokes",
-		defaultValue: function(el) {
-			this.keystrokes = 0;
-			el.innerHTML = "0 Keystrokes";
-		},
-		onUpdate: function(el) {
-			el.innerHTML = ++this.keystrokes + " Keystrokes";
-		},
+        defaultValue: (el) => {
+            el.setAttribute('data-keystrokes', 0);
+        },
+        onUpdate: (el) => {
+            let keystrokes = Number(el.getAttribute('data-keystrokes')) + 1;
+            el.innerHTML = keystrokes + " Keystrokes";
+            el.setAttribute('data-keystrokes', keystrokes);
+        },
 	}], // Another optional usage, with a custom status bar item that counts keystrokes
 	styleSelectedText: false,
 	sideBySideFullscreen: false,
@@ -349,7 +353,7 @@ Customize the toolbar using the `toolbar` option.
 Only the order of existing buttons:
 
 ```JavaScript
-var easyMDE = new EasyMDE({
+const easyMDE = new EasyMDE({
 	toolbar: ["bold", "italic", "heading", "|", "quote"]
 });
 ```
@@ -357,7 +361,7 @@ var easyMDE = new EasyMDE({
 All information and/or add your own icons
 
 ```Javascript
-var easyMDE = new EasyMDE({
+const easyMDE = new EasyMDE({
 	toolbar: [{
 			name: "bold",
 			action: EasyMDE.toggleBold,
@@ -381,7 +385,7 @@ var easyMDE = new EasyMDE({
 Put some buttons on dropdown menu
 
 ```Javascript
-var easyMDE = new EasyMDE({
+const easyMDE = new EasyMDE({
 	toolbar: [{
                 name: "heading",
                 action: EasyMDE.toggleHeadingSmaller,
@@ -443,7 +447,7 @@ Shortcut (Windows / Linux) | Shortcut (macOS) | Action
 Here is how you can change a few, while leaving others untouched:
 
 ```JavaScript
-var editor = new EasyMDE({
+const editor = new EasyMDE({
 	shortcuts: {
 		"toggleOrderedList": "Ctrl-Alt-K", // alter the shortcut for toggleOrderedList
 		"toggleCodeBlock": null, // unbind Ctrl-Alt-C
@@ -464,7 +468,7 @@ The list of actions that can be bound is the same as the list of built-in action
 You can catch the following list of events: https://codemirror.net/doc/manual.html#events
 
 ```JavaScript
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 easyMDE.codemirror.on("change", function(){
 	console.log(easyMDE.value());
 });
@@ -476,7 +480,7 @@ easyMDE.codemirror.on("change", function(){
 You can revert to the initial text area by calling the `toTextArea` method. Note that this clears up the autosave (if enabled) associated with it. The text area will retain any text from the destroyed EasyMDE instance.
 
 ```JavaScript
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 // ...
 easyMDE.toTextArea();
 easyMDE = null;
@@ -490,7 +494,7 @@ If you need to remove installed listeners (when editor not needed anymore), call
 The following self-explanatory methods may be of use while developing with EasyMDE.
 
 ```js
-var easyMDE = new EasyMDE();
+const easyMDE = new EasyMDE();
 easyMDE.isPreviewActive(); // returns boolean
 easyMDE.isSideBySideActive(); // returns boolean
 easyMDE.isFullscreenActive(); // returns boolean
