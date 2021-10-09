@@ -299,8 +299,8 @@ const editor = new EasyMDE({
             el.setAttribute('data-keystrokes', 0);
         },
         onUpdate: (el) => {
-            let keystrokes = Number(el.getAttribute('data-keystrokes')) + 1;
-            el.innerHTML = keystrokes + " Keystrokes";
+            const keystrokes = Number(el.getAttribute('data-keystrokes')) + 1;
+            el.innerHTML = `${keystrokes} Keystrokes`;
             el.setAttribute('data-keystrokes', keystrokes);
         },
     }], // Another optional usage, with a custom status bar item that counts keystrokes
@@ -369,9 +369,10 @@ const easyMDE = new EasyMDE({
             className: "fa fa-bold",
             title: "Bold",
         },
+        "italics", // shortcut to pre-made button
         {
             name: "custom",
-            action: function customFunction(editor) {
+            action: (editor) => {
                 // Add your own code
             },
             className: "fa fa-star",
