@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Image extension detection when extension is uppercase (Thanks to [@ukjinjang], [#357]).
+- Submenu actions not working in Chromium Browsers (Thanks to [@Offerel] and [@robjean9], [#364]).
 
 ## [2.15.0] - 2021-04-22
 ### Added
@@ -230,6 +231,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#364]: https://github.com/Ionaru/easy-markdown-editor/pull/364
 [#358]: https://github.com/Ionaru/easy-markdown-editor/pull/358
 [#357]: https://github.com/Ionaru/easy-markdown-editor/pull/357
 [#322]: https://github.com/Ionaru/easy-markdown-editor/pull/322
@@ -324,6 +326,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sne11ius]: https://github.com/sne11ius
 [@souljuse]: https://github.com/souljuse
 [@ukjinjang]: https://github.com/ukjinjang
+[@robjean9]: https://github.com/robjean9
+[@Offerel]: https://github.com/Offerel
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.15.0...HEAD
