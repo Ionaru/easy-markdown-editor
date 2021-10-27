@@ -361,7 +361,7 @@
 
 .easymde-dropdown:active .easymde-dropdown-content,
 .easymde-dropdown:focus .easymde-dropdown-content,
-.easymde-dropdown:focus-within .easymde-dropdown-content, {
+.easymde-dropdown:focus-within .easymde-dropdown-content {
     visibility: visible;
 }
 
