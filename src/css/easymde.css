@@ -360,7 +360,9 @@
 }
 
 .easymde-dropdown:active .easymde-dropdown-content,
-.easymde-dropdown:focus .easymde-dropdown-content {
+.easymde-dropdown:focus .easymde-dropdown-content,
+.easymde-dropdown-content:active,
+.easymde-dropdown-content:focus{
     visibility: visible;
 }
 
