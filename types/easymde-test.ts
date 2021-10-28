@@ -202,3 +202,11 @@ new EasyMDE({
         'link',
     ],
 });
+
+new EasyMDE({
+    direction: 'ltr',
+})
+
+new EasyMDE({
+    direction: 'rtl',
+})

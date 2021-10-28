@@ -222,6 +222,8 @@ declare namespace EasyMDE {
         syncSideBySidePreviewScroll?: boolean;
 
         overlayMode?: OverlayModeOptions;
+
+        direction?: 'ltr' | 'rtl';
     }
 }
 
