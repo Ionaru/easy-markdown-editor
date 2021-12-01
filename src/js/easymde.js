@@ -2379,8 +2379,8 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
             onErrorSup(fillErrorMessage(self.options.errorMessages.importError));
             return;
         }
-        if (this.status === 200 && response && !response.error && response.data && response.data.filePath) {
-            onSuccess((self.options.imagePathAbsolute ? '' : (window.location.origin + '/')) + response.data.filePath);
+        if (this.status === 200 || this.status === 201 && response && !response.error && response.data && response.data.slug) {
+            onSuccess((self.options.imagePathAbsolute ? '' : (window.location.origin + '/thumbs/')) + response.data.slug);
         } else {
             if (response.error && response.error in self.options.errorMessages) {  // preformatted error message
                 onErrorSup(fillErrorMessage(self.options.errorMessages[response.error]));
