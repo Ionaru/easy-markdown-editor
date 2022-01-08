@@ -2672,7 +2672,9 @@ EasyMDE.prototype.createStatusbar = function (status) {
                 };
                 onActivity = function (el) {
                     var pos = cm.getCursor();
-                    el.innerHTML = pos.line + 1 + ':' + pos.ch;
+                    var posLine = pos.line + 1;
+                    var posColumn = pos.ch + 1;
+                    el.innerHTML = posLine + ':' + posColumn;
                 };
             } else if (name === 'autosave') {
                 defaultValue = function (el) {
