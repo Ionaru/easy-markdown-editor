@@ -206,6 +206,7 @@ declare namespace EasyMDE {
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
         scrollbarStyle?: string;
+        unorderedListStyle?: '*' | '-' | '+';
 
         uploadImage?: boolean;
         imageMaxSize?: number;

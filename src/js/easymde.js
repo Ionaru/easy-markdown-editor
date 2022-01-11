@@ -188,6 +188,11 @@ function removeClass(el, className) {
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
     el.className += ' easymde-dropdown';
+
+    el.onclick = function () {
+        el.focus();
+    };
+
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
     for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
@@ -201,6 +206,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
             childElement = createToolbarButton(child, true, enableTooltips, shortcuts, 'button', parent);
         }
 
+        childElement.addEventListener('click', function (e) { e.stopPropagation(); }, false);
         content.appendChild(childElement);
     }
     el.appendChild(content);
@@ -799,7 +805,13 @@ function toggleHeading3(editor) {
  */
 function toggleUnorderedList(editor) {
     var cm = editor.codemirror;
-    _toggleLine(cm, 'unordered-list');
+
+    var listStyle = '*'; // Default
+    if (['-', '+', '*'].includes(editor.options.unorderedListStyle)) {
+        listStyle = editor.options.unorderedListStyle;
+    }
+
+    _toggleLine(cm, 'unordered-list', listStyle);
 }
 
 
@@ -1177,7 +1189,7 @@ function _toggleHeading(cm, direction, size) {
 }
 
 
-function _toggleLine(cm, name) {
+function _toggleLine(cm, name, liststyle) {
     if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
         return;
 
@@ -1196,7 +1208,7 @@ function _toggleLine(cm, name) {
     var _getChar = function (name, i) {
         var map = {
             'quote': '>',
-            'unordered-list': '*',
+            'unordered-list': liststyle,
             'ordered-list': '%%i.',
         };
 
@@ -1206,7 +1218,7 @@ function _toggleLine(cm, name) {
     var _checkChar = function (name, char) {
         var map = {
             'quote': '>',
-            'unordered-list': '\\*',
+            'unordered-list': '\\' + liststyle,
             'ordered-list': '\\d+.',
         };
         var rt = new RegExp(map[name]);
