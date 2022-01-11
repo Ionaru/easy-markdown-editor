@@ -6,15 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
-- `unorderedListStyle` option to change the character used for unordered lists (Thanks to [@Zignature], [#389]).
-
-## [2.16.0] - 2021-10-28
-### Added
 - `direction` option to enable RTL mode (Thanks to [@souljuse], [#358]).
+- `attributes` option to add custom attributes to toolbar buttons (Thanks to [@Zignature], [#388]).
+- `unorderedListStyle` option to change the character used for unordered lists (Thanks to [@Zignature], [#389]).
 
 ### Fixed
 - Image extension detection when extension is uppercase (Thanks to [@ukjinjang], [#357]).
-- Submenu actions not working in Chromium Browsers (Thanks to [@Offerel] and [@robjean9], [#364]).
+- Submenu actions not working in Chromium Browsers (Thanks to [@Offerel], [@robjean9] and [@kelvinj], [#364]).
 
 ## [2.15.0] - 2021-04-22
 ### Added
@@ -236,6 +234,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked PRs -->
 [#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
+[#388]: https://github.com/Ionaru/easy-markdown-editor/pull/388
 [#364]: https://github.com/Ionaru/easy-markdown-editor/pull/364
 [#358]: https://github.com/Ionaru/easy-markdown-editor/pull/358
 [#357]: https://github.com/Ionaru/easy-markdown-editor/pull/357
@@ -334,6 +333,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@robjean9]: https://github.com/robjean9
 [@Offerel]: https://github.com/Offerel
 [@Zignature]: https://github.com/Zignature
+[@kelvinj]: https://github.com/kelvinj
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.0...HEAD
