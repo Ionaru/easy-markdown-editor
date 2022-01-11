@@ -793,7 +793,17 @@ function toggleHeading3(editor) {
  */
 function toggleUnorderedList(editor) {
     var cm = editor.codemirror;
-    _toggleLine(cm, 'unordered-list');
+    var liststyle = editor.options.unorderedListStyle;
+
+    liststyle = (
+        liststyle != undefined
+        && liststyle !== ''
+        && liststyle.length == 1
+        )
+        ? liststyle
+        : '*';
+
+    _toggleLine(cm, 'unordered-list', liststyle);
 }
 
 
@@ -1171,7 +1181,7 @@ function _toggleHeading(cm, direction, size) {
 }
 
 
-function _toggleLine(cm, name) {
+function _toggleLine(cm, name, liststyle) {
     if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
         return;
 
@@ -1190,7 +1200,7 @@ function _toggleLine(cm, name) {
     var _getChar = function (name, i) {
         var map = {
             'quote': '>',
-            'unordered-list': '*',
+            'unordered-list': liststyle,
             'ordered-list': '%%i.',
         };
 
@@ -1200,7 +1210,7 @@ function _toggleLine(cm, name) {
     var _checkChar = function (name, char) {
         var map = {
             'quote': '>',
-            'unordered-list': '\\*',
+            'unordered-list': '\\'.liststyle,
             'ordered-list': '\\d+.',
         };
         var rt = new RegExp(map[name]);
