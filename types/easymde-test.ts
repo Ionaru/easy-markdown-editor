@@ -38,6 +38,7 @@ const editor2 = new EasyMDE({
     autoDownloadFontAwesome: undefined,
     previewClass: ['my-custom-class', 'some-other-class'],
     nativeSpellcheck: true,
+    unorderedListStyle: '-',
     inputStyle: 'contenteditable',
     toolbar: [
         {
@@ -104,6 +105,7 @@ const editorImages = new EasyMDE({
     previewImagesInEditor: false,
     imageAccept: 'image/png, image/bmp',
     imageCSRFToken: undefined,
+    unorderedListStyle: '+',
     imageMaxSize: 10485760,
     imageUploadEndpoint: 'https://my.domain/image-upload/',
     imageTexts: {
@@ -170,6 +172,7 @@ const editorImagesCustom = new EasyMDE({
 new EasyMDE({
     sideBySideFullscreen: true,
     lineNumbers: false,
+    unorderedListStyle: '*',
     autosave: {
         enabled: true,
         delay: 2000,
