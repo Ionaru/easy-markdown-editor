@@ -793,17 +793,13 @@ function toggleHeading3(editor) {
  */
 function toggleUnorderedList(editor) {
     var cm = editor.codemirror;
-    var liststyle = editor.options.unorderedListStyle;
 
-    liststyle = (
-        liststyle != undefined
-        && liststyle !== ''
-        && liststyle.length == 1
-        )
-        ? liststyle
-        : '*';
+    var listStyle = '*'; // Default
+    if (['-', '+', '*'].includes(editor.options.unorderedListStyle)) {
+        listStyle = editor.options.unorderedListStyle;
+    }
 
-    _toggleLine(cm, 'unordered-list', liststyle);
+    _toggleLine(cm, 'unordered-list', listStyle);
 }
 
 
@@ -1210,7 +1206,7 @@ function _toggleLine(cm, name, liststyle) {
     var _checkChar = function (name, char) {
         var map = {
             'quote': '>',
-            'unordered-list': '\\'.liststyle,
+            'unordered-list': '\\' + liststyle,
             'ordered-list': '\\d+.',
         };
         var rt = new RegExp(map[name]);
