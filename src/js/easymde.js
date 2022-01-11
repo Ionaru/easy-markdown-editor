@@ -188,6 +188,11 @@ function removeClass(el, className) {
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
     el.className += ' easymde-dropdown';
+
+    el.onclick = function () {
+        el.focus();
+    };
+
     var content = document.createElement('div');
     content.className = 'easymde-dropdown-content';
     for (var childrenIndex = 0; childrenIndex < options.children.length; childrenIndex++) {
@@ -201,6 +206,7 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
             childElement = createToolbarButton(child, true, enableTooltips, shortcuts, 'button', parent);
         }
 
+        childElement.addEventListener('click', function (e) { e.stopPropagation(); }, false);
         content.appendChild(childElement);
     }
     el.appendChild(content);
