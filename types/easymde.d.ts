@@ -74,6 +74,10 @@ declare namespace EasyMDE {
         italic?: string;
     }
 
+    interface CustomAttributes {
+        [key: string]: string;
+    }
+
     interface InsertTextOptions {
         horizontalRule?: ReadonlyArray<string>;
         image?: ReadonlyArray<string>;
@@ -142,6 +146,7 @@ declare namespace EasyMDE {
         noDisable?: boolean;
         noMobile?: boolean;
         icon?: string;
+        attributes?: CustomAttributes;
     }
 
     interface ImageTextsOptions {
