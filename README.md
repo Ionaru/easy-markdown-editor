@@ -136,6 +136,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **bold**: Can be set to `**` or `__`. Defaults to `**`.
   - **code**: Can be set to  ```` ``` ```` or `~~~`.  Defaults to ```` ``` ````.
   - **italic**: Can be set to `*` or `_`. Defaults to `*`.
+- **unorderedListStyle**: can be `*`, `-` or `+`. Defaults to `*`.
 - **scrollbarStyle**: Chooses a scrollbar implementation. The default is "native", showing native scrollbars. The core library also provides the "null" style, which completely hides the scrollbars. Addons can implement additional scrollbar models.
 - **element**: The DOM element for the TextArea to use. Defaults to the first TextArea on the page.
 - **forceSync**: If set to `true`, force text changes made in EasyMDE to be immediately stored in original text area. Defaults to `false`.
@@ -242,6 +243,7 @@ const editor = new EasyMDE({
         bold: "__",
         italic: "_",
     },
+    unorderedListStyle: "-",
     element: document.getElementById("MyID"),
     forceSync: true,
     hideIcons: ["guide", "heading"],

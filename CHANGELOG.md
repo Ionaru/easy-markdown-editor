@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!-- ## [Unreleased] -->
+## [Unreleased]
+### Added
+- `unorderedListStyle` option to change the character used for unordered lists (Thanks to [@Zignature], [#389]).
+
 ## [2.16.0] - 2021-10-28
 ### Added
 - `direction` option to enable RTL mode (Thanks to [@souljuse], [#358]).
@@ -232,6 +235,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
 [#364]: https://github.com/Ionaru/easy-markdown-editor/pull/364
 [#358]: https://github.com/Ionaru/easy-markdown-editor/pull/358
 [#357]: https://github.com/Ionaru/easy-markdown-editor/pull/357
@@ -329,6 +333,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@ukjinjang]: https://github.com/ukjinjang
 [@robjean9]: https://github.com/robjean9
 [@Offerel]: https://github.com/Offerel
+[@Zignature]: https://github.com/Zignature
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.0...HEAD
