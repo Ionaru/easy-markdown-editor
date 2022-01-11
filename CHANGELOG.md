@@ -4,7 +4,8 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!-- ## [Unreleased] -->
+## [2.16.0] - 2022-01-11
 ### Added
 - `direction` option to enable RTL mode (Thanks to [@souljuse], [#358]).
 - `attributes` option to add custom attributes to toolbar buttons (Thanks to [@Zignature], [#388]).
@@ -13,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Image extension detection when extension is uppercase (Thanks to [@ukjinjang], [#357]).
 - Submenu actions not working in Chromium Browsers (Thanks to [@Offerel], [@robjean9] and [@kelvinj], [#364]).
+- Incorrect line and column count in status bar (Thanks to [@Zignature], [#384]).
 
 ## [2.15.0] - 2021-04-22
 ### Added
@@ -235,6 +237,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 <!-- Linked PRs -->
 [#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
 [#388]: https://github.com/Ionaru/easy-markdown-editor/pull/388
+[#384]: https://github.com/Ionaru/easy-markdown-editor/pull/384
 [#364]: https://github.com/Ionaru/easy-markdown-editor/pull/364
 [#358]: https://github.com/Ionaru/easy-markdown-editor/pull/358
 [#357]: https://github.com/Ionaru/easy-markdown-editor/pull/357
