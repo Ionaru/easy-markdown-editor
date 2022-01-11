@@ -379,6 +379,10 @@ const easyMDE = new EasyMDE({
             },
             className: "fa fa-star",
             title: "Custom Button",
+            attributes: { // for custom attributes
+                id: "custom-id",
+                "data-value": "custom value" // HTML5 data-* attributes need to be enclosed in quotation marks ("") because of the dash (-) in its name.
+            }
         },
         "|" // Separator
         // [, ...]

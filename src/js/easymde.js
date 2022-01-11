@@ -219,6 +219,16 @@ function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
 function createToolbarButton(options, enableActions, enableTooltips, shortcuts, markup, parent) {
     options = options || {};
     var el = document.createElement(markup);
+
+    // Add 'custom' attributes as early as possible, so that 'official' attributes will never be overwritten.
+    if (options.attributes) {
+        for (var attribute in options.attributes) {
+            if (Object.prototype.hasOwnProperty.call(options.attributes, attribute)) {
+                el.setAttribute(attribute, options.attributes[attribute]);
+            }
+        }
+    }
+
     el.className = options.name;
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;

@@ -59,6 +59,9 @@ const editor2 = new EasyMDE({
             title: 'A Custom Button',
             noDisable: undefined,
             noMobile: false,
+            attributes: {
+                'data-custom': 'attribute',
+            }
         },
         '|',
         {
@@ -89,6 +92,10 @@ const editor2 = new EasyMDE({
                     action: EasyMDE.toggleBold,
                     className: 'fa fas fa-bold',
                     title: 'Bold',
+                    attributes: {
+                        'data-custom': 'some value',
+                        'data-custom-2': 'another value',
+                    }
                 },
             ],
         },
