@@ -239,7 +239,9 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     if (options.attributes) {
         for (var attribute in options.attributes) {
-            el.setAttribute(attribute, options.attributes[attribute]);
+            if (Object.prototype.hasOwnProperty.call(options.attributes, attribute)) {
+                el.setAttribute(attribute, options.attributes[attribute]);
+            }
         }
     }
 
