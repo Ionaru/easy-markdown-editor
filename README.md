@@ -2,7 +2,6 @@
 
 [![npm version](https://img.shields.io/npm/v/easymde.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde)
 [![npm version](https://img.shields.io/npm/v/easymde/next.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/next)
-[![Build Status](https://img.shields.io/travis/Ionaru/easy-markdown-editor/master.svg?style=for-the-badge)](https://travis-ci.org/Ionaru/easy-markdown-editor)
 [![Build Status](https://img.shields.io/github/workflow/status/ionaru/easy-markdown-editor/Test%20&%20Deploy/master?style=for-the-badge)](https://github.com/Ionaru/easy-markdown-editor/actions)
 
 > This repository is a fork of
