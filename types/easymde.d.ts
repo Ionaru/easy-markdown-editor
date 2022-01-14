@@ -20,7 +20,8 @@
 // SOFTWARE.
 
 /// <reference types="codemirror"/>
-/// <reference types="marked"/>
+
+import { marked } from 'marked';
 
 interface ArrayOneOrMore<T> extends Array<T> {
     0: T;
@@ -178,7 +179,7 @@ declare namespace EasyMDE {
         autoDownloadFontAwesome?: boolean;
         autofocus?: boolean;
         autosave?: AutoSaveOptions;
-        autoRefresh?: boolean | { delay: number };
+        autoRefresh?: boolean | { delay: number; };
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
         forceSync?: boolean;
