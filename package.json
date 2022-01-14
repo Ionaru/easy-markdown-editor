@@ -27,6 +27,9 @@
     },
     "devDependencies": {
         "browserify": "^17.0.0",
+        "cypress": "^9.2.1",
+        "eslint": "^6.8.0",
+        "eslint-plugin-cypress": "^2.12.1",
         "gulp": "^4.0.2",
         "gulp-clean-css": "^4.2.0",
         "gulp-concat": "^2.6.1",
@@ -42,8 +45,11 @@
     "repository": "github:Ionaru/easy-markdown-editor",
     "scripts": {
         "prepare": "gulp",
-        "test": "npm run lint && npm run test:types",
+        "test": "npm run lint && npm run test:types && npm run e2e",
         "lint": "gulp lint",
+        "cypress:lint": "eslint cypress",
+        "cypress:run": "cypress run",
+        "e2e": "gulp && npm run cypress:lint && npm run cypress:run",
         "test:types": "tsc --project types/tsconfig.json"
     }
 }

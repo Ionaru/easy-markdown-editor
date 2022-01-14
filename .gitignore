@@ -11,3 +11,7 @@ node_modules/
 .idea/
 .vscode/
 dev_test/
+
+# Test artifacts
+cypress/screenshots
+cypress/videos

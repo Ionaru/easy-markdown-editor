@@ -1,0 +1,14 @@
+{
+    "plugins": [
+        "cypress"
+    ],
+    "env": {
+        "node": true,
+        "es6": true,
+        "cypress/globals": true
+    },
+    "extends": [
+        "../.eslintrc",
+        "plugin:cypress/recommended"
+    ]
+}
