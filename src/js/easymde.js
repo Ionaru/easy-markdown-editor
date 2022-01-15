@@ -849,10 +849,8 @@ function drawLink(editor) {
             return false;
         }
 
-        if (options.escapePromptURLs) {
-            url = encodeURI(url);
-            if (/[()]/.test(url)) url = escapePromptURL(url);
-        }
+        url = encodeURI(url);
+        if (/[()]/.test(url)) url = escapePromptURL(url);
     }
     _replaceSelection(cm, stat.link, options.insertTexts.link, url);
 }
@@ -871,10 +869,8 @@ function drawImage(editor) {
             return false;
         }
 
-        if (options.escapePromptURLs) {
-            url = encodeURI(url);
-            if (/[()]/.test(url)) url = escapePromptURL(url);
-        }
+        url = encodeURI(url);
+        if (/[()]/.test(url)) url = escapePromptURL(url);
     }
     _replaceSelection(cm, stat.image, options.insertTexts.image, url);
 }

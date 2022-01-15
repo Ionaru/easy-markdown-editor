@@ -165,7 +165,6 @@ easyMDE.value('New input for **EasyMDE**');
 - **previewClass**: A string or array of strings that will be applied to the preview screen when activated. Defaults to `"editor-preview"`.
 - **previewRender**: Custom function for parsing the plaintext Markdown and returning HTML. Used when user previews.
 - **promptURLs**: If set to `true`, a JS alert window appears asking for the link or image URL. Defaults to `false`.
-- **escapePromptURLs**: If set to `true`, urlencodes and escapes links entered via the JS prompt to prevent malformed Markdown rendered links. Only works when `promptURLs` is set to `true`. Defaults to `false`.
 - **promptTexts**: Customize the text used to prompt for URLs.
   - **image**: The text to use when prompting for an image's URL.  Defaults to `URL of the image:`.
   - **link**: The text to use when prompting for a link's URL. Defaults to `URL for the link:`.
@@ -277,7 +276,6 @@ const editor = new EasyMDE({
         return "Loading...";
     },
     promptURLs: true,
-    escapePromptURLs: true,
     promptTexts: {
         image: "Custom prompt for URL:",
         link: "Custom prompt for URL:",
