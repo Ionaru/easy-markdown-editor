@@ -849,9 +849,9 @@ function drawLink(editor) {
             return false;
         }
 
-        if (options.escapeURLs) {
+        if (options.escapePromptURLs) {
             url = encodeURI(url);
-            if (/[()]/.test(url)) url = escapeURI(url);
+            if (/[()]/.test(url)) url = escapePromptURL(url);
         }
     }
     _replaceSelection(cm, stat.link, options.insertTexts.link, url);
@@ -871,9 +871,9 @@ function drawImage(editor) {
             return false;
         }
 
-        if (options.escapeURLs) {
+        if (options.escapePromptURLs) {
             url = encodeURI(url);
-            if (/[()]/.test(url)) url = escapeURI(url);
+            if (/[()]/.test(url)) url = escapePromptURL(url);
         }
     }
     _replaceSelection(cm, stat.image, options.insertTexts.image, url);
@@ -883,7 +883,7 @@ function drawImage(editor) {
  * Escape URLs to prevent breaking up rendered Markdown links
  * @param url {string} The url of the link or image
  */
-function escapeURI(url) {
+function escapePromptURL(url) {
     url = url.replace(/\(/g,'\\(').replace(/\)/g,'\\)');
 
     return url;
