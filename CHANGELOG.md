@@ -4,7 +4,10 @@ All notable changes to easymde will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!-- ## [Unreleased] -->
+## [Unreleased]
+### Fixed
+- URLs with certain characters entered through prompts causing invalid markdown (Thanks to [@Zignature], [#393]).
+
 ## [2.16.1] - 2022-01-14
 ### Fixed
 - Incorrect initial line and column count in status bar.
@@ -240,6 +243,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#393]: https://github.com/Ionaru/easy-markdown-editor/pull/393
 [#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
 [#388]: https://github.com/Ionaru/easy-markdown-editor/pull/388
 [#384]: https://github.com/Ionaru/easy-markdown-editor/pull/384
