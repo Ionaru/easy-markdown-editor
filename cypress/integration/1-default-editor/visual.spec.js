@@ -2,10 +2,10 @@
 
 describe('Default editor', () => {
     beforeEach(() => {
-        cy.visit(__dirname + '/default.html');
+        cy.visit(__dirname + '/index.html');
     });
 
-    it('Loads the editor with default settings', () => {
+    it('loads the editor with default settings', () => {
         cy.get('.EasyMDEContainer').should('be.visible');
         cy.get('#textarea').should('not.be.visible');
 

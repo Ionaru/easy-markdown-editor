@@ -13,3 +13,19 @@ Cypress.Commands.add(
         return unquote(before.getPropertyValue(property));
     },
 );
+
+Cypress.Commands.add('previewOn' , () => {
+    cy.get('.EasyMDEContainer .editor-preview').should('not.be.visible');
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').should('not.have.class', 'active');
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').click();
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').should('have.class', 'active');
+    cy.get('.EasyMDEContainer .editor-preview').should('be.visible');
+});
+
+Cypress.Commands.add('previewOff' , () => {
+    cy.get('.EasyMDEContainer .editor-preview').should('be.visible');
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').should('have.class', 'active');
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').click();
+    cy.get('.EasyMDEContainer .editor-toolbar button.preview').should('not.have.class', 'active');
+    cy.get('.EasyMDEContainer .editor-preview').should('not.be.visible');
+});
