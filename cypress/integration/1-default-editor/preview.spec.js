@@ -2,7 +2,7 @@
 
 describe('Preview', () => {
     beforeEach(() => {
-        cy.visit(__dirname + '/default.html');
+        cy.visit(__dirname + '/index.html');
     });
 
     it('can show a preview of markdown text', () => {
@@ -22,9 +22,7 @@ describe('Preview', () => {
         cy.get('.EasyMDEContainer .cm-strong').should('contain', '**');
         cy.get('.EasyMDEContainer .cm-strong').should('contain', 'important');
 
-        // Toggle preview.
-        cy.get('.EasyMDEContainer .editor-toolbar button.preview').click();
-        cy.get('.EasyMDEContainer .editor-preview').should('be.visible');
+        cy.previewOn();
 
         // Check preview window for rendered markdown.
         cy.get('.EasyMDEContainer .editor-preview').should('contain.html', '<h1 id="my-big-title">My Big Title</h1>');

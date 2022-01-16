@@ -2,7 +2,7 @@
 
 describe('Default statusbar', () => {
     beforeEach(() => {
-        cy.visit(__dirname + '/default.html');
+        cy.visit(__dirname + '/index.html');
     });
 
     it('loads the editor with default statusbar', () => {

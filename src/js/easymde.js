@@ -844,10 +844,11 @@ function drawLink(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.link, 'https://');
+        url = prompt(options.promptTexts.link, url);
         if (!url) {
             return false;
         }
+        url = escapePromptURL(url);
     }
     _replaceSelection(cm, stat.link, options.insertTexts.link, url);
 }
@@ -861,12 +862,21 @@ function drawImage(editor) {
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.image, 'https://');
+        url = prompt(options.promptTexts.image, url);
         if (!url) {
             return false;
         }
+        url = escapePromptURL(url);
     }
     _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+}
+
+/**
+ * Encode and escape URLs to prevent breaking up rendered Markdown links.
+ * @param url {string} The url of the link or image
+ */
+function escapePromptURL(url) {
+    return encodeURI(url).replace(/([\\()])/g, '\\$1');
 }
 
 /**
