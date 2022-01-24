@@ -221,6 +221,8 @@ declare namespace EasyMDE {
         imageUploadEndpoint?: string;
         imagePathAbsolute?: boolean;
         imageCSRFToken?: string;
+        imageCSRFName?: string;
+        imageCSRFHeader?: boolean;
         imageTexts?: ImageTextsOptions;
         errorMessages?: ImageErrorTextsOptions;
         errorCallback?: (errorMessage: string) => void;

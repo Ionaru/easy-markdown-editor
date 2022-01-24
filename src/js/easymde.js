@@ -1819,6 +1819,9 @@ function EasyMDE(options) {
     options.imageAccept = options.imageAccept || 'image/png, image/jpeg';
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
+    options.imagePathAbsolute = options.imagePathAbsolute || false;
+    options.imageCSRFName = options.imageCSRFHeader || 'csrfmiddlewaretoken';
+    options.imageCSRFHeader = options.imageCSRFHeader || false;
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -2390,10 +2393,11 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     var formData = new FormData();
     formData.append('image', file);
 
-    // insert CSRF token if provided in config.
-    if (self.options.imageCSRFToken) {
-        formData.append('csrfmiddlewaretoken', self.options.imageCSRFToken);
+    // insert CSRF body token if provided in config.
+    if (self.options.imageCSRFToken && !self.options.imageCSRFHeader) {
+        formData.append(self.options.imageCSRFName, self.options.imageCSRFToken);
     }
+
     var request = new XMLHttpRequest();
     request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
@@ -2402,6 +2406,11 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
         }
     };
     request.open('POST', this.options.imageUploadEndpoint);
+
+    // insert CSRF body token if provided in config.
+    if (self.options.imageCSRFToken && self.options.imageCSRFHeader) {
+        request.setRequestHeader(self.options.imageCSRFName, self.options.imageCSRFToken);
+    }
 
     request.onload = function () {
         try {
