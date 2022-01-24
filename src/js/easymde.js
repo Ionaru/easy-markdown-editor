@@ -2407,7 +2407,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     };
     request.open('POST', this.options.imageUploadEndpoint);
 
-    // insert CSRF body token if provided in config.
+    // insert CSRF header token if provided in config.
     if (self.options.imageCSRFToken && self.options.imageCSRFHeader) {
         request.setRequestHeader(self.options.imageCSRFName, self.options.imageCSRFToken);
     }
