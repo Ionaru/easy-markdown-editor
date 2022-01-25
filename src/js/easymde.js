@@ -1820,7 +1820,7 @@ function EasyMDE(options) {
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
     options.imagePathAbsolute = options.imagePathAbsolute || false;
-    options.imageCSRFName = options.imageCSRFHeader || 'csrfmiddlewaretoken';
+    options.imageCSRFName = options.imageCSRFName || 'csrfmiddlewaretoken';
     options.imageCSRFHeader = options.imageCSRFHeader || false;
 
 
