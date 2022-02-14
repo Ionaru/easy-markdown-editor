@@ -178,7 +178,9 @@ easyMDE.value('New input for **EasyMDE**');
      - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400), `typeNotAllowed` (HTTP 415), `fileTooLarge` (HTTP 413) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server side error messages.
      No default value.
 - **imagePathAbsolute**: If set to `true`, will treat `imageUrl` from `imageUploadFunction` and *filePath* returned from `imageUploadEndpoint` as an absolute rather than relative path, i.e. not prepend `window.location.origin` to it.
-- **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For instance used with Django backend.
+- **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For various instances like Django, Spring and Laravel.
+- **imageCSRFName**: CSRF token filed name to include with AJAX call to upload image, applied when `imageCSRFToken` has value, defaults to `csrfmiddlewaretoken`.
+- **imageCSRFHeader**: If set to `true`, passing CSRF token via header. Defaults to `false`, which pass CSRF through request body.
 - **imageTexts**: Texts displayed to the user (mainly on the status bar) for the import image feature, where `#image_name#`, `#image_size#` and `#image_max_size#` will replaced by their respective values, that can be used for customization or internationalization:
     - **sbInit**: Status message displayed initially if `uploadImage` is set to `true`. Defaults to `Attach files by drag and dropping or pasting from clipboard.`.
     - **sbOnDragEnter**: Status message displayed when the user drags a file to the text area. Defaults to `Drop image to upload it.`.
