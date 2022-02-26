@@ -850,7 +850,7 @@ function drawLink(editor) {
         }
         url = escapePromptURL(url);
     }
-    _replaceSelection(cm, stat.link, options.insertTexts.link, url);
+    _replaceSelection(cm, false, options.insertTexts.link, url);
 }
 
 /**
