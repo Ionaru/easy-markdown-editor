@@ -2207,6 +2207,9 @@ EasyMDE.prototype.render = function (el) {
 
                 if (srcAttr && srcAttr.length >= 2) {
                     var keySrc = srcAttr[1];
+                    if (options.imagesPreviewHandler) {
+                        keySrc = options.imagesPreviewHandler(keySrc);
+                    }
 
                     if (!window.EMDEimagesCache[keySrc]) {
                         var img = document.createElement('img');
