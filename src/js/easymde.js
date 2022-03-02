@@ -2207,8 +2207,13 @@ EasyMDE.prototype.render = function (el) {
 
                 if (srcAttr && srcAttr.length >= 2) {
                     var keySrc = srcAttr[1];
+
                     if (options.imagesPreviewHandler) {
-                        keySrc = options.imagesPreviewHandler(keySrc);
+                        var newSrc = options.imagesPreviewHandler(srcAttr[1]);
+                        // defensive check making sure the handler provided by the user returns a string
+                        if (typeof newSrc === 'string') {
+                            keySrc = newSrc;
+                        }
                     }
 
                     if (!window.EMDEimagesCache[keySrc]) {
