@@ -144,7 +144,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **indentWithTabs**: If set to `false`, indent using spaces instead of tabs. Defaults to `true`.
 - **initialValue**: If set, will customize the initial value of the editor.
 - **previewImagesInEditor**: - EasyMDE will show preview of images, `false` by default, preview for images will appear only for images on separate lines.
-- **imagesPreviewHandler**: - A custom function for handling the preview of images. Takes the parsed string from the image markdown `![](string)` as argument and returns a string that serves as the `src` attribute of the `<img>` tag in the preview (for ex. as base64). Enables dynamic previewing of images in the frontend without having to upload them to a server.
+- **imagesPreviewHandler**: - A custom function for handling the preview of images. Takes the parsed string between the parantheses of the image markdown `![]( )` as argument and returns a string that serves as the `src` attribute of the `<img>` tag in the preview. Enables dynamic previewing of images in the frontend without having to upload them to a server, allows copy-pasting of images to the editor with preview.
 - **insertTexts**: Customize how certain buttons that insert text behave. Takes an array with two elements. The first element will be the text inserted before the cursor or highlight, and the second element will be inserted after. For example, this is the default link value: `["[", "](http://)"]`.
   - horizontalRule
   - image
