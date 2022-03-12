@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Option to register an image preview handler: `imagesPreviewHandler` (Thanks to [@diego-gw], [#411]).
+
 ### Fixed
 - URLs with certain characters entered through prompts causing invalid markdown (Thanks to [@Zignature], [#393]).
 
@@ -243,6 +246,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#411]: https://github.com/Ionaru/easy-markdown-editor/pull/411
 [#393]: https://github.com/Ionaru/easy-markdown-editor/pull/393
 [#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
 [#388]: https://github.com/Ionaru/easy-markdown-editor/pull/388
@@ -346,6 +350,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@Offerel]: https://github.com/Offerel
 [@Zignature]: https://github.com/Zignature
 [@kelvinj]: https://github.com/kelvinj
+[@diego-gw]: https://github.com/diego-gw
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...HEAD
