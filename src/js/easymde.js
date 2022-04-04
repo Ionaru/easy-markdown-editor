@@ -2242,6 +2242,10 @@ EasyMDE.prototype.render = function (el) {
     this.gui.sideBySide = this.createSideBySide();
     this._rendered = this.element;
 
+    if (options.autofocus === true || el.autofocus) {
+        this.codemirror.focus();
+    }
+
     // Fixes CodeMirror bug (#344)
     var temp_cm = this.codemirror;
     setTimeout(function () {

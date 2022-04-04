@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - URLs with certain characters entered through prompts causing invalid markdown (Thanks to [@Zignature], [#393]).
+- Autofocus option not working properly ([#399]).
 
 ## [2.16.1] - 2022-01-14
 ### Fixed
@@ -228,6 +229,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#399]: https://github.com/Ionaru/easy-markdown-editor/issues/399
 [#252]: https://github.com/Ionaru/easy-markdown-editor/issues/252
 [#251]: https://github.com/Ionaru/easy-markdown-editor/issues/251
 [#239]: https://github.com/Ionaru/easy-markdown-editor/issues/239
