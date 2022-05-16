@@ -440,20 +440,20 @@ EasyMDE comes with an array of predefined keyboard shortcuts, but they can be al
 
 Shortcut (Windows / Linux) | Shortcut (macOS) | Action
 :--- | :--- | :---
-*Ctrl-'* | *Cmd-'* | "toggleBlockquote"
-*Ctrl-B* | *Cmd-B* | "toggleBold"
-*Ctrl-E* | *Cmd-E* | "cleanBlock"
-*Ctrl-H* | *Cmd-H* | "toggleHeadingSmaller"
-*Ctrl-I* | *Cmd-I* | "toggleItalic"
-*Ctrl-K* | *Cmd-K* | "drawLink"
-*Ctrl-L* | *Cmd-L* | "toggleUnorderedList"
-*Ctrl-P* | *Cmd-P* | "togglePreview"
-*Ctrl-Alt-C* | *Cmd-Alt-C* | "toggleCodeBlock"
-*Ctrl-Alt-I* | *Cmd-Alt-I* | "drawImage"
-*Ctrl-Alt-L* | *Cmd-Alt-L* | "toggleOrderedList"
-*Shift-Ctrl-H* | *Shift-Cmd-H* | "toggleHeadingBigger"
-*F9* | *F9* | "toggleSideBySide"
-*F11* | *F11* | "toggleFullScreen"
+<kbd>Ctrl</kbd>-<kbd>'</kbd> | <kbd>Cmd</kbd>-<kbd>'</kbd> | "toggleBlockquote"
+<kbd>Ctrl</kbd>-<kbd>B</kbd> | <kbd>Cmd</kbd>-<kbd>B</kbd> | "toggleBold"
+<kbd>Ctrl</kbd>-<kbd>E</kbd> | <kbd>Cmd</kbd>-<kbd>E</kbd> | "cleanBlock"
+<kbd>Ctrl</kbd>-<kbd>H</kbd> | <kbd>Cmd</kbd>-<kbd>H</kbd> | "toggleHeadingSmaller"
+<kbd>Ctrl</kbd>-<kbd>I</kbd> | <kbd>Cmd</kbd>-<kbd>I</kbd> | "toggleItalic"
+<kbd>Ctrl</kbd>-<kbd>K</kbd> | <kbd>Cmd</kbd>-<kbd>K</kbd> | "drawLink"
+<kbd>Ctrl</kbd>-<kbd>L</kbd> | <kbd>Cmd</kbd>-<kbd>L</kbd> | "toggleUnorderedList"
+<kbd>Ctrl</kbd>-<kbd>P</kbd> | <kbd>Cmd</kbd>-<kbd>P</kbd> | "togglePreview"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>C</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>C</kbd> | "toggleCodeBlock"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>I</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>I</kbd> | "drawImage"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>L</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>L</kbd> | "toggleOrderedList"
+<kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>H</kbd> | <kbd>Shift</kbd>-<kbd>Cmd</kbd>-<kbd>H</kbd> | "toggleHeadingBigger"
+<kbd>F9</kbd> | <kbd>F9</kbd> | "toggleSideBySide"
+<kbd>F11</kbd> | <kbd>F11</kbd> | "toggleFullScreen"
 
 Here is how you can change a few, while leaving others untouched:
 
