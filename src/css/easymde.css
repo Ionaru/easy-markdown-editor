@@ -380,3 +380,12 @@ span[data-img-src]::after {
     width: var(--width);
     background-repeat: no-repeat;
 }
+
+@media (prefers-color-scheme: dark) {
+    .editor-toolbar {
+        background: #333;
+    }
+    .editor-toolbar button {
+        color: #ddd;
+    }
+}
