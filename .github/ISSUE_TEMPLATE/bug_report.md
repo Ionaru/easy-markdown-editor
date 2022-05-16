@@ -23,7 +23,7 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-** Version information **
+**Version information**
 - OS: [e.g. Windows, MacOS]
 - Browser: [e.g. Chrome 72]
 - EasyMDE version: [e.g. 2.5.1]
