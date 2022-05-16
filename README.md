@@ -349,6 +349,8 @@ preview | togglePreview | Toggle Preview<br>fa fa-eye no-disable
 side-by-side | toggleSideBySide | Toggle Side by Side<br>fa fa-columns no-disable no-mobile
 fullscreen | toggleFullScreen | Toggle Fullscreen<br>fa fa-arrows-alt no-disable no-mobile
 guide | [This link](https://www.markdownguide.org/basic-syntax/) | Markdown Guide<br>fa fa-question-circle
+undo | undo | Undo<br>fa fa-undo
+redo | redo | Redo<br>fa fa-redo
 
 
 ### Toolbar customization
