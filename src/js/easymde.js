@@ -2850,6 +2850,9 @@ EasyMDE.toggleHeadingBigger = toggleHeadingBigger;
 EasyMDE.toggleHeading1 = toggleHeading1;
 EasyMDE.toggleHeading2 = toggleHeading2;
 EasyMDE.toggleHeading3 = toggleHeading3;
+EasyMDE.toggleHeading4 = toggleHeading4;
+EasyMDE.toggleHeading5 = toggleHeading5;
+EasyMDE.toggleHeading6 = toggleHeading6;
 EasyMDE.toggleCodeBlock = toggleCodeBlock;
 EasyMDE.toggleUnorderedList = toggleUnorderedList;
 EasyMDE.toggleOrderedList = toggleOrderedList;
@@ -2894,6 +2897,15 @@ EasyMDE.prototype.toggleHeading2 = function () {
 };
 EasyMDE.prototype.toggleHeading3 = function () {
     toggleHeading3(this);
+};
+EasyMDE.prototype.toggleHeading4 = function () {
+    toggleHeading4(this);
+};
+EasyMDE.prototype.toggleHeading5 = function () {
+    toggleHeading5(this);
+};
+EasyMDE.prototype.toggleHeading6 = function () {
+    toggleHeading6(this);
 };
 EasyMDE.prototype.toggleCodeBlock = function () {
     toggleCodeBlock(this);
