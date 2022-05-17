@@ -71,7 +71,7 @@ Or *jsDelivr*:
 
 ### Loading the editor
 
-After installing and/or importing the module, you can load EasyMDE onto the first TextArea on the web page:
+After installing and/or importing the module, you can load EasyMDE onto the first `textarea` element on the web page:
 
 ```html
 <textarea></textarea>
@@ -80,7 +80,7 @@ const easyMDE = new EasyMDE();
 </script>
 ```
 
-Alternatively you can select a specific TextArea, via Javascript:
+Alternatively you can select a specific `textarea`, via JavaScript:
 
 ```html
 <textarea id="my-text-area"></textarea>
@@ -89,19 +89,9 @@ const easyMDE = new EasyMDE({element: document.getElementById('my-text-area')});
 </script>
 ```
 
-Or via jQuery:
-
-```html
-<textarea id="my-text-area"></textarea>
-<script>
-const easyMDE = new EasyMDE({element: $('#my-text-area')[0]});
-</script>
-```
-
-
 ### Editor functions
 
-Use EasyMDE.value() to get the content of the editor:
+Use `easyMDE.value()` to get the content of the editor:
 
 ```html
 <script>
@@ -109,7 +99,7 @@ easyMDE.value();
 </script>
 ```
 
-Use EasyMDE.value(val) to set the content of the editor:
+Use `easyMDE.value(val)` to set the content of the editor:
 
 ```html
 <script>
@@ -126,8 +116,8 @@ easyMDE.value('New input for **EasyMDE**');
 - **autofocus**: If set to `true`, focuses the editor automatically. Defaults to `false`.
 - **autosave**: *Saves the text that's being written and will load it back in the future. It will forget the text when the form it's contained in is submitted.*
   - **enabled**: If set to `true`, saves the text automatically. Defaults to `false`.
-  - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10s).
-  - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10s).
+  - **delay**: Delay between saves, in milliseconds. Defaults to `10000` (10 seconds).
+  - **submit_delay**: Delay before assuming that submit of the form failed and saving the text, in milliseconds. Defaults to `autosave.delay` or `10000` (10 seconds).
   - **uniqueId**: You must set a unique string identifier so that EasyMDE can autosave. Something that separates this from other instances of EasyMDE elsewhere on your website.
   - **timeFormat**: Set DateTimeFormat. More information see [DateTimeFormat instances](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat). Default `locale: en-US, format: hour:minute`.
   - **text**: Set text for autosave.
@@ -138,7 +128,7 @@ easyMDE.value('New input for **EasyMDE**');
   - **italic**: Can be set to `*` or `_`. Defaults to `*`.
 - **unorderedListStyle**: can be `*`, `-` or `+`. Defaults to `*`.
 - **scrollbarStyle**: Chooses a scrollbar implementation. The default is "native", showing native scrollbars. The core library also provides the "null" style, which completely hides the scrollbars. Addons can implement additional scrollbar models.
-- **element**: The DOM element for the TextArea to use. Defaults to the first TextArea on the page.
+- **element**: The DOM element for the `textarea` element to use. Defaults to the first `textarea` element on the page.
 - **forceSync**: If set to `true`, force text changes made in EasyMDE to be immediately stored in original text area. Defaults to `false`.
 - **hideIcons**: An array of icon names to hide. Can be used to hide specific icons shown by default without completely customizing the toolbar.
 - **indentWithTabs**: If set to `false`, indent using spaces instead of tabs. Defaults to `true`.
@@ -169,14 +159,14 @@ easyMDE.value('New input for **EasyMDE**');
 - **promptTexts**: Customize the text used to prompt for URLs.
   - **image**: The text to use when prompting for an image's URL.  Defaults to `URL of the image:`.
   - **link**: The text to use when prompting for a link's URL. Defaults to `URL for the link:`.
-- **uploadImage**: If set to `true`, enables the image upload functionality, which can be triggered by drag&drop, copy-paste and through the browse-file window (opened when the user click on the *upload-image* icon). Defaults to `false`.
-- **imageMaxSize**: Maximum image size in bytes, checked before upload (note: never trust client, always check image size at server-side). Defaults to `1024*1024*2` (2Mb).
+- **uploadImage**: If set to `true`, enables the image upload functionality, which can be triggered by drag and drop, copy-paste and through the browse-file window (opened when the user click on the *upload-image* icon). Defaults to `false`.
+- **imageMaxSize**: Maximum image size in bytes, checked before upload (note: never trust client, always check the image size at server-side). Defaults to `1024 * 1024 * 2` (2 MB).
 - **imageAccept**: A comma-separated list of mime-types used to check image type before upload (note: never trust client, always check file types at server-side). Defaults to `image/png, image/jpeg`.
 - **imageUploadFunction**: A custom function for handling the image upload. Using this function will render the options `imageMaxSize`, `imageAccept`, `imageUploadEndpoint` and `imageCSRFToken` ineffective.
-    - The function gets a file and onSuccess and onError callback functions as parameters. `onSuccess(imageUrl: string)` and `onError(errorMessage: string)`
-- **imageUploadEndpoint**: The endpoint where the images data will be sent, via an asynchronous *POST* request. The server is supposed to save this image, and return a json response.
-     - if the request was successfully processed (HTTP 200-OK): `{"data": {"filePath": "<filePath>"}}` where *filePath* is the path of the image (absolute if `imagePathAbsolute` is set to true, relative if otherwise);
-     - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400), `typeNotAllowed` (HTTP 415), `fileTooLarge` (HTTP 413) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server side error messages.
+    - The function gets a file and `onSuccess` and `onError` callback functions as parameters. `onSuccess(imageUrl: string)` and `onError(errorMessage: string)`
+- **imageUploadEndpoint**: The endpoint where the images data will be sent, via an asynchronous *POST* request. The server is supposed to save this image, and return a JSON response.
+     - if the request was successfully processed (HTTP 200 OK): `{"data": {"filePath": "<filePath>"}}` where *filePath* is the path of the image (absolute if `imagePathAbsolute` is set to true, relative if otherwise);
+     - otherwise: `{"error": "<errorCode>"}`, where *errorCode* can be `noFileGiven` (HTTP 400 Bad Request), `typeNotAllowed` (HTTP 415 Unsupported Media Type), `fileTooLarge` (HTTP 413 Payload Too Large) or `importError` (see *errorMessages* below). If *errorCode* is not one of the *errorMessages*, it is alerted unchanged to the user. This allows for server-side error messages.
      No default value.
 - **imagePathAbsolute**: If set to `true`, will treat `imageUrl` from `imageUploadFunction` and *filePath* returned from `imageUploadEndpoint` as an absolute rather than relative path, i.e. not prepend `window.location.origin` to it.
 - **imageCSRFToken**: CSRF token to include with AJAX call to upload image. For various instances like Django, Spring and Laravel.
@@ -199,8 +189,8 @@ easyMDE.value('New input for **EasyMDE**');
   - **codeSyntaxHighlighting**: If set to `true`, will highlight using [highlight.js](https://github.com/isagalaev/highlight.js). Defaults to `false`. To use this feature you must include highlight.js on your page or pass in using the `hljs` option. For example, include the script and the CSS files like:<br>`<script src="https://cdn.jsdelivr.net/highlight.js/latest/highlight.min.js"></script>`<br>`<link rel="stylesheet" href="https://cdn.jsdelivr.net/highlight.js/latest/styles/github.min.css">`
   - **hljs**: An injectible instance of [highlight.js](https://github.com/isagalaev/highlight.js). If you don't want to rely on the global namespace (`window.hljs`), you can provide an instance here. Defaults to `undefined`.
   - **markedOptions**: Set the internal Markdown renderer's [options](https://marked.js.org/#/USING_ADVANCED.md#options). Other `renderingConfig` options will take precedence.
-  - **singleLineBreaks**: If set to `false`, disable parsing GFM single line breaks. Defaults to `true`.
-  - **sanitizerFunction**: Custom function for sanitizing the HTML output of markdown renderer.
+  - **singleLineBreaks**: If set to `false`, disable parsing [GitHub Flavored Markdown](https://github.github.com/gfm/) (GFM) single line breaks. Defaults to `true`.
+  - **sanitizerFunction**: Custom function for sanitizing the HTML output of Markdown renderer.
 - **shortcuts**: Keyboard shortcuts associated with this instance. Defaults to the [array of shortcuts](#keyboard-shortcuts).
 - **showIcons**: An array of icon names to show. Can be used to show specific icons hidden by default without completely customizing the toolbar.
 - **spellChecker**: If set to `false`, disable the spell checker. Defaults to `true`.  Optionally pass a CodeMirrorSpellChecker-compliant function.
@@ -321,7 +311,7 @@ const editor = new EasyMDE({
 
 ### Toolbar icons
 
-Below are the built-in toolbar icons (only some of which are enabled by default), which can be reorganized however you like. "Name" is the name of the icon, referenced in the JS. "Action" is either a function or a URL to open. "Class" is the class given to the icon. "Tooltip" is the small tooltip that appears via the `title=""` attribute. Note that shortcut hints are added automatically and reflect the specified action if it has a key bind assigned to it (i.e. with the value of `action` set to `bold` and that of `tooltip` set to `Bold`, the final text the user will see would be "Bold (Ctrl-B)").
+Below are the built-in toolbar icons (only some of which are enabled by default), which can be reorganized however you like. "Name" is the name of the icon, referenced in the JavaScript. "Action" is either a function or a URL to open. "Class" is the class given to the icon. "Tooltip" is the small tooltip that appears via the `title=""` attribute. Note that shortcut hints are added automatically and reflect the specified action if it has a key bind assigned to it (i.e. with the value of `action` set to `bold` and that of `tooltip` set to `Bold`, the final text the user will see would be "Bold (Ctrl-B)").
 
 Additionally, you can add a separator between any icons by adding `"|"` to the toolbar array.
 
@@ -499,7 +489,7 @@ easyMDE.toTextArea();
 easyMDE = null;
 ```
 
-If you need to remove installed listeners (when editor not needed anymore), call `easyMDE.cleanup()`
+If you need to remove registered event listeners (when the editor is not needed anymore), call `easyMDE.cleanup()`.
 
 
 ### Useful methods
@@ -521,7 +511,7 @@ EasyMDE is a continuation of SimpleMDE.
 
 SimpleMDE began as an improvement of [lepture's Editor project](https://github.com/lepture/editor), but has now taken on an identity of its own. It is bundled with [CodeMirror](https://github.com/codemirror/codemirror) and depends on [Font Awesome](http://fontawesome.io).
 
-CodeMirror is the backbone of the project and parses much of the Markdown syntax as it's being written. This allows us to add styles to the Markdown that's being written. Additionally, a toolbar and status bar have been added to the top and bottom, respectively. Previews are rendered by [Marked](https://github.com/chjj/marked) using GFM.
+CodeMirror is the backbone of the project and parses much of the Markdown syntax as it's being written. This allows us to add styles to the Markdown that's being written. Additionally, a toolbar and status bar have been added to the top and bottom, respectively. Previews are rendered by [Marked](https://github.com/chjj/marked) using GitHub Flavored Markdown (GFM).
 
 
 ## SimpleMDE fork
@@ -536,7 +526,7 @@ Changes include:
 * Support for Node 8 and beyond
 * Lots of refactored code
 * Links in preview will open in a new tab by default
-* Typescript support
+* TypeScript support
 
 My intention is to continue development on this project, improving it and keeping it alive.
 
