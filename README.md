@@ -73,7 +73,7 @@ Or *jsDelivr*:
 
 After installing and/or importing the module, you can load EasyMDE onto the first `textarea` element on the web page:
 
-```html`
+```html
 <textarea></textarea>
 <script>
 const easyMDE = new EasyMDE();
