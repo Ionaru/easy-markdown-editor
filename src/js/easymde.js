@@ -803,21 +803,21 @@ function toggleHeading3(editor) {
 /**
  * Action for toggling heading size 4
  */
-function toggleHeading3(editor) {
+function toggleHeading4(editor) {
     _toggleHeading(editor.codemirror, undefined, 4);
 }
 
 /**
  * Action for toggling heading size 5
  */
-function toggleHeading3(editor) {
+function toggleHeading5(editor) {
     _toggleHeading(editor.codemirror, undefined, 5);
 }
 
 /**
  * Action for toggling heading size 6
  */
-function toggleHeading3(editor) {
+function toggleHeading6(editor) {
     _toggleHeading(editor.codemirror, undefined, 6);
 }
 
