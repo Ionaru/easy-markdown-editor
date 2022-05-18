@@ -2183,7 +2183,7 @@ EasyMDE.prototype.render = function (el) {
 
 
     function assignImageBlockAttributes(parentEl, img) {
-        parentEl.setAttribute('data-img-src', img.url);
+        parentEl.setAttribute('data-mde-img-src', img.url);
         parentEl.setAttribute('style', '--bg-image:url(' + img.url + ');--width:' + img.naturalWidth + 'px;--height:' + calcHeight(img.naturalWidth, img.naturalHeight));
         _vm.codemirror.setSize();
     }
@@ -2199,7 +2199,7 @@ EasyMDE.prototype.render = function (el) {
                 // if img pasted on the same line with other text, don't preview, preview only images on separate line
                 return;
             }
-            if (!parentEl.hasAttribute('data-img-src')) {
+            if (!parentEl.hasAttribute('data-mde-img-src')) {
                 var srcAttr = parentEl.innerText.match('\\((.*)\\)'); // might require better parsing according to markdown spec
                 if (!window.EMDEimagesCache) {
                     window.EMDEimagesCache = {};
