@@ -134,7 +134,7 @@
     height: 30px;
     margin: 0;
     padding: 0;
-    border: 1px solid transparent;
+    border: 3px solid transparent;
     border-radius: 3px;
     cursor: pointer;
 }
@@ -145,8 +145,7 @@
 
 .editor-toolbar button.active,
 .editor-toolbar button:hover {
-    background: #fcfcfc;
-    border-color: #95a5a6;
+    background: #ddd;
 }
 
 .editor-toolbar i.separator {
