@@ -1464,7 +1464,7 @@ var iconClassMap = {
     toggleFullScreen: 'fa fa-arrows-alt',
     guide: 'fa fa-question-circle',
     undo: 'fa fa-undo',
-    redo: 'fa fa-repeat fa-redo'
+    redo: 'fa fa-repeat fa-redo',
 };
 
 var toolbarBuiltInButtons = {
