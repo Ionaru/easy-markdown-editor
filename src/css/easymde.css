@@ -300,23 +300,37 @@
 }
 
 .cm-s-easymde .cm-header-1 {
-    font-size: 200%;
-    line-height: 200%;
+    font-size: calc(1.375rem + 1.5vw);
 }
 
 .cm-s-easymde .cm-header-2 {
-    font-size: 160%;
-    line-height: 160%;
+    font-size: calc(1.325rem + .9vw);
 }
 
 .cm-s-easymde .cm-header-3 {
-    font-size: 125%;
-    line-height: 125%;
+    font-size: calc(1.3rem + .6vw);
 }
 
 .cm-s-easymde .cm-header-4 {
-    font-size: 110%;
-    line-height: 110%;
+    font-size: calc(1.275rem + .3vw);
+}
+
+.cm-s-easymde .cm-header-5 {
+    font-size: 1.25rem;
+}
+
+.cm-s-easymde .cm-header-6 {
+    font-size: 1rem;
+}
+
+.cm-s-easymde .cm-header-1,
+.cm-s-easymde .cm-header-2,
+.cm-s-easymde .cm-header-3,
+.cm-s-easymde .cm-header-4,
+.cm-s-easymde .cm-header-5,
+.cm-s-easymde .cm-header-6 {
+    margin-bottom: .5rem;
+    line-height: 1.2;
 }
 
 .cm-s-easymde .cm-comment {
