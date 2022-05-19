@@ -926,7 +926,7 @@ function afterImageUploaded(editor, url) {
     }
 
     // show uploaded image filename for 1000ms
-    editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
+    editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('{{image_name}}', imageName));
     setTimeout(function () {
         editor.updateStatusBar('upload-image', editor.options.imageTexts.sbInit);
     }, 1000);
@@ -1124,8 +1124,8 @@ function _replaceSelection(cm, active, startEnd, url) {
     Object.assign(startPoint, cm.getCursor('start'));
     Object.assign(endPoint, cm.getCursor('end'));
     if (url) {
-        start = start.replace('#url#', url);  // url is in start for upload-image
-        end = end.replace('#url#', url);
+        start = start.replace('{{url}}', url);  // url is in start for upload-image
+        end = end.replace('{{url}}', url);
     }
     if (active) {
         text = cm.getLine(startPoint.line);
@@ -1644,10 +1644,10 @@ var toolbarBuiltInButtons = {
 };
 
 var insertTexts = {
-    link: ['[', '](#url#)'],
-    image: ['![](', '#url#)'],
-    uploadedImage: ['![](#url#)', ''],
-    // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
+    link: ['[', ']({{url}})'],
+    image: ['![](', '{{url}})'],
+    uploadedImage: ['![]({{url}})', ''],
+    // uploadedImage: ['![]({{url}})\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],
     horizontalRule: ['', '\n\n-----\n\n'],
 };
@@ -1678,9 +1678,9 @@ var blockStyles = {
 var imageTexts = {
     sbInit: 'Attach files by drag and dropping or pasting from clipboard.',
     sbOnDragEnter: 'Drop image to upload it.',
-    sbOnDrop: 'Uploading image #images_names#...',
-    sbProgress: 'Uploading #file_name#: #progress#%',
-    sbOnUploaded: 'Uploaded #image_name#',
+    sbOnDrop: 'Uploading image {{images_names}}...',
+    sbProgress: 'Uploading {{file_name}}: {{progress}}%',
+    sbOnUploaded: 'Uploaded {{image_name}}',
     sizeUnits: ' B, KB, MB',
 };
 
@@ -1691,9 +1691,9 @@ var imageTexts = {
 var errorMessages = {
     noFileGiven: 'You must select a file.',
     typeNotAllowed: 'This image type is not allowed.',
-    fileTooLarge: 'Image #image_name# is too big (#image_size#).\n' +
-        'Maximum file size is #image_max_size#.',
-    importError: 'Something went wrong when uploading the image #image_name#.',
+    fileTooLarge: 'Image {{image_name}} is too big ({{image_size}}).\n' +
+        'Maximum file size is {{image_max_size}}.',
+    importError: 'Something went wrong when uploading the image {{image_name}}.',
 };
 
 /**
@@ -1929,7 +1929,7 @@ EasyMDE.prototype.uploadImages = function (files, onSuccess, onError) {
         names.push(files[i].name);
         this.uploadImage(files[i], onSuccess, onError);
     }
-    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('{{images_names}}', names.join(', ')));
 };
 
 /**
@@ -1951,7 +1951,7 @@ EasyMDE.prototype.uploadImagesUsingCustomFunction = function (imageUploadFunctio
         names.push(files[i].name);
         this.uploadImageUsingCustomFunction(imageUploadFunction, files[i]);
     }
-    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('#images_names#', names.join(', ')));
+    this.updateStatusBar('upload-image', this.options.imageTexts.sbOnDrop.replace('{{images_names}}', names.join(', ')));
 };
 
 /**
@@ -2408,9 +2408,9 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     function fillErrorMessage(errorMessage) {
         var units = self.options.imageTexts.sizeUnits.split(',');
         return errorMessage
-            .replace('#image_name#', file.name)
-            .replace('#image_size#', humanFileSize(file.size, units))
-            .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
+            .replace('{{image_name}}', file.name)
+            .replace('{{image_size}}', humanFileSize(file.size, units))
+            .replace('{{image_max_size}}', humanFileSize(self.options.imageMaxSize, units));
     }
 
     if (file.size > this.options.imageMaxSize) {
@@ -2430,7 +2430,7 @@ EasyMDE.prototype.uploadImage = function (file, onSuccess, onError) {
     request.upload.onprogress = function (event) {
         if (event.lengthComputable) {
             var progress = '' + Math.round((event.loaded * 100) / event.total);
-            self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('#file_name#', file.name).replace('#progress#', progress));
+            self.updateStatusBar('upload-image', self.options.imageTexts.sbProgress.replace('{{file_name}}', file.name).replace('{{progress}}', progress));
         }
     };
     request.open('POST', this.options.imageUploadEndpoint);
@@ -2502,9 +2502,9 @@ EasyMDE.prototype.uploadImageUsingCustomFunction = function (imageUploadFunction
     function fillErrorMessage(errorMessage) {
         var units = self.options.imageTexts.sizeUnits.split(',');
         return errorMessage
-            .replace('#image_name#', file.name)
-            .replace('#image_size#', humanFileSize(file.size, units))
-            .replace('#image_max_size#', humanFileSize(self.options.imageMaxSize, units));
+            .replace('{{image_name}}', file.name)
+            .replace('{{image_size}}', humanFileSize(file.size, units))
+            .replace('{{image_max_size}}', humanFileSize(self.options.imageMaxSize, units));
     }
 
     imageUploadFunction.apply(this, [file, onSuccess, onError]);
