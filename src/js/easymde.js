@@ -236,7 +236,11 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
-    // Properly hande custom shortcuts
+    if (options.text) {
+        el.innerText = options.text;
+    }
+    
+    // Properly handle custom shortcuts
     if (options.name && options.name in shortcuts) {
         bindings[options.name] = options.action;
     }
