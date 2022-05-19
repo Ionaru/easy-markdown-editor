@@ -917,7 +917,7 @@ function afterImageUploaded(editor, url) {
     var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
 
     // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'avif', 'webp'].includes(ext)) {
+    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(ext)) {
         _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     } else {
         var text_link = options.insertTexts.link;
