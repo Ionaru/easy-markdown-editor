@@ -365,7 +365,7 @@
     visibility: visible;
 }
 
-span[data-img-src]::after {
+span[data-mde-img-src]::after {
     content: '';
     /*noinspection CssUnresolvedCustomProperty, added through JS*/
     background-image: var(--bg-image);
