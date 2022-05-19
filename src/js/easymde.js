@@ -36,6 +36,9 @@ var bindings = {
     'toggleHeading1': toggleHeading1,
     'toggleHeading2': toggleHeading2,
     'toggleHeading3': toggleHeading3,
+    'toggleHeading4': toggleHeading4,
+    'toggleHeading5': toggleHeading5,
+    'toggleHeading6': toggleHeading6,
     'cleanBlock': cleanBlock,
     'drawTable': drawTable,
     'drawHorizontalRule': drawHorizontalRule,
@@ -759,48 +762,63 @@ function toggleCodeBlock(editor) {
  * Action for toggling blockquote.
  */
 function toggleBlockquote(editor) {
-    var cm = editor.codemirror;
-    _toggleLine(cm, 'quote');
+    _toggleLine(editor.codemirror, 'quote');
 }
 
 /**
  * Action for toggling heading size: normal -> h1 -> h2 -> h3 -> h4 -> h5 -> h6 -> normal
  */
 function toggleHeadingSmaller(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, 'smaller');
+    _toggleHeading(editor.codemirror, 'smaller');
 }
 
 /**
  * Action for toggling heading size: normal -> h6 -> h5 -> h4 -> h3 -> h2 -> h1 -> normal
  */
 function toggleHeadingBigger(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, 'bigger');
+    _toggleHeading(editor.codemirror, 'bigger');
 }
 
 /**
  * Action for toggling heading size 1
  */
 function toggleHeading1(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 1);
+    _toggleHeading(editor.codemirror, undefined, 1);
 }
 
 /**
  * Action for toggling heading size 2
  */
 function toggleHeading2(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 2);
+    _toggleHeading(editor.codemirror, undefined, 2);
 }
 
 /**
  * Action for toggling heading size 3
  */
 function toggleHeading3(editor) {
-    var cm = editor.codemirror;
-    _toggleHeading(cm, undefined, 3);
+    _toggleHeading(editor.codemirror, undefined, 3);
+}
+
+/**
+ * Action for toggling heading size 4
+ */
+function toggleHeading4(editor) {
+    _toggleHeading(editor.codemirror, undefined, 4);
+}
+
+/**
+ * Action for toggling heading size 5
+ */
+function toggleHeading5(editor) {
+    _toggleHeading(editor.codemirror, undefined, 5);
+}
+
+/**
+ * Action for toggling heading size 6
+ */
+function toggleHeading6(editor) {
+    _toggleHeading(editor.codemirror, undefined, 6);
 }
 
 
@@ -823,16 +841,14 @@ function toggleUnorderedList(editor) {
  * Action for toggling ol.
  */
 function toggleOrderedList(editor) {
-    var cm = editor.codemirror;
-    _toggleLine(cm, 'ordered-list');
+    _toggleLine(editor.codemirror, 'ordered-list');
 }
 
 /**
  * Action for clean block (remove headline, list, blockquote code, markers)
  */
 function cleanBlock(editor) {
-    var cm = editor.codemirror;
-    _cleanBlock(cm);
+    _cleanBlock(editor.codemirror);
 }
 
 /**
@@ -2834,6 +2850,9 @@ EasyMDE.toggleHeadingBigger = toggleHeadingBigger;
 EasyMDE.toggleHeading1 = toggleHeading1;
 EasyMDE.toggleHeading2 = toggleHeading2;
 EasyMDE.toggleHeading3 = toggleHeading3;
+EasyMDE.toggleHeading4 = toggleHeading4;
+EasyMDE.toggleHeading5 = toggleHeading5;
+EasyMDE.toggleHeading6 = toggleHeading6;
 EasyMDE.toggleCodeBlock = toggleCodeBlock;
 EasyMDE.toggleUnorderedList = toggleUnorderedList;
 EasyMDE.toggleOrderedList = toggleOrderedList;
@@ -2878,6 +2897,15 @@ EasyMDE.prototype.toggleHeading2 = function () {
 };
 EasyMDE.prototype.toggleHeading3 = function () {
     toggleHeading3(this);
+};
+EasyMDE.prototype.toggleHeading4 = function () {
+    toggleHeading4(this);
+};
+EasyMDE.prototype.toggleHeading5 = function () {
+    toggleHeading5(this);
+};
+EasyMDE.prototype.toggleHeading6 = function () {
+    toggleHeading6(this);
 };
 EasyMDE.prototype.toggleCodeBlock = function () {
     toggleCodeBlock(this);

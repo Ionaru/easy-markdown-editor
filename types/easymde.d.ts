@@ -265,6 +265,9 @@ declare class EasyMDE {
     static toggleHeading1: (editor: EasyMDE) => void;
     static toggleHeading2: (editor: EasyMDE) => void;
     static toggleHeading3: (editor: EasyMDE) => void;
+    static toggleHeading4: (editor: EasyMDE) => void;
+    static toggleHeading5: (editor: EasyMDE) => void;
+    static toggleHeading6: (editor: EasyMDE) => void;
     static toggleCodeBlock: (editor: EasyMDE) => void;
     static toggleBlockquote: (editor: EasyMDE) => void;
     static toggleUnorderedList: (editor: EasyMDE) => void;
