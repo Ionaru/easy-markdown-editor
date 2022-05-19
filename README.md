@@ -355,7 +355,7 @@ const easyMDE = new EasyMDE({
 });
 ```
 
-All information and/or add your own icons
+All information and/or add your own icons or text
 
 ```js
 const easyMDE = new EasyMDE({
@@ -373,6 +373,7 @@ const easyMDE = new EasyMDE({
                 // Add your own code
             },
             className: "fa fa-star",
+            text: "Starred",
             title: "Custom Button",
             attributes: { // for custom attributes
                 id: "custom-id",
