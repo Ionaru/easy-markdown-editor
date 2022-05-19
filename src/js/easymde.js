@@ -917,7 +917,7 @@ function afterImageUploaded(editor, url) {
     var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
 
     // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'webp'].includes(ext)) {
+    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'avif', 'webp'].includes(ext)) {
         _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     } else {
         var text_link = options.insertTexts.link;
@@ -1832,7 +1832,7 @@ function EasyMDE(options) {
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
     options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
-    options.imageAccept = options.imageAccept || 'image/png, image/jpeg, image/gif';
+    options.imageAccept = options.imageAccept || 'image/png, image/jpeg, image/gif, image/avif';
     options.imageTexts = extend({}, imageTexts, options.imageTexts || {});
     options.errorMessages = extend({}, errorMessages, options.errorMessages || {});
     options.imagePathAbsolute = options.imagePathAbsolute || false;
