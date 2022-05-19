@@ -68,9 +68,9 @@
     -o-user-select: none;
     user-select: none;
     padding: 9px 10px;
-    border-top: 1px solid #bbb;
-    border-left: 1px solid #bbb;
-    border-right: 1px solid #bbb;
+    border-top: 1px solid #ced4da;
+    border-left: 1px solid #ced4dab;
+    border-right: 1px solid #ced4da;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
