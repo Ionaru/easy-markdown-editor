@@ -2599,6 +2599,7 @@ EasyMDE.prototype.createToolbar = function (items) {
 
     var bar = document.createElement('div');
     bar.className = 'editor-toolbar';
+    bar.setAttribute('role', 'toolbar');
 
     var self = this;
 
