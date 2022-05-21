@@ -250,6 +250,10 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         }
     }
 
+    if (options.title) {
+        el.setAttribute('aria-label', options.title);
+    }
+    
     if (options.noDisable) {
         el.classList.add('no-disable');
     }
