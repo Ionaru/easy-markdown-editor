@@ -2180,6 +2180,7 @@ EasyMDE.prototype.render = function (el) {
     // to use with sideBySideFullscreen option.
     var easyMDEContainer = document.createElement('div');
     easyMDEContainer.classList.add('EasyMDEContainer');
+    easyMDEContainer.setAttribute('role', 'application');
     var cmWrapper = this.codemirror.getWrapperElement();
     cmWrapper.parentNode.insertBefore(easyMDEContainer, cmWrapper);
     easyMDEContainer.appendChild(cmWrapper);
