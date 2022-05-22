@@ -446,6 +446,12 @@ Shortcut (Windows / Linux) | Shortcut (macOS) | Action
 <kbd>Shift</kbd>-<kbd>Ctrl</kbd>-<kbd>H</kbd> | <kbd>Shift</kbd>-<kbd>Cmd</kbd>-<kbd>H</kbd> | "toggleHeadingBigger"
 <kbd>F9</kbd> | <kbd>F9</kbd> | "toggleSideBySide"
 <kbd>F11</kbd> | <kbd>F11</kbd> | "toggleFullScreen"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>1</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>1</kbd> | "toggleHeading1"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>2</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>2</kbd> | "toggleHeading2"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>3</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>3</kbd> | "toggleHeading3"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>4</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>4</kbd> | "toggleHeading4"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>5</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>5</kbd> | "toggleHeading5"
+<kbd>Ctrl</kbd>-<kbd>Alt</kbd>-<kbd>6</kbd> | <kbd>Cmd</kbd>-<kbd>Alt</kbd>-<kbd>6</kbd> | "toggleHeading6"
 
 Here is how you can change a few, while leaving others untouched:
 
