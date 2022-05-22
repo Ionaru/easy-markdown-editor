@@ -54,6 +54,12 @@ var shortcuts = {
     'drawLink': 'Cmd-K',
     'toggleHeadingSmaller': 'Cmd-H',
     'toggleHeadingBigger': 'Shift-Cmd-H',
+    'toggleHeading1': 'Ctrl+Alt+1',
+    'toggleHeading2': 'Ctrl+Alt+2',
+    'toggleHeading3': 'Ctrl+Alt+3',
+    'toggleHeading4': 'Ctrl+Alt+4',
+    'toggleHeading5': 'Ctrl+Alt+5',
+    'toggleHeading6': 'Ctrl+Alt+6',
     'cleanBlock': 'Cmd-E',
     'drawImage': 'Cmd-Alt-I',
     'toggleBlockquote': 'Cmd-\'',
@@ -235,7 +241,11 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
-    // Properly hande custom shortcuts
+    if (options.text) {
+        el.innerText = options.text;
+    }
+    
+    // Properly handle custom shortcuts
     if (options.name && options.name in shortcuts) {
         bindings[options.name] = options.action;
     }
@@ -282,13 +292,15 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     el.tabIndex = -1;
 
-    // Create icon element and append as a child to the button
-    var icon = document.createElement('i');
-    for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
-        var iconClass = iconClasses[iconClassIndex];
-        icon.classList.add(iconClass);
+    if (iconClasses.length > 0) {
+        // Create icon element and append as a child to the button
+        var icon = document.createElement('i');
+        for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
+            var iconClass = iconClasses[iconClassIndex];
+            icon.classList.add(iconClass);
+        }
+        el.appendChild(icon);
     }
-    el.appendChild(icon);
 
     // If there is a custom icon markup set, use that
     if (typeof options.icon !== 'undefined') {
@@ -2167,6 +2179,7 @@ EasyMDE.prototype.render = function (el) {
     // to use with sideBySideFullscreen option.
     var easyMDEContainer = document.createElement('div');
     easyMDEContainer.classList.add('EasyMDEContainer');
+    easyMDEContainer.setAttribute('role', 'application');
     var cmWrapper = this.codemirror.getWrapperElement();
     cmWrapper.parentNode.insertBefore(easyMDEContainer, cmWrapper);
     easyMDEContainer.appendChild(cmWrapper);
