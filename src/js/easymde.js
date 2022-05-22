@@ -238,6 +238,7 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         }
     }
 
+    el.className = 'mde-' + options.name;
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
