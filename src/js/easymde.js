@@ -283,13 +283,15 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     el.tabIndex = -1;
 
-    // Create icon element and append as a child to the button
-    var icon = document.createElement('i');
-    for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
-        var iconClass = iconClasses[iconClassIndex];
-        icon.classList.add(iconClass);
+    if (iconClasses.length > 0) {
+        // Create icon element and append as a child to the button
+        var icon = document.createElement('i');
+        for (var iconClassIndex = 0; iconClassIndex < iconClasses.length; iconClassIndex++) {
+            var iconClass = iconClasses[iconClassIndex];
+            icon.classList.add(iconClass);
+        }
+        el.appendChild(icon);
     }
-    el.appendChild(icon);
 
     // If there is a custom icon markup set, use that
     if (typeof options.icon !== 'undefined') {
