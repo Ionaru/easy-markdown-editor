@@ -7,7 +7,7 @@ describe('Preview', () => {
 
     it('can show a preview of markdown text', () => {
         cy.get('.EasyMDEContainer').should('be.visible');
-        cy.get('.EasyMDEContainer .mde-editor-preview').should('not.be.visible');
+        cy.get('.EasyMDEContainer .editor-preview').should('not.be.visible');
 
         // Enter markdown text.
         cy.get('.EasyMDEContainer .CodeMirror').type('# My Big Title');
@@ -25,7 +25,7 @@ describe('Preview', () => {
         cy.previewOn();
 
         // Check preview window for rendered markdown.
-        cy.get('.EasyMDEContainer .mde-editor-preview').should('contain.html', '<h1 id="my-big-title">My Big Title</h1>');
-        cy.get('.EasyMDEContainer .mde-editor-preview').should('contain.html', '<p>This is some <strong>important</strong> text!</p>');
+        cy.get('.EasyMDEContainer .editor-preview').should('contain.html', '<h1 id="my-big-title">My Big Title</h1>');
+        cy.get('.EasyMDEContainer .editor-preview').should('contain.html', '<p>This is some <strong>important</strong> text!</p>');
     });
 });
