@@ -1822,6 +1822,7 @@ function EasyMDE(options) {
         options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
     }
 
+    options.iconClassMap = extend({}, iconClassMap, options.iconClassMap || {});
 
     // Merging the shortcuts, with the given options
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
