@@ -140,7 +140,10 @@
 }
 
 .editor-toolbar button {
-    width: 30px;
+    font-weight: bold;
+    min-width: 30px;
+    padding: 0 6px;
+    white-space: nowrap;
 }
 
 .editor-toolbar button.active,
@@ -363,6 +366,10 @@
 .easymde-dropdown:focus .easymde-dropdown-content,
 .easymde-dropdown:focus-within .easymde-dropdown-content {
     visibility: visible;
+}
+
+.easymde-dropdown-content button {
+    display: block;
 }
 
 span[data-img-src]::after {
