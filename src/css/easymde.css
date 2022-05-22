@@ -142,6 +142,7 @@
 .editor-toolbar button {
     font-weight: bold;
     min-width: 30px;
+    padding: 0 6px;
     white-space: nowrap;
 }
 
