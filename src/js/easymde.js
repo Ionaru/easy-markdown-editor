@@ -446,9 +446,9 @@ function toggleFullScreen(editor) {
 
     // Update toolbar class
     if (!/fullscreen/.test(editor.toolbar_div.className)) {
-        editor.toolbar_div.className += ' fullscreen';
+        editor.toolbar_div.classList.add('fullscreen');
     } else {
-        editor.toolbar_div.className = editor.toolbar_div.className.replace(/\s*fullscreen\b/, '');
+        editor.toolbar_div.classList.remove('fullscreen');
     }
 
 
@@ -457,9 +457,9 @@ function toggleFullScreen(editor) {
         var toolbarButton = editor.toolbarElements.fullscreen;
 
         if (!/active/.test(toolbarButton.className)) {
-            toolbarButton.className += ' active';
+            toolbarButton.classList.add('active');
         } else {
-            toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
+            toolbarButton.classList.remove('active');
         }
     }
 }
@@ -1006,11 +1006,9 @@ function toggleSideBySide(editor) {
             // if side-by-side not-fullscreen ok, remove classes when hiding side
             removeClass(easyMDEContainer, 'sided--no-fullscreen');
         }
-        preview.className = preview.className.replace(
-            /\s*editor-preview-active-side\s*/g, ''
-        );
-        if (toolbarButton) toolbarButton.className = toolbarButton.className.replace(/\s*active\s*/g, '');
-        wrapper.className = wrapper.className.replace(/\s*CodeMirror-sided\s*/g, ' ');
+        preview.classList.remove('editor-preview-active-side');
+        if (toolbarButton) toolbarButton.classList.remove('active');
+        wrapper.classList.remove('CodeMirror-sided');
     } else {
         // When the preview button is clicked for the first time,
         // give some time for the transition from editor.css to fire and the view to slide from right to left,
@@ -1024,23 +1022,21 @@ function toggleSideBySide(editor) {
                     toggleFullScreen(editor);
                 }
             }
-            preview.className += ' editor-preview-active-side';
+            preview.classList.add('editor-preview-active-side');
         }, 1);
-        if (toolbarButton) toolbarButton.className += ' active';
-        wrapper.className += ' CodeMirror-sided';
+        if (toolbarButton) toolbarButton.classList.add('active');
+        wrapper.classList.add('CodeMirror-sided');
         useSideBySideListener = true;
     }
 
     // Hide normal preview if active
     var previewNormal = wrapper.lastChild;
     if (/editor-preview-active/.test(previewNormal.className)) {
-        previewNormal.className = previewNormal.className.replace(
-            /\s*editor-preview-active\s*/g, ''
-        );
+        previewNormal.classList.remove('editor-preview-active');
         var toolbar = editor.toolbarElements.preview;
         var toolbar_div = editor.toolbar_div;
-        toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
-        toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
+        toolbar.classList.remove('active');
+        toolbar_div.classList.remove('disabled-for-preview');
     }
 
     var sideBySideRenderingFunction = function () {
@@ -1105,23 +1101,21 @@ function togglePreview(editor) {
     }
 
     if (/editor-preview-active/.test(preview.className)) {
-        preview.className = preview.className.replace(
-            /\s*editor-preview-active\s*/g, ''
-        );
+        preview.classList.remove('editor-preview-active');
         if (toolbar) {
-            toolbar.className = toolbar.className.replace(/\s*active\s*/g, '');
-            toolbar_div.className = toolbar_div.className.replace(/\s*disabled-for-preview*/g, '');
+            toolbar.classList.remove('active');
+            toolbar_div.classList.remove('disabled-for-preview');
         }
     } else {
         // When the preview button is clicked for the first time,
         // give some time for the transition from editor.css to fire and the view to slide from right to left,
         // instead of just appearing.
         setTimeout(function () {
-            preview.className += ' editor-preview-active';
+            preview.classList.add('editor-preview-active');
         }, 1);
         if (toolbar) {
-            toolbar.className += ' active';
-            toolbar_div.className += ' disabled-for-preview';
+            toolbar.classList.add('active');
+            toolbar_div.classList.add('disabled-for-preview');
         }
     }
     preview.innerHTML = editor.options.previewRender(editor.value(), preview);
@@ -2695,7 +2689,7 @@ EasyMDE.prototype.createToolbar = function (items) {
                 if (stat[key]) {
                     el.className += ' active';
                 } else if (key != 'fullscreen' && key != 'side-by-side') {
-                    el.className = el.className.replace(/\s*active\s*/g, '');
+                    el.classList.remove('active');
                 }
             })(key);
         }
