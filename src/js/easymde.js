@@ -148,55 +148,11 @@ function fixShortcut(name) {
 }
 
 /**
- * Class handling utility methods.
- */
-var CLASS_REGEX = {};
-
-/**
- * Convert a className string into a regex for matching (and cache).
- * Note that the RegExp includes trailing spaces for replacement
- * (to ensure that removing a class from the middle of the string will retain
- *  spacing between other classes.)
- * @param {String} className Class name to convert to regex for matching.
- * @returns {RegExp} Regular expression option that will match className.
- */
-function getClassRegex(className) {
-    return CLASS_REGEX[className] || (CLASS_REGEX[className] = new RegExp('\\s*' + className + '(\\s*)', 'g'));
-}
-
-/**
- * Add a class string to an element.
- * @param {Element} el DOM element on which to add className.
- * @param {String} className Class string to apply
- * @returns {void}
- */
-function addClass(el, className) {
-    if (!el || !className) return;
-    var classRegex = getClassRegex(className);
-    if (el.className.match(classRegex)) return; // already applied
-    el.className += ' ' + className;
-}
-
-/**
- * Remove a class string from an element.
- * @param {Element} el DOM element from which to remove className.
- * @param {String} className Class string to remove
- * @returns {void}
- */
-function removeClass(el, className) {
-    if (!el || !className) return;
-    var classRegex = getClassRegex(className);
-    if (!el.className.match(classRegex)) return; // not available to remove
-    el.className = el.className.replace(classRegex, '$1');
-}
-
-
-/**
  * Create dropdown block
  */
 function createToolbarDropdown(options, enableTooltips, shortcuts, parent) {
     var el = createToolbarButton(options, false, enableTooltips, shortcuts, 'button', parent);
-    el.className += ' easymde-dropdown';
+    el.classList.add('easymde-dropdown');
 
     el.onclick = function () {
         el.focus();
@@ -245,7 +201,7 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     if (options.text) {
         el.innerText = options.text;
     }
-    
+
     // Properly handle custom shortcuts
     if (options.name && options.name in shortcuts) {
         bindings[options.name] = options.action;
@@ -263,7 +219,7 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     if (options.title) {
         el.setAttribute('aria-label', options.title);
     }
-    
+
     if (options.noDisable) {
         el.classList.add('no-disable');
     }
@@ -414,14 +370,14 @@ function toggleFullScreen(editor) {
     var wrapper = cm.getWrapperElement();
     var sidebyside = wrapper.nextSibling;
 
-    if (/editor-preview-active-side/.test(sidebyside.className)) {
+    if (sidebyside.classList.contains('editor-preview-active-side')) {
         if (editor.options.sideBySideFullscreen === false) {
             // if side-by-side not-fullscreen ok, apply classes as needed
             var easyMDEContainer = wrapper.parentNode;
             if (cm.getOption('fullScreen')) {
-                removeClass(easyMDEContainer, 'sided--no-fullscreen');
+                easyMDEContainer.classList.remove('sided--no-fullscreen');
             } else {
-                addClass(easyMDEContainer, 'sided--no-fullscreen');
+                easyMDEContainer.classList.add('sided--no-fullscreen');
             }
         } else {
             toggleSideBySide(editor);
@@ -443,24 +399,13 @@ function toggleFullScreen(editor) {
         }
     }
 
-
     // Update toolbar class
-    if (!/fullscreen/.test(editor.toolbar_div.className)) {
-        editor.toolbar_div.classList.add('fullscreen');
-    } else {
-        editor.toolbar_div.classList.remove('fullscreen');
-    }
-
+    editor.toolbar_div.classList.toggle('fullscreen');
 
     // Update toolbar button
     if (editor.toolbarElements && editor.toolbarElements.fullscreen) {
         var toolbarButton = editor.toolbarElements.fullscreen;
-
-        if (!/active/.test(toolbarButton.className)) {
-            toolbarButton.classList.add('active');
-        } else {
-            toolbarButton.classList.remove('active');
-        }
+        toolbarButton.classList.toggle('active');
     }
 }
 
@@ -1001,10 +946,10 @@ function toggleSideBySide(editor) {
 
     var easyMDEContainer = wrapper.parentNode;
 
-    if (/editor-preview-active-side/.test(preview.className)) {
+    if (preview.classList.contains('editor-preview-active-side')) {
         if (editor.options.sideBySideFullscreen === false) {
             // if side-by-side not-fullscreen ok, remove classes when hiding side
-            removeClass(easyMDEContainer, 'sided--no-fullscreen');
+            easyMDEContainer.classList.remove('sided--no-fullscreen');
         }
         preview.classList.remove('editor-preview-active-side');
         if (toolbarButton) toolbarButton.classList.remove('active');
@@ -1017,7 +962,7 @@ function toggleSideBySide(editor) {
             if (!cm.getOption('fullScreen')) {
                 if (editor.options.sideBySideFullscreen === false) {
                     // if side-by-side not-fullscreen ok, add classes when not fullscreen and showing side
-                    addClass(easyMDEContainer, 'sided--no-fullscreen');
+                    easyMDEContainer.classList.add('sided--no-fullscreen');
                 } else {
                     toggleFullScreen(editor);
                 }
@@ -1031,7 +976,7 @@ function toggleSideBySide(editor) {
 
     // Hide normal preview if active
     var previewNormal = wrapper.lastChild;
-    if (/editor-preview-active/.test(previewNormal.className)) {
+    if (previewNormal.classList.contains('editor-preview-active')) {
         previewNormal.classList.remove('editor-preview-active');
         var toolbar = editor.toolbarElements.preview;
         var toolbar_div = editor.toolbar_div;
@@ -1067,6 +1012,7 @@ function toggleSideBySide(editor) {
 
 /**
  * Preview action.
+ * @param editor {EasyMDE}
  */
 function togglePreview(editor) {
     var cm = editor.codemirror;
@@ -1077,10 +1023,10 @@ function togglePreview(editor) {
 
     // Turn off side by side if needed
     var sidebyside = cm.getWrapperElement().nextSibling;
-    if (/editor-preview-active-side/.test(sidebyside.className))
+    if (sidebyside.classList.contains('editor-preview-active-side'))
         toggleSideBySide(editor);
 
-    if (!preview || !/editor-preview-full/.test(preview.className)) {
+    if (!preview || !preview.classList.contains('editor-preview-full')) {
 
         preview = document.createElement('div');
         preview.className = 'editor-preview-full';
@@ -1089,18 +1035,18 @@ function togglePreview(editor) {
 
             if (Array.isArray(editor.options.previewClass)) {
                 for (var i = 0; i < editor.options.previewClass.length; i++) {
-                    preview.className += (' ' + editor.options.previewClass[i]);
+                    preview.classList.add(editor.options.previewClass[i]);
                 }
 
             } else if (typeof editor.options.previewClass === 'string') {
-                preview.className += (' ' + editor.options.previewClass);
+                preview.classList.add(editor.options.previewClass);
             }
         }
 
         wrapper.appendChild(preview);
     }
 
-    if (/editor-preview-active/.test(preview.className)) {
+    if (preview.classList.contains('editor-preview-active')) {
         preview.classList.remove('editor-preview-active');
         if (toolbar) {
             toolbar.classList.remove('active');
@@ -1123,7 +1069,7 @@ function togglePreview(editor) {
 }
 
 function _replaceSelection(cm, active, startEnd, url) {
-    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+    if (cm.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
 
     var text;
@@ -1160,7 +1106,7 @@ function _replaceSelection(cm, active, startEnd, url) {
 
 
 function _toggleHeading(cm, direction, size) {
-    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+    if (cm.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
 
     var startPoint = cm.getCursor('start');
@@ -1230,7 +1176,7 @@ function _toggleHeading(cm, direction, size) {
 
 
 function _toggleLine(cm, name, liststyle) {
-    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+    if (cm.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
 
     var listRegexp = /^(\s*)(\*|-|\+|\d*\.)(\s+)/;
@@ -1308,8 +1254,11 @@ function _toggleLine(cm, name, liststyle) {
     cm.focus();
 }
 
+/**
+ * @param {EasyMDE} editor
+ */
 function _toggleBlock(editor, type, start_chars, end_chars) {
-    if (/editor-preview-active/.test(editor.codemirror.getWrapperElement().lastChild.className))
+    if (editor.codemirror.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
 
     end_chars = (typeof end_chars === 'undefined') ? start_chars : end_chars;
@@ -1378,7 +1327,7 @@ function _toggleBlock(editor, type, start_chars, end_chars) {
 }
 
 function _cleanBlock(cm) {
-    if (/editor-preview-active/.test(cm.getWrapperElement().lastChild.className))
+    if (cm.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
 
     var startPoint = cm.getCursor('start');
@@ -2541,7 +2490,7 @@ EasyMDE.prototype.createSideBySide = function () {
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
 
-    if (!preview || !/editor-preview-side/.test(preview.className)) {
+    if (!preview || !preview.classList.contains('editor-preview-side')) {
         preview = document.createElement('div');
         preview.className = 'editor-preview-side';
 
@@ -2549,11 +2498,11 @@ EasyMDE.prototype.createSideBySide = function () {
 
             if (Array.isArray(this.options.previewClass)) {
                 for (var i = 0; i < this.options.previewClass.length; i++) {
-                    preview.className += (' ' + this.options.previewClass[i]);
+                    preview.classList.add(this.options.previewClass[i]);
                 }
 
             } else if (typeof this.options.previewClass === 'string') {
-                preview.className += (' ' + this.options.previewClass);
+                preview.classList.add(this.options.previewClass);
             }
         }
 
@@ -2687,7 +2636,7 @@ EasyMDE.prototype.createToolbar = function (items) {
             (function (key) {
                 var el = toolbarData[key];
                 if (stat[key]) {
-                    el.className += ' active';
+                    el.classList.add('active');
                 } else if (key != 'fullscreen' && key != 'side-by-side') {
                     el.classList.remove('active');
                 }
@@ -2967,7 +2916,7 @@ EasyMDE.prototype.isPreviewActive = function () {
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.lastChild;
 
-    return /editor-preview-active/.test(preview.className);
+    return preview.classList.contains('editor-preview-active');
 };
 
 EasyMDE.prototype.isSideBySideActive = function () {
@@ -2975,7 +2924,7 @@ EasyMDE.prototype.isSideBySideActive = function () {
     var wrapper = cm.getWrapperElement();
     var preview = wrapper.nextSibling;
 
-    return /editor-preview-active-side/.test(preview.className);
+    return preview.classList.contains('editor-preview-active-side');
 };
 
 EasyMDE.prototype.isFullscreenActive = function () {
