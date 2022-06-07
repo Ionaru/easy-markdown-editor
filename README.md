@@ -266,6 +266,11 @@ const editor = new EasyMDE({
             preview.innerHTML = customMarkdownParser(plainText);
         }, 250);
 
+        // If you return null, the innerHTML of the preview will not 
+        // be overwritten. Useful if you control the preview node's content via
+        // vdom diffing.
+        // return null;
+
         return "Loading...";
     },
     promptURLs: true,
