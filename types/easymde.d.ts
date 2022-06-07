@@ -196,7 +196,7 @@ declare namespace EasyMDE {
         previewClass?: string | ReadonlyArray<string>;
         previewImagesInEditor?: boolean;
         imagesPreviewHandler?: (src: string) => string,
-        previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
+        previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string | null;
         promptURLs?: boolean;
         renderingConfig?: RenderingOptions;
         shortcuts?: Shortcuts;
