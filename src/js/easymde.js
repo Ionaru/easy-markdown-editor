@@ -335,9 +335,9 @@ function getState(cm, pos) {
             ret.strikethrough = true;
         } else if (data === 'comment') {
             ret.code = true;
-        } else if (data === 'link') {
+        } else if (data === 'link' && !ret.image) {
             ret.link = true;
-        } else if (data === 'tag') {
+        } else if (data === 'image') {
             ret.image = true;
         } else if (data.match(/^header(-[1-6])?$/)) {
             ret[data.replace('header', 'heading')] = true;
@@ -352,6 +352,7 @@ var saved_overflow = '';
 
 /**
  * Toggle full screen of the editor.
+ * @param {EasyMDE} editor
  */
 function toggleFullScreen(editor) {
     // Set fullscreen
@@ -412,6 +413,7 @@ function toggleFullScreen(editor) {
 
 /**
  * Action for toggling bold.
+ * @param {EasyMDE} editor
  */
 function toggleBold(editor) {
     _toggleBlock(editor, 'bold', editor.options.blockStyles.bold);
@@ -420,6 +422,7 @@ function toggleBold(editor) {
 
 /**
  * Action for toggling italic.
+ * @param {EasyMDE} editor
  */
 function toggleItalic(editor) {
     _toggleBlock(editor, 'italic', editor.options.blockStyles.italic);
@@ -428,6 +431,7 @@ function toggleItalic(editor) {
 
 /**
  * Action for toggling strikethrough.
+ * @param {EasyMDE} editor
  */
 function toggleStrikethrough(editor) {
     _toggleBlock(editor, 'strikethrough', '~~');
@@ -435,6 +439,7 @@ function toggleStrikethrough(editor) {
 
 /**
  * Action for toggling code block.
+ * @param {EasyMDE} editor
  */
 function toggleCodeBlock(editor) {
     var fenceCharsToInsert = editor.options.blockStyles.code;
@@ -814,43 +819,41 @@ function cleanBlock(editor) {
 
 /**
  * Action for drawing a link.
+ * @param {EasyMDE} editor
  */
 function drawLink(editor) {
-    var cm = editor.codemirror;
-    var stat = getState(cm);
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.link, url);
-        if (!url) {
+        var result = prompt(options.promptTexts.link, url);
+        if (!result) {
             return false;
         }
-        url = escapePromptURL(url);
+        url = escapePromptURL(result);
     }
-    _replaceSelection(cm, stat.link, options.insertTexts.link, url);
+    _toggleLink(editor, 'link', options.insertTexts.link, url);
 }
 
 /**
  * Action for drawing an img.
+ * @param {EasyMDE} editor
  */
 function drawImage(editor) {
-    var cm = editor.codemirror;
-    var stat = getState(cm);
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
-        url = prompt(options.promptTexts.image, url);
-        if (!url) {
+        var result = prompt(options.promptTexts.image, url);
+        if (!result) {
             return false;
         }
-        url = escapePromptURL(url);
+        url = escapePromptURL(result);
     }
-    _replaceSelection(cm, stat.image, options.insertTexts.image, url);
+    _toggleLink(editor, 'image', options.insertTexts.image, url);
 }
 
 /**
  * Encode and escape URLs to prevent breaking up rendered Markdown links.
- * @param url {string} The url of the link or image
+ * @param {string} url The url of the link or image
  */
 function escapePromptURL(url) {
     return encodeURI(url).replace(/([\\()])/g, '\\$1');
@@ -858,7 +861,7 @@ function escapePromptURL(url) {
 
 /**
  * Action for opening the browse-file window to upload an image to a server.
- * @param editor {EasyMDE} The EasyMDE object
+ * @param {EasyMDE} editor The EasyMDE object
  */
 function drawUploadedImage(editor) {
     // TODO: Draw the image template with a fake url? ie: '![](importing foo.png...)'
@@ -867,8 +870,8 @@ function drawUploadedImage(editor) {
 
 /**
  * Action executed after an image have been successfully imported on the server.
- * @param editor {EasyMDE} The EasyMDE object
- * @param url {string} The url of the uploaded image
+ * @param {EasyMDE} editor The EasyMDE object
+ * @param {string} url The url of the uploaded image
  */
 function afterImageUploaded(editor, url) {
     var cm = editor.codemirror;
@@ -895,6 +898,7 @@ function afterImageUploaded(editor, url) {
 
 /**
  * Action for drawing a table.
+ * @param {EasyMDE} editor
  */
 function drawTable(editor) {
     var cm = editor.codemirror;
@@ -905,6 +909,7 @@ function drawTable(editor) {
 
 /**
  * Action for drawing a horizontal rule.
+ * @param {EasyMDE} editor
  */
 function drawHorizontalRule(editor) {
     var cm = editor.codemirror;
@@ -916,6 +921,7 @@ function drawHorizontalRule(editor) {
 
 /**
  * Undo action.
+ * @param {EasyMDE} editor
  */
 function undo(editor) {
     var cm = editor.codemirror;
@@ -926,6 +932,7 @@ function undo(editor) {
 
 /**
  * Redo action.
+ * @param {EasyMDE} editor
  */
 function redo(editor) {
     var cm = editor.codemirror;
@@ -936,6 +943,7 @@ function redo(editor) {
 
 /**
  * Toggle side by side preview
+ * @param {EasyMDE} editor
  */
 function toggleSideBySide(editor) {
     var cm = editor.codemirror;
@@ -1012,7 +1020,7 @@ function toggleSideBySide(editor) {
 
 /**
  * Preview action.
- * @param editor {EasyMDE}
+ * @param {EasyMDE} editor
  */
 function togglePreview(editor) {
     var cm = editor.codemirror;
@@ -1256,10 +1264,59 @@ function _toggleLine(cm, name, liststyle) {
 
 /**
  * @param {EasyMDE} editor
+ * @param {'link' | 'image'} type
+ * @param {string} startEnd
+ * @param {string} url
+ */
+function _toggleLink(editor, type, startEnd, url) {
+    if (!editor.codemirror || editor.isPreviewActive()) {
+        return;
+    }
+
+    var cm = editor.codemirror;
+    var stat = getState(cm);
+    var active = stat[type];
+    if (!active) {
+        _replaceSelection(cm, active, startEnd, url);
+        return;
+    }
+
+    var startPoint = cm.getCursor('start');
+    var endPoint = cm.getCursor('end');
+    var text = cm.getLine(startPoint.line);
+    var start = text.slice(0, startPoint.ch);
+    var end = text.slice(startPoint.ch);
+
+    if (type == 'link') {
+        start = start.replace(/(.*(?<!!))\[/, '$1');
+    } else if (type == 'image') {
+        start = start.replace(/(.*)!\[$/, '$1');
+    }
+    end = end.replace(/]\(.*?\)/, '');
+
+    cm.replaceRange(start + end, {
+        line: startPoint.line,
+        ch: 0,
+    }, {
+        line: startPoint.line,
+        ch: 99999999999999,
+    });
+
+    startPoint.ch -= startEnd[0].length;
+    if (startPoint !== endPoint) {
+        endPoint.ch -= startEnd[0].length;
+    }
+    cm.setSelection(startPoint, endPoint);
+    cm.focus();
+}
+
+/**
+ * @param {EasyMDE} editor
  */
 function _toggleBlock(editor, type, start_chars, end_chars) {
-    if (editor.codemirror.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
+    if (!editor.codemirror || editor.isPreviewActive()) {
         return;
+    }
 
     end_chars = (typeof end_chars === 'undefined') ? start_chars : end_chars;
     var cm = editor.codemirror;
@@ -1352,7 +1409,7 @@ function _cleanBlock(cm) {
  * Convert a number of bytes to a human-readable file size. If you desire
  * to add a space between the value and the unit, you need to add this space
  * to the given units.
- * @param bytes {integer} A number of bytes, as integer. Ex: 421137
+ * @param bytes {number} A number of bytes, as integer. Ex: 421137
  * @param units {number[]} An array of human-readable units, ie. [' B', ' K', ' MB']
  * @returns string A human-readable file size. Ex: '412 KB'
  */
@@ -1604,7 +1661,7 @@ var toolbarBuiltInButtons = {
 
 var insertTexts = {
     link: ['[', '](#url#)'],
-    image: ['![](', '#url#)'],
+    image: ['![', '](#url#)'],
     uploadedImage: ['![](#url#)', ''],
     // uploadedImage: ['![](#url#)\n', ''], // TODO: New line insertion doesn't work here.
     table: ['', '\n\n| Column 1 | Column 2 | Column 3 |\n| -------- | -------- | -------- |\n| Text     | Text     | Text     |\n\n'],

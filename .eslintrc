@@ -11,11 +11,17 @@
             "error",
             "always"
         ],
-        "comma-dangle": ["error", "always-multiline"]
+        "comma-dangle": [
+            "error",
+            "always-multiline"
+        ]
     },
     "env": {
         "browser": true,
         "node": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
     },
     "extends": "eslint:recommended"
 }

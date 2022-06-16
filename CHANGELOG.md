@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - URLs with certain characters entered through prompts causing invalid markdown (Thanks to [@Zignature], [#393]).
 - Autofocus option not working properly ([#399]).
+- Hyperlink doubling (Thanks to [@danielok1993], [#95]).
 
 ## [2.16.1] - 2022-01-14
 ### Fixed
@@ -297,6 +298,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#106]: https://github.com/Ionaru/easy-markdown-editor/pull/106
 [#101]: https://github.com/Ionaru/easy-markdown-editor/pull/101
 [#97]: https://github.com/Ionaru/easy-markdown-editor/pull/97
+[#97]: https://github.com/Ionaru/easy-markdown-editor/pull/95
 [#93]: https://github.com/Ionaru/easy-markdown-editor/pull/93
 [#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
 [#71]: https://github.com/Ionaru/easy-markdown-editor/pull/71
@@ -353,6 +355,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@Zignature]: https://github.com/Zignature
 [@kelvinj]: https://github.com/kelvinj
 [@diego-gw]: https://github.com/diego-gw
+[@danielok1993]: https://github.com/danielok1993
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...HEAD
