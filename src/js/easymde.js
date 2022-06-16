@@ -1471,62 +1471,90 @@ function wordCount(data) {
     return count;
 }
 
+var iconClassMap = {
+    'bold': 'fa fa-bold',
+    'italic': 'fa fa-italic',
+    'strikethrough': 'fa fa-strikethrough',
+    'heading': 'fa fa-header fa-heading',
+    'heading-smaller': 'fa fa-header fa-heading header-smaller',
+    'heading-bigger': 'fa fa-header fa-heading header-bigger',
+    'heading-1': 'fa fa-header fa-heading header-1',
+    'heading-2': 'fa fa-header fa-heading header-2',
+    'heading-3': 'fa fa-header fa-heading header-3',
+    'code': 'fa fa-code',
+    'quote': 'fa fa-quote-left',
+    'ordered-list': 'fa fa-list-ol',
+    'unordered-list': 'fa fa-list-ul',
+    'clean-block': 'fa fa-eraser',
+    'link': 'fa fa-link',
+    'image': 'fa fa-image',
+    'upload-image': 'fa fa-image',
+    'table': 'fa fa-table',
+    'horizontal-rule': 'fa fa-minus',
+    'preview': 'fa fa-eye',
+    'side-by-side': 'fa fa-columns',
+    'fullscreen': 'fa fa-arrows-alt',
+    'guide': 'fa fa-question-circle',
+    'undo': 'fa fa-undo',
+    'redo': 'fa fa-repeat fa-redo',
+};
+
 var toolbarBuiltInButtons = {
     'bold': {
         name: 'bold',
         action: toggleBold,
-        className: 'fa fa-bold',
+        className: iconClassMap['bold'],
         title: 'Bold',
         default: true,
     },
     'italic': {
         name: 'italic',
         action: toggleItalic,
-        className: 'fa fa-italic',
+        className: iconClassMap['italic'],
         title: 'Italic',
         default: true,
     },
     'strikethrough': {
         name: 'strikethrough',
         action: toggleStrikethrough,
-        className: 'fa fa-strikethrough',
+        className: iconClassMap['strikethrough'],
         title: 'Strikethrough',
     },
     'heading': {
         name: 'heading',
         action: toggleHeadingSmaller,
-        className: 'fa fa-header fa-heading',
+        className: iconClassMap['heading'],
         title: 'Heading',
         default: true,
     },
     'heading-smaller': {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
-        className: 'fa fa-header fa-heading header-smaller',
+        className: iconClassMap['heading-smaller'],
         title: 'Smaller Heading',
     },
     'heading-bigger': {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
-        className: 'fa fa-header fa-heading header-bigger',
+        className: iconClassMap['heading-bigger'],
         title: 'Bigger Heading',
     },
     'heading-1': {
         name: 'heading-1',
         action: toggleHeading1,
-        className: 'fa fa-header fa-heading header-1',
+        className: iconClassMap['heading-1'],
         title: 'Big Heading',
     },
     'heading-2': {
         name: 'heading-2',
         action: toggleHeading2,
-        className: 'fa fa-header fa-heading header-2',
+        className: iconClassMap['heading-2'],
         title: 'Medium Heading',
     },
     'heading-3': {
         name: 'heading-3',
         action: toggleHeading3,
-        className: 'fa fa-header fa-heading header-3',
+        className: iconClassMap['heading-3'],
         title: 'Small Heading',
     },
     'separator-1': {
@@ -1535,34 +1563,34 @@ var toolbarBuiltInButtons = {
     'code': {
         name: 'code',
         action: toggleCodeBlock,
-        className: 'fa fa-code',
+        className: iconClassMap['code'],
         title: 'Code',
     },
     'quote': {
         name: 'quote',
         action: toggleBlockquote,
-        className: 'fa fa-quote-left',
+        className: iconClassMap['quote'],
         title: 'Quote',
         default: true,
     },
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
-        className: 'fa fa-list-ul',
+        className: iconClassMap['ordered-list'],
         title: 'Generic List',
         default: true,
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
-        className: 'fa fa-list-ol',
+        className: iconClassMap['unordered-list'],
         title: 'Numbered List',
         default: true,
     },
     'clean-block': {
         name: 'clean-block',
         action: cleanBlock,
-        className: 'fa fa-eraser',
+        className: iconClassMap['clean-block'],
         title: 'Clean block',
     },
     'separator-2': {
@@ -1571,33 +1599,33 @@ var toolbarBuiltInButtons = {
     'link': {
         name: 'link',
         action: drawLink,
-        className: 'fa fa-link',
+        className: iconClassMap['link'],
         title: 'Create Link',
         default: true,
     },
     'image': {
         name: 'image',
         action: drawImage,
-        className: 'fa fa-image',
+        className: iconClassMap['image'],
         title: 'Insert Image',
         default: true,
     },
     'upload-image': {
         name: 'upload-image',
         action: drawUploadedImage,
-        className: 'fa fa-image',
+        className: iconClassMap['upload-image'],
         title: 'Import an image',
     },
     'table': {
         name: 'table',
         action: drawTable,
-        className: 'fa fa-table',
+        className: iconClassMap['table'],
         title: 'Insert Table',
     },
     'horizontal-rule': {
         name: 'horizontal-rule',
         action: drawHorizontalRule,
-        className: 'fa fa-minus',
+        className: iconClassMap['horizontal-rule'],
         title: 'Insert Horizontal Line',
     },
     'separator-3': {
@@ -1606,7 +1634,7 @@ var toolbarBuiltInButtons = {
     'preview': {
         name: 'preview',
         action: togglePreview,
-        className: 'fa fa-eye',
+        className: iconClassMap['preview'],
         noDisable: true,
         title: 'Toggle Preview',
         default: true,
@@ -1614,7 +1642,7 @@ var toolbarBuiltInButtons = {
     'side-by-side': {
         name: 'side-by-side',
         action: toggleSideBySide,
-        className: 'fa fa-columns',
+        className: iconClassMap['side-by-side'],
         noDisable: true,
         noMobile: true,
         title: 'Toggle Side by Side',
@@ -1623,7 +1651,7 @@ var toolbarBuiltInButtons = {
     'fullscreen': {
         name: 'fullscreen',
         action: toggleFullScreen,
-        className: 'fa fa-arrows-alt',
+        className: iconClassMap['fullscreen'],
         noDisable: true,
         noMobile: true,
         title: 'Toggle Fullscreen',
@@ -1635,7 +1663,7 @@ var toolbarBuiltInButtons = {
     'guide': {
         name: 'guide',
         action: 'https://www.markdownguide.org/basic-syntax/',
-        className: 'fa fa-question-circle',
+        className: iconClassMap['guide'],
         noDisable: true,
         title: 'Markdown Guide',
         default: true,
@@ -1646,14 +1674,14 @@ var toolbarBuiltInButtons = {
     'undo': {
         name: 'undo',
         action: undo,
-        className: 'fa fa-undo',
+        className: iconClassMap['undo'],
         noDisable: true,
         title: 'Undo',
     },
     'redo': {
         name: 'redo',
         action: redo,
-        className: 'fa fa-repeat fa-redo',
+        className: iconClassMap['redo'],
         noDisable: true,
         title: 'Redo',
     },
@@ -1826,6 +1854,7 @@ function EasyMDE(options) {
         options.autosave.timeFormat = extend({}, timeFormat, options.autosave.timeFormat || {});
     }
 
+    options.iconClassMap = extend({}, iconClassMap, options.iconClassMap || {});
 
     // Merging the shortcuts, with the given options
     options.shortcuts = extend({}, shortcuts, options.shortcuts || {});
