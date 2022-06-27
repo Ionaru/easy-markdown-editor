@@ -1576,14 +1576,14 @@ var toolbarBuiltInButtons = {
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
-        className: iconClassMap['ordered-list'],
+        className: iconClassMap['unordered-list'],
         title: 'Generic List',
         default: true,
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
-        className: iconClassMap['unordered-list'],
+        className: iconClassMap['ordered-list'],
         title: 'Numbered List',
         default: true,
     },
