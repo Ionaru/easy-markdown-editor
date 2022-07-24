@@ -334,6 +334,7 @@ ordered-list | toggleOrderedList | Numbered List<br>fa fa-list-ol
 clean-block | cleanBlock | Clean block<br>fa fa-eraser
 link | drawLink | Create Link<br>fa fa-link
 image | drawImage | Insert Image<br>fa fa-picture-o
+upload-image | drawUploadedImage | Raise browse-file window<br>fa fa-image
 table | drawTable | Insert Table<br>fa fa-table
 horizontal-rule | drawHorizontalRule | Insert Horizontal Line<br>fa fa-minus
 preview | togglePreview | Toggle Preview<br>fa fa-eye no-disable
