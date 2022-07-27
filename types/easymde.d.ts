@@ -183,7 +183,7 @@ declare namespace EasyMDE {
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
         forceSync?: boolean;
-        hideIcons?: ReadonlyArray<string>;
+        hideIcons?: ReadonlyArray<ToolbarButton>;
         indentWithTabs?: boolean;
         initialValue?: string;
         insertTexts?: InsertTextOptions;
