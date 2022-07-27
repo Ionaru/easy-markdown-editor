@@ -367,7 +367,7 @@ const easyMDE = new EasyMDE({
             className: "fa fa-bold",
             title: "Bold",
         },
-        "italics", // shortcut to pre-made button
+        "italic", // shortcut to pre-made button
         {
             name: "custom",
             action: (editor) => {
