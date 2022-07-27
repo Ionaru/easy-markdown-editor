@@ -298,7 +298,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#106]: https://github.com/Ionaru/easy-markdown-editor/pull/106
 [#101]: https://github.com/Ionaru/easy-markdown-editor/pull/101
 [#97]: https://github.com/Ionaru/easy-markdown-editor/pull/97
-[#97]: https://github.com/Ionaru/easy-markdown-editor/pull/95
+[#95]: https://github.com/Ionaru/easy-markdown-editor/pull/95
 [#93]: https://github.com/Ionaru/easy-markdown-editor/pull/93
 [#75]: https://github.com/Ionaru/easy-markdown-editor/pull/75
 [#71]: https://github.com/Ionaru/easy-markdown-editor/pull/71
