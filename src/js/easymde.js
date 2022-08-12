@@ -1143,30 +1143,12 @@ function _toggleHeading(cm, direction, size) {
                     }
                 }
             } else {
-                if (size == 1) {
-                    if (currHeadingLevel <= 0) {
-                        text = '# ' + text;
-                    } else if (currHeadingLevel == size) {
-                        text = text.substr(currHeadingLevel + 1);
-                    } else {
-                        text = '# ' + text.substr(currHeadingLevel + 1);
-                    }
-                } else if (size == 2) {
-                    if (currHeadingLevel <= 0) {
-                        text = '## ' + text;
-                    } else if (currHeadingLevel == size) {
-                        text = text.substr(currHeadingLevel + 1);
-                    } else {
-                        text = '## ' + text.substr(currHeadingLevel + 1);
-                    }
+                if (currHeadingLevel <= 0) {
+                    text = '#'.repeat(size) + ' ' + text;
+                } else if (currHeadingLevel == size) {
+                    text = text.substr(currHeadingLevel + 1);
                 } else {
-                    if (currHeadingLevel <= 0) {
-                        text = '### ' + text;
-                    } else if (currHeadingLevel == size) {
-                        text = text.substr(currHeadingLevel + 1);
-                    } else {
-                        text = '### ' + text.substr(currHeadingLevel + 1);
-                    }
+                    text = '#'.repeat(size) + ' ' + text.substr(currHeadingLevel + 1);
                 }
             }
 
