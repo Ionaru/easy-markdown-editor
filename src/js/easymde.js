@@ -1072,7 +1072,11 @@ function togglePreview(editor) {
             toolbar_div.classList.add('disabled-for-preview');
         }
     }
-    preview.innerHTML = editor.options.previewRender(editor.value(), preview);
+
+    var preview_result = editor.options.previewRender(editor.value(), preview);
+    if (preview_result !== null) {
+        preview.innerHTML = preview_result;
+    }
 
 }
 
@@ -2860,7 +2864,11 @@ EasyMDE.prototype.value = function (val) {
         if (this.isPreviewActive()) {
             var wrapper = cm.getWrapperElement();
             var preview = wrapper.lastChild;
-            preview.innerHTML = this.options.previewRender(val, preview);
+            var preview_result = this.options.previewRender(val, preview);
+            if (preview_result !== null) {
+                preview.innerHTML = preview_result;
+            }
+
         }
         return this;
     }
