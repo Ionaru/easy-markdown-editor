@@ -6,12 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Added
+- Improved CSRF support for uploading images (Thanks to [@ZsgsDesign], [#394]).
 - Option to register an image preview handler: `imagesPreviewHandler` (Thanks to [@diego-gw], [#411]).
+- Support for `.webp` image formats (Thanks to [@sghoweri], [#417]).
+- `toggleHeading` methods for headings 4, 5 and 6 (Thanks to [@vanillajonathan], [#449] and [#492]).
+- Support for `.gif`, `.avif` and `.apng` image formats (Thanks to [@vanillajonathan], [#450], [#458] and [#459]).
+- Keyboard shortcuts for `toggleHeading` methods (Thanks to [@vanillajonathan], [#451]).
+- `iconClassMap` option to specify icon class names for toolbar buttons (Thanks to [@vanillajonathan], [#454]).
+- `role="toolbar"` on the toolbar element (Thanks to [@vanillajonathan], [#455]).
+- Support for text buttons in the toolbar (Thanks to [@vanillajonathan], [#461]).
+- `aria-label` attribute for toolbar buttons (uses the `title` option) (Thanks to [@vanillajonathan], [#463]).
+- `role="application"` on the editor container element (Thanks to [@vanillajonathan], [#464]).
+- Option to not overwrite the preview HTML by returning `null` from `previewRender` (Thanks to [@LevitatingOrange], [#471]).
 
 ### Fixed
+- Hyperlink doubling (Thanks to [@danielok1993], [#95]).
 - URLs with certain characters entered through prompts causing invalid markdown (Thanks to [@Zignature], [#393]).
 - Autofocus option not working properly ([#399]).
-- Hyperlink doubling (Thanks to [@danielok1993], [#95]).
+- Inconsistent border colour (Thanks to [@vanillajonathan], [#466]).
+- Invalid regex on Safari browsers ([#478])
+- `hideIcons` option type (Thanks to [@LoyalPotato], [#488]).
+
+### Changed
+- Editor now uses responsive font sizes (Thanks to [@vanillajonathan], [#452]).
+
+### Documentation
+- Added several improvements to README (Thanks to [@vanillajonathan], [#436], [#438], [#440], [#444]).
+- Fixed typo in README (Thanks to [@kicksent], [#484]).
+- Added missing icon for `upload-image` in README (Thanks to [@hlf20010508], [#486]).
 
 ## [2.16.1] - 2022-01-14
 ### Fixed
@@ -230,6 +252,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#478]: https://github.com/Ionaru/easy-markdown-editor/issues/478
 [#399]: https://github.com/Ionaru/easy-markdown-editor/issues/399
 [#252]: https://github.com/Ionaru/easy-markdown-editor/issues/252
 [#251]: https://github.com/Ionaru/easy-markdown-editor/issues/251
@@ -249,7 +272,32 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#492]: https://github.com/Ionaru/easy-markdown-editor/pull/492
+[#488]: https://github.com/Ionaru/easy-markdown-editor/pull/488
+[#486]: https://github.com/Ionaru/easy-markdown-editor/pull/486
+[#484]: https://github.com/Ionaru/easy-markdown-editor/pull/484
+[#479]: https://github.com/Ionaru/easy-markdown-editor/pull/479
+[#471]: https://github.com/Ionaru/easy-markdown-editor/pull/471
+[#467]: https://github.com/Ionaru/easy-markdown-editor/pull/467
+[#466]: https://github.com/Ionaru/easy-markdown-editor/pull/466
+[#464]: https://github.com/Ionaru/easy-markdown-editor/pull/464
+[#463]: https://github.com/Ionaru/easy-markdown-editor/pull/463
+[#461]: https://github.com/Ionaru/easy-markdown-editor/pull/461
+[#459]: https://github.com/Ionaru/easy-markdown-editor/pull/459
+[#458]: https://github.com/Ionaru/easy-markdown-editor/pull/458
+[#455]: https://github.com/Ionaru/easy-markdown-editor/pull/455
+[#454]: https://github.com/Ionaru/easy-markdown-editor/pull/454
+[#452]: https://github.com/Ionaru/easy-markdown-editor/pull/452
+[#451]: https://github.com/Ionaru/easy-markdown-editor/pull/451
+[#450]: https://github.com/Ionaru/easy-markdown-editor/pull/450
+[#449]: https://github.com/Ionaru/easy-markdown-editor/pull/449
+[#444]: https://github.com/Ionaru/easy-markdown-editor/pull/444
+[#440]: https://github.com/Ionaru/easy-markdown-editor/pull/440
+[#438]: https://github.com/Ionaru/easy-markdown-editor/pull/438
+[#436]: https://github.com/Ionaru/easy-markdown-editor/pull/436
+[#417]: https://github.com/Ionaru/easy-markdown-editor/pull/417
 [#411]: https://github.com/Ionaru/easy-markdown-editor/pull/411
+[#394]: https://github.com/Ionaru/easy-markdown-editor/pull/394
 [#393]: https://github.com/Ionaru/easy-markdown-editor/pull/393
 [#389]: https://github.com/Ionaru/easy-markdown-editor/pull/389
 [#388]: https://github.com/Ionaru/easy-markdown-editor/pull/388
@@ -356,6 +404,13 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@kelvinj]: https://github.com/kelvinj
 [@diego-gw]: https://github.com/diego-gw
 [@danielok1993]: https://github.com/danielok1993
+[@vanillajonathan]: https://github.com/vanillajonathan
+[@LevitatingOrange]: https://github.com/LevitatingOrange
+[@LoyalPotato]: https://github.com/LoyalPotato
+[@kicksent]: https://github.com/kicksent
+[@hlf20010508]: https://github.com/hlf20010508
+[@ZsgsDesign]: https://github.com/ZsgsDesign
+[@sghoweri]: https://github.com/sghoweri
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...HEAD
