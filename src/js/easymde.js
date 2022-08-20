@@ -1274,7 +1274,7 @@ function _toggleLink(editor, type, startEnd, url) {
     var end = text.slice(startPoint.ch);
 
     if (type == 'link') {
-        start = start.replace(/(.*(?<!!))\[/, '$1');
+        start = start.replace(/(.*)[^!]\[/, '$1');
     } else if (type == 'image') {
         start = start.replace(/(.*)!\[$/, '$1');
     }
