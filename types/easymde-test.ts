@@ -215,8 +215,21 @@ new EasyMDE({
 
 new EasyMDE({
     direction: 'ltr',
-})
+});
 
 new EasyMDE({
     direction: 'rtl',
-})
+});
+
+new EasyMDE({
+    previewRender: (plainText: string) => {
+        return '<pre>' + plainText + '</pre>';
+    }
+});
+
+new EasyMDE({
+    previewRender: (plainText: string, preview) => {
+        preview.innerHTML = '<pre>' + plainText + '</pre>';
+        return null;
+    }
+});
