@@ -261,13 +261,20 @@ const editor = new EasyMDE({
     previewClass: "my-custom-styling",
     previewClass: ["my-custom-styling", "more-custom-styling"],
 
+    extractYaml: (yaml) => {
+         // Extracts yaml from Markdown, use a third party parser to convert to json
+         // ----
+         // Key: value
+         // ---
+        console.log(yaml);
+    }
     previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
     previewRender: (plainText, preview) => { // Async method
         setTimeout(() => {
             preview.innerHTML = customMarkdownParser(plainText);
         }, 250);
 
-        // If you return null, the innerHTML of the preview will not 
+        // If you return null, the innerHTML of the preview will not
         // be overwritten. Useful if you control the preview node's content via
         // vdom diffing.
         // return null;

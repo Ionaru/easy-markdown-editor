@@ -10,6 +10,7 @@ require('codemirror/addon/display/autorefresh.js');
 require('codemirror/addon/selection/mark-selection.js');
 require('codemirror/addon/search/searchcursor.js');
 require('codemirror/mode/gfm/gfm.js');
+require('codemirror/mode/yaml-frontmatter/yaml-frontmatter.js');
 require('codemirror/mode/xml/xml.js');
 var CodeMirrorSpellChecker = require('codemirror-spell-checker');
 var marked = require('marked').marked;
@@ -2010,6 +2011,22 @@ EasyMDE.prototype.updateStatusBar = function (itemName, content) {
  */
 EasyMDE.prototype.markdown = function (text) {
     if (marked) {
+        // When extractYaml is present we remove it from preview
+        if (typeof this.options.extractYaml === 'function' && text.indexOf('---') === 0) {
+            var yaml = text.substring(3);
+            var closeIdx = yaml.indexOf('---');
+            if (closeIdx === -1) {
+                // yaml-frontmatter can be closed with ...
+                closeIdx = yaml.indexOf('...');
+            }
+            if (closeIdx != -1) {
+                text = text.substring(closeIdx + 6);
+                yaml = yaml.substring(0, closeIdx);
+            } else {
+                text = '';
+            }
+            this.options.extractYaml(yaml);
+        }
         // Initialize
         var markedOptions;
         if (this.options && this.options.renderingConfig && this.options.renderingConfig.markedOptions) {
@@ -2115,11 +2132,11 @@ EasyMDE.prototype.render = function (el) {
     document.addEventListener('keydown', this.documentOnKeyDown, false);
 
     var mode, backdrop;
-
+    var defaultMode = typeof options.extractYaml === 'function' ? 'yaml-frontmatter' : 'gfm';
     // CodeMirror overlay mode
     if (options.overlayMode) {
         CodeMirror.defineMode('overlay-mode', function (config) {
-            return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
+            return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : defaultMode), options.overlayMode.mode, options.overlayMode.combine);
         });
 
         mode = 'overlay-mode';
@@ -2127,13 +2144,13 @@ EasyMDE.prototype.render = function (el) {
         backdrop.gitHubSpice = false;
     } else {
         mode = options.parsingConfig;
-        mode.name = 'gfm';
+        mode.name = defaultMode;
         mode.gitHubSpice = false;
     }
     if (options.spellChecker !== false) {
         mode = 'spell-checker';
         backdrop = options.parsingConfig;
-        backdrop.name = 'gfm';
+        backdrop.name = defaultMode;
         backdrop.gitHubSpice = false;
 
         if (typeof options.spellChecker === 'function') {
