@@ -2011,8 +2011,8 @@ EasyMDE.prototype.updateStatusBar = function (itemName, content) {
  */
 EasyMDE.prototype.markdown = function (text) {
     if (marked) {
-        // When extractYaml is present we remove it from preview
-        if (typeof this.options.extractYaml === 'function' && text.indexOf('---') === 0) {
+        // remove yaml-frontmatter from preview
+        if (text.indexOf('---') === 0) {
             var yaml = text.substring(3);
             var closeIdx = yaml.indexOf('---');
             if (closeIdx === -1) {
@@ -2025,7 +2025,9 @@ EasyMDE.prototype.markdown = function (text) {
             } else {
                 text = '';
             }
-            this.options.extractYaml(yaml);
+            if (this.options.extractYaml) {
+                this.options.extractYaml(yaml);
+            }
         }
         // Initialize
         var markedOptions;
@@ -2132,7 +2134,7 @@ EasyMDE.prototype.render = function (el) {
     document.addEventListener('keydown', this.documentOnKeyDown, false);
 
     var mode, backdrop;
-    var defaultMode = typeof options.extractYaml === 'function' ? 'yaml-frontmatter' : 'gfm';
+    var defaultMode = 'yaml-frontmatter';
     // CodeMirror overlay mode
     if (options.overlayMode) {
         CodeMirror.defineMode('overlay-mode', function (config) {

@@ -182,6 +182,7 @@ declare namespace EasyMDE {
         autoRefresh?: boolean | { delay: number; };
         blockStyles?: BlockStyleOptions;
         element?: HTMLElement;
+        extractYaml?: (yaml: string) => void;
         forceSync?: boolean;
         hideIcons?: ReadonlyArray<ToolbarButton>;
         indentWithTabs?: boolean;
