@@ -4,7 +4,9 @@ All notable changes to EasyMDE will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-[//]: # (## [Unreleased])
+## [Unreleased]
+### Added
+- `toolbarButtonClassPrefix` option to resolve conflicts with Bootstrap classes ([#493]).
 
 ## [2.17.0] - 2022-08-20
 ### Added
@@ -254,6 +256,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#493]: https://github.com/Ionaru/easy-markdown-editor/issues/493
 [#478]: https://github.com/Ionaru/easy-markdown-editor/issues/478
 [#399]: https://github.com/Ionaru/easy-markdown-editor/issues/399
 [#252]: https://github.com/Ionaru/easy-markdown-editor/issues/252

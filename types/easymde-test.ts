@@ -177,6 +177,7 @@ const editorImagesCustom = new EasyMDE({
 });
 
 new EasyMDE({
+    toolbarButtonClassPrefix: 'mde',
     sideBySideFullscreen: true,
     lineNumbers: false,
     unorderedListStyle: '*',

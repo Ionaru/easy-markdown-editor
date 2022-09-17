@@ -206,6 +206,7 @@ easyMDE.value('New input for **EasyMDE**');
 - **theme**: Override the theme. Defaults to `easymde`.
 - **toolbar**: If set to `false`, hide the toolbar. Defaults to the [array of icons](#toolbar-icons).
 - **toolbarTips**: If set to `false`, disable toolbar button tips. Defaults to `true`.
+- **toolbarButtonClassPrefix**: Adds a prefix to the toolbar button classes when set. For example, a value of `"mde"` results in `"mde-bold"` for the Bold button.
 - **direction**: `rtl` or `ltr`. Changes text direction to support right-to-left languages. Defaults to `ltr`.
 
 
@@ -267,7 +268,7 @@ const editor = new EasyMDE({
             preview.innerHTML = customMarkdownParser(plainText);
         }, 250);
 
-        // If you return null, the innerHTML of the preview will not 
+        // If you return null, the innerHTML of the preview will not
         // be overwritten. Useful if you control the preview node's content via
         // vdom diffing.
         // return null;
@@ -311,6 +312,7 @@ const editor = new EasyMDE({
     tabSize: 4,
     toolbar: false,
     toolbarTips: false,
+    toolbarButtonClassPrefix: "mde",
 });
 ```
 

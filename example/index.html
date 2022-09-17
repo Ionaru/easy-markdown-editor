@@ -13,7 +13,52 @@
 <body>
     <textarea></textarea>
     <script>
-        const easyMDE = new EasyMDE();
+        const easyMDE = new EasyMDE({
+            showIcons: ["code", "table"],
+            toolbar: [
+                {
+                    name: "bold",
+                    action: EasyMDE.toggleBold,
+                    className: "fa fa-bold",
+                    title: "Bold",
+                },
+                'table',
+                {
+                    name: "italic",
+                    action: EasyMDE.toggleItalic,
+                    className: "fa fa-italic",
+                    title: "Italic",
+                },
+                {
+                    name: "strikethrough",
+                    action: EasyMDE.toggleStrikethrough,
+                    className: "fa fa-strikethrough",
+                    title: "Strikethrough",
+                    children: [
+                {
+                    name: 'link',
+                    action: 'https://github.com/Ionaru/easy-markdown-editor',
+                    className: 'fa fab fa-github',
+                    title: 'A Custom Link',
+                    noDisable: true,
+                    noMobile: true,
+                },
+                'preview',
+                {
+                    name: 'bold',
+                    action: EasyMDE.toggleBold,
+                    className: 'fa fas fa-bold',
+                    title: 'Bold',
+                    attributes: {
+                        'data-custom': 'some value',
+                        'data-custom-2': 'another value',
+                    }
+                },
+            ],
+                },
+            ],
+            toolbarButtonClassPrefix: 'mde'
+        });
     </script>
 </body>
 

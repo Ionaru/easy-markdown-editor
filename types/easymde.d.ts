@@ -210,6 +210,7 @@ declare namespace EasyMDE {
         tabSize?: number;
         toolbar?: boolean | ReadonlyArray<'|' | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon>;
         toolbarTips?: boolean;
+        toolbarButtonClassPrefix?: string;
         onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
         theme?: string;
         scrollbarStyle?: string;

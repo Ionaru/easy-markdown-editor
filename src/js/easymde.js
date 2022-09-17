@@ -194,7 +194,8 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
         }
     }
 
-    el.className = options.name;
+    var classNamePrefix = parent.options.toolbarButtonClassPrefix ? parent.options.toolbarButtonClassPrefix + '-' : '';
+    el.className = classNamePrefix + options.name;
     el.setAttribute('type', markup);
     enableTooltips = (enableTooltips == undefined) ? true : enableTooltips;
 
