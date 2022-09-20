@@ -4,7 +4,8 @@ All notable changes to EasyMDE will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+<!-- ## [Unreleased] -->
+## [2.18.0] - 2022-09-20
 ### Added
 - `toolbarButtonClassPrefix` option to resolve conflicts with Bootstrap classes ([#493]).
 
@@ -418,7 +419,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@sghoweri]: https://github.com/sghoweri
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.17.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.18.0...HEAD
+[2.18.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.17.0...2.18.0
 [2.17.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...2.17.0
 [2.16.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.0...2.16.1
 [2.16.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.15.0...2.16.0
