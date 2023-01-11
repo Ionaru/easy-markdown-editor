@@ -1,0 +1,71 @@
+From eaf3469f6bec7db767d2618e92b16140766ff712 Mon Sep 17 00:00:00 2001
+From: Kiara Grouwstra <kiara@bij1.org>
+Date: Wed, 11 Jan 2023 23:35:59 +0100
+Subject: [PATCH] don't intercept tab key fixes
+ https://github.com/Ionaru/easy-markdown-editor/issues/515
+
+---
+ keymap/emacs.js     | 1 -
+ keymap/sublime.js   | 2 --
+ src/input/keymap.js | 1 -
+ lib/codemirror.js   | 1 -
+ 4 files changed, 5 deletions(-)
+
+diff --git a/keymap/emacs.js b/keymap/emacs.js
+index f4e4e90e..819f0d01 100644
+--- a/keymap/emacs.js
++++ b/keymap/emacs.js
+@@ -519,7 +519,6 @@
+     "Alt-/": "autocomplete",
+     "Enter": "newlineAndIndent",
+     "Ctrl-J": "newline",
+-    "Tab": "indentAuto",
+     "Alt-G G": "gotoLine",
+     "Ctrl-X Tab": "indentRigidly",
+     "Ctrl-X Ctrl-X": "exchangePointAndMark",
+diff --git a/keymap/sublime.js b/keymap/sublime.js
+index fe677c84..335f59c7 100644
+--- a/keymap/sublime.js
++++ b/keymap/sublime.js
+@@ -589,7 +589,6 @@
+   var keyMap = CodeMirror.keyMap;
+   keyMap.macSublime = {
+     "Cmd-Left": "goLineStartSmart",
+-    "Shift-Tab": "indentLess",
+     "Shift-Ctrl-K": "deleteLine",
+     "Alt-Q": "wrapLines",
+     "Ctrl-Left": "goSubwordLeft",
+@@ -652,7 +651,6 @@
+   CodeMirror.normalizeKeyMap(keyMap.macSublime);
+ 
+   keyMap.pcSublime = {
+-    "Shift-Tab": "indentLess",
+     "Shift-Ctrl-K": "deleteLine",
+     "Alt-Q": "wrapLines",
+     "Ctrl-T": "transposeChars",
+diff --git a/src/input/keymap.js b/src/input/keymap.js
+index 2df588de..1aec191d 100644
+--- a/src/input/keymap.js
++++ b/src/input/keymap.js
+@@ -9,7 +9,6 @@ keyMap.basic = {
+   "Left": "goCharLeft", "Right": "goCharRight", "Up": "goLineUp", "Down": "goLineDown",
+   "End": "goLineEnd", "Home": "goLineStartSmart", "PageUp": "goPageUp", "PageDown": "goPageDown",
+   "Delete": "delCharAfter", "Backspace": "delCharBefore", "Shift-Backspace": "delCharBefore",
+-  "Tab": "defaultTab", "Shift-Tab": "indentAuto",
+   "Enter": "newlineAndIndent", "Insert": "toggleOverwrite",
+   "Esc": "singleSelection"
+ }
+diff --git a/lib/codemirror.js b/lib/codemirror.js
+--- a/lib/codemirror.js
++++ b/lib/codemirror.js
+@@ -6731,7 +6731,6 @@
+     "Left": "goCharLeft", "Right": "goCharRight", "Up": "goLineUp", "Down": "goLineDown",
+     "End": "goLineEnd", "Home": "goLineStartSmart", "PageUp": "goPageUp", "PageDown": "goPageDown",
+     "Delete": "delCharAfter", "Backspace": "delCharBefore", "Shift-Backspace": "delCharBefore",
+-    "Tab": "defaultTab", "Shift-Tab": "indentAuto",
+     "Enter": "newlineAndIndent", "Insert": "toggleOverwrite",
+     "Esc": "singleSelection"
+   };
+-- 
+2.37.2
+

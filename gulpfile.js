@@ -11,6 +11,8 @@ var eslint = require('gulp-eslint');
 var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var rename = require('gulp-rename');
+var { existsSync } = require('node:fs');
+var { exec } = require('child_process');
 
 var banner = ['/**',
     ' * <%= pkg.name %> v<%= pkg.version %>',
@@ -53,13 +55,27 @@ function styles() {
         .pipe(gulp.dest('./dist/'));
 }
 
+function patch() {
+    var is_top = existsSync('./node_modules/codemirror');
+    var command = 'patch -tN -d ' + (is_top ? './node_modules' : '..') + '/codemirror -p1 < ./codemirror-dont-intercept-tab-key.patch | echo';
+    exec(command, (err, stdout, stderr) => {
+        if (err) {
+            console.error(err)
+        } else {
+            console.log(`stdout: ${stdout}`);
+            console.log(`stderr: ${stderr}`);
+        }
+    });
+    return Promise.resolve();
+}
+
 // Watch for file changes
 function watch() {
     gulp.watch('./src/js/**/*.js', scripts);
     gulp.watch(css_files, styles);
 }
 
-var build = gulp.parallel(gulp.series(lint, scripts), styles);
+var build = gulp.parallel(gulp.series(patch, lint, scripts), styles);
 
 gulp.task('default', build);
 gulp.task('watch', gulp.series(build, watch));
