@@ -2877,6 +2877,12 @@ EasyMDE.prototype.value = function (val) {
 
 
 /**
+ * Expose CodeMirror as static property.
+ */
+EasyMDE.CodeMirror = CodeMirror;
+
+
+/**
  * Bind static methods for exports.
  */
 EasyMDE.toggleBold = toggleBold;
