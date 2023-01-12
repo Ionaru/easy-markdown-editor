@@ -27,6 +27,8 @@ interface ArrayOneOrMore<T> extends Array<T> {
     0: T;
 }
 
+type SetRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+
 type ToolbarButton =
     'bold'
     | 'italic'
@@ -53,30 +55,28 @@ type ToolbarButton =
     | 'fullscreen'
     | 'guide';
 
-interface InstanceOptions extends EasyMDE {
+interface InstanceOptions extends SetRequired<EasyMDE.Options, 'minHeight' |
+    'parsingConfig' |
+    'previewClass' |
+    'previewRender' |
+    'status' |
+    'toolbar' |
+    'uploadImage' |
+    'imageMaxSize' |
+    'imageAccept' |
+    'imagePathAbsolute' |
+    'imageCSRFName' |
+    'imageCSRFHeader' |
+    'errorCallback' |
+    'direction'> {
     blockStyles: Required<EasyMDE.BlockStyleOptions>;
     insertTexts: Required<EasyMDE.InsertTextOptions>;
-    minHeight: string;
-    parsingConfig: EasyMDE.ParsingOptions;
-    previewClass: string | ReadonlyArray<string>;
-    previewRender: (markdownPlaintext: string, previewElement: HTMLElement) => string | null;
     shortcuts: Required<EasyMDE.Shortcuts>;
-    status: boolean | ReadonlyArray<string | EasyMDE.StatusBarItem>;
-    toolbar: boolean | ReadonlyArray<'|' | ToolbarButton | EasyMDE.ToolbarIcon | EasyMDE.ToolbarDropdownIcon>;
 
-    uploadImage: boolean;
-    imageMaxSize: number;
-    imageAccept: string;
-    imagePathAbsolute: boolean;
-    imageCSRFName: string;
-    imageCSRFHeader: boolean;
     imageTexts: Required<EasyMDE.ImageTextsOptions>;
     errorMessages: Required<EasyMDE.ImageErrorTextsOptions>;
-    errorCallback: (errorMessage: string) => void;
 
     promptTexts: Required<EasyMDE.PromptTexts>;
-
-    direction: 'ltr' | 'rtl';
 }
 
 declare namespace EasyMDE {
