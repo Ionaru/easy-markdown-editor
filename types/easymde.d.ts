@@ -54,13 +54,13 @@ type ToolbarButton =
     | 'guide';
 
 interface InstanceOptions extends EasyMDE {
-    blockStyles: EasyMDE.BlockStyleOptions;
-    insertTexts: EasyMDE.InsertTextOptions;
+    blockStyles: Required<EasyMDE.BlockStyleOptions>;
+    insertTexts: Required<EasyMDE.InsertTextOptions>;
     minHeight: string;
     parsingConfig: EasyMDE.ParsingOptions;
     previewClass: string | ReadonlyArray<string>;
     previewRender: (markdownPlaintext: string, previewElement: HTMLElement) => string | null;
-    shortcuts: EasyMDE.Shortcuts;
+    shortcuts: Required<EasyMDE.Shortcuts>;
     status: boolean | ReadonlyArray<string | EasyMDE.StatusBarItem>;
     toolbar: boolean | ReadonlyArray<'|' | ToolbarButton | EasyMDE.ToolbarIcon | EasyMDE.ToolbarDropdownIcon>;
 
@@ -70,11 +70,11 @@ interface InstanceOptions extends EasyMDE {
     imagePathAbsolute: boolean;
     imageCSRFName: string;
     imageCSRFHeader: boolean;
-    imageTexts: EasyMDE.ImageTextsOptions;
-    errorMessages: EasyMDE.ImageErrorTextsOptions;
+    imageTexts: Required<EasyMDE.ImageTextsOptions>;
+    errorMessages: Required<EasyMDE.ImageErrorTextsOptions>;
     errorCallback: (errorMessage: string) => void;
 
-    promptTexts: EasyMDE.PromptTexts;
+    promptTexts: Required<EasyMDE.PromptTexts>;
 
     direction: 'ltr' | 'rtl';
 }
