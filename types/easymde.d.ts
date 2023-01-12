@@ -53,6 +53,32 @@ type ToolbarButton =
     | 'fullscreen'
     | 'guide';
 
+interface InstanceOptions extends EasyMDE {
+    blockStyles: EasyMDE.BlockStyleOptions;
+    insertTexts: EasyMDE.InsertTextOptions;
+    minHeight: string;
+    parsingConfig: EasyMDE.ParsingOptions;
+    previewClass: string | ReadonlyArray<string>;
+    previewRender: (markdownPlaintext: string, previewElement: HTMLElement) => string | null;
+    shortcuts: EasyMDE.Shortcuts;
+    status: boolean | ReadonlyArray<string | EasyMDE.StatusBarItem>;
+    toolbar: boolean | ReadonlyArray<'|' | ToolbarButton | EasyMDE.ToolbarIcon | EasyMDE.ToolbarDropdownIcon>;
+
+    uploadImage: boolean;
+    imageMaxSize: number;
+    imageAccept: string;
+    imagePathAbsolute: boolean;
+    imageCSRFName: string;
+    imageCSRFHeader: boolean;
+    imageTexts: EasyMDE.ImageTextsOptions;
+    errorMessages: EasyMDE.ImageErrorTextsOptions;
+    errorCallback: (errorMessage: string) => void;
+
+    promptTexts: EasyMDE.PromptTexts;
+
+    direction: 'ltr' | 'rtl';
+}
+
 declare namespace EasyMDE {
 
     interface TimeFormatOptions {
@@ -245,67 +271,7 @@ declare class EasyMDE {
     value(val: string): void;
 
     codemirror: CodeMirror.Editor;
-    options: {
-        autoDownloadFontAwesome?: boolean;
-        autofocus?: boolean;
-        autosave?: EasyMDE.AutoSaveOptions;
-        autoRefresh?: boolean | { delay: number; };
-        blockStyles?: EasyMDE.BlockStyleOptions;
-        element?: HTMLElement;
-        forceSync?: boolean;
-        hideIcons?: ReadonlyArray<ToolbarButton>;
-        indentWithTabs?: boolean;
-        initialValue?: string;
-        insertTexts?: EasyMDE.InsertTextOptions;
-        lineNumbers?: boolean;
-        lineWrapping?: boolean;
-        minHeight?: string;
-        maxHeight?: string;
-        parsingConfig?: EasyMDE.ParsingOptions;
-        placeholder?: string;
-        previewClass?: string | ReadonlyArray<string>;
-        previewImagesInEditor?: boolean;
-        imagesPreviewHandler?: (src: string) => string,
-        previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string | null;
-        promptURLs?: boolean;
-        renderingConfig?: EasyMDE.RenderingOptions;
-        shortcuts?: EasyMDE.Shortcuts;
-        showIcons?: ReadonlyArray<ToolbarButton>;
-        spellChecker?: boolean | ((options: EasyMDE.SpellCheckerOptions) => void);
-        inputStyle?: 'textarea' | 'contenteditable';
-        nativeSpellcheck?: boolean;
-        sideBySideFullscreen?: boolean;
-        status?: boolean | ReadonlyArray<string | EasyMDE.StatusBarItem>;
-        styleSelectedText?: boolean;
-        tabSize?: number;
-        toolbar?: boolean | ReadonlyArray<'|' | ToolbarButton | EasyMDE.ToolbarIcon | EasyMDE.ToolbarDropdownIcon>;
-        toolbarTips?: boolean;
-        toolbarButtonClassPrefix?: string;
-        onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
-        theme?: string;
-        scrollbarStyle?: string;
-        unorderedListStyle?: '*' | '-' | '+';
-
-        uploadImage?: boolean;
-        imageMaxSize?: number;
-        imageAccept?: string;
-        imageUploadFunction?: (file: File, onSuccess: (url: string) => void, onError: (error: string) => void) => void;
-        imageUploadEndpoint?: string;
-        imagePathAbsolute?: boolean;
-        imageCSRFToken?: string;
-        imageCSRFName?: string;
-        imageCSRFHeader?: boolean;
-        imageTexts?: EasyMDE.ImageTextsOptions;
-        errorMessages?: EasyMDE.ImageErrorTextsOptions;
-        errorCallback?: (errorMessage: string) => void;
-
-        promptTexts?: EasyMDE.PromptTexts;
-        syncSideBySidePreviewScroll?: boolean;
-
-        overlayMode?: EasyMDE.OverlayModeOptions;
-
-        direction?: 'ltr' | 'rtl';
-    }
+    options: InstanceOptions;
 
     cleanup(): void;
 
