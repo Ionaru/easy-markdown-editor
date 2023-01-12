@@ -71,7 +71,9 @@ interface InstanceOptions extends SetRequired<EasyMDE.Options, 'minHeight' |
     'direction'> {
     blockStyles: Required<EasyMDE.BlockStyleOptions>;
     insertTexts: Required<EasyMDE.InsertTextOptions>;
-    shortcuts: Required<EasyMDE.Shortcuts>;
+    shortcuts: {
+        [P in keyof EasyMDE.Shortcuts]-?: NonNullable<EasyMDE.Shortcuts[P]>;
+    };
 
     imageTexts: Required<EasyMDE.ImageTextsOptions>;
     errorMessages: Required<EasyMDE.ImageErrorTextsOptions>;
