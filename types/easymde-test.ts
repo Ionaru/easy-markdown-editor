@@ -103,6 +103,7 @@ const editor2 = new EasyMDE({
 });
 
 editor2.clearAutosavedValue();
+editor2.updateStatusBar('upload-image', 'Drag & drop images!');
 
 EasyMDE.togglePreview(editor2);
 EasyMDE.toggleSideBySide(editor2);

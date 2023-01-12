@@ -258,6 +258,8 @@ declare class EasyMDE {
 
     clearAutosavedValue(): void;
 
+    updateStatusBar(itemName: string, content: string): void;
+
     static toggleBold: (editor: EasyMDE) => void;
     static toggleItalic: (editor: EasyMDE) => void;
     static toggleStrikethrough: (editor: EasyMDE) => void;
