@@ -35,6 +35,7 @@ type ToolbarButton =
     | 'ordered-list'
     | 'link'
     | 'image'
+    | 'upload-image'
     | 'strikethrough'
     | 'code'
     | 'table'
