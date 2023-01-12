@@ -209,6 +209,7 @@ new EasyMDE({
         'unordered-list',
         'ordered-list',
         'table',
+        'upload-image',
         '|',
         'link',
     ],
