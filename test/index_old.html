@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css"
+        />
+        <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+    </head>
+
+    <body>
+        <button onclick="x.toTextArea()">DESTROY</button>
+        <button onclick="x.render()">Render</button>
+        <hr />
+        <br />
+        <textarea id="text">
+**Moooooo**
+ooo
+`code`
+*sdhjk*
+# head?
+~~hjhj~~
+***Bold & Brash***
+last
+
+`const x = "moooo";`
+
+```js
+const x = "moooo";
+```
+    </textarea
+        >
+        <script type="module">
+            window.x = new EasyMDE({
+                element: document.getElementById('text'),
+            });
+        </script>
+    </body>
+</html>

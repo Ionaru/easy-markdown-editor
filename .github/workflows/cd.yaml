@@ -1,95 +1,91 @@
 name: Test & Deploy
 
 on:
-  workflow_dispatch:
-  push:
-    branches:
-      - master
-    tags:
-      - '*'
-  pull_request:
-    branches:
-      - master
+    workflow_dispatch:
+    push:
+        branches:
+            - master
+        tags:
+            - '*'
+    pull_request:
+        branches:
+            - master
 
 jobs:
+    audit:
+        runs-on: ubuntu-latest
 
-  audit:
+        steps:
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: current
 
-    runs-on: ubuntu-latest
+            - uses: actions/checkout@v3
 
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: current
+            - run: npm audit --omit=dev
 
-      - uses: actions/checkout@v3
+    test:
+        needs: [audit]
+        runs-on: ubuntu-latest
 
-      - run: npm audit --omit=dev
+        strategy:
+            matrix:
+                node-version: ['14', '16', '18']
 
-  test:
+        steps:
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: ${{ matrix.node-version }}
 
-    needs: [ audit ]
-    runs-on: ubuntu-latest
+            - uses: actions/checkout@v3
 
-    strategy:
-      matrix:
-        node-version: [ '14', '16', '18' ]
+            - run: npm ci
 
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
+            - name: Test
+              run: npm test
 
-      - uses: actions/checkout@v3
+#            - uses: actions/upload-artifact@v3
+#              if: failure()
+#              with:
+#                  name: cypress-screenshots
+#                  path: cypress/screenshots
+#                  retention-days: 7
+#
+#            - uses: actions/upload-artifact@v3
+#              if: always()
+#              with:
+#                  name: cypress-videos
+#                  path: cypress/videos
+#                  retention-days: 7
 
-      - run: npm ci
-
-      - name: Test
-        run: npm test
-
-      - uses: actions/upload-artifact@v3
-        if: failure()
-        with:
-          name: cypress-screenshots
-          path: cypress/screenshots
-          retention-days: 7
-
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: cypress-videos
-          path: cypress/videos
-          retention-days: 7
-
-  deploy:
-
-    needs: [ test ]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: current
-
-      - uses: actions/checkout@v3
-
-      - run: npm ci
-
-      - name: Deploy @latest version to npm
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
-
-      - name: Update @next version
-        if: startsWith(github.ref, 'refs/heads/')
-        run: npm version prerelease --no-git-tag-version --preid "$GITHUB_RUN_NUMBER"
-
-      - name: Deploy @next version to npm
-        if: startsWith(github.ref, 'refs/heads/')
-        uses: JS-DevTools/npm-publish@v1
-        with:
-          tag: next
-          token: ${{ secrets.NPM_TOKEN }}
-          check-version: false
+#    deploy:
+#        needs: [test]
+#        runs-on: ubuntu-latest
+#        if: github.event_name == 'push'
+#
+#        steps:
+#            - uses: actions/setup-node@v3
+#              with:
+#                  node-version: current
+#
+#            - uses: actions/checkout@v3
+#
+#            - run: npm ci
+#
+#            - name: Deploy @latest version to npm
+#              if: startsWith(github.ref, 'refs/tags/')
+#              uses: JS-DevTools/npm-publish@v1
+#              with:
+#                  token: ${{ secrets.NPM_TOKEN }}
+#
+#            - name: Update @next version
+#              if: startsWith(github.ref, 'refs/heads/')
+#              run: npm version prerelease --no-git-tag-version --preid "$GITHUB_RUN_NUMBER"
+#
+#            - name: Deploy @next version to npm
+#              if: startsWith(github.ref, 'refs/heads/')
+#              uses: JS-DevTools/npm-publish@v1
+#              with:
+#                  tag: next
+#                  token: ${{ secrets.NPM_TOKEN }}
+#                  check-version: false

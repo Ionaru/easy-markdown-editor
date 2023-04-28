@@ -1,27 +1,12 @@
 {
     "root": true,
+    "extends": ["@ionaru", "prettier"],
     "rules": {
-        "strict": 0,
-        "no-console": 0,
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "comma-dangle": [
-            "error",
-            "always-multiline"
-        ]
-    },
-    "env": {
-        "browser": true,
-        "node": true
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018
-    },
-    "extends": "eslint:recommended"
+        "jest/no-deprecated-functions": "off",
+        "jest/unbound-method": "off",
+        "jest/require-hook": "off",
+        "import/extensions": "off",
+        "import/no-unresolved": "off",
+        "unicorn/no-null": "off"
+    }
 }

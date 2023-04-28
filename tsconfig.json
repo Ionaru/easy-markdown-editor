@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "esModuleInterop": true,
+        "noFallthroughCasesInSwitch": true,
+        "declaration": false,
+        "lib": ["esnext", "dom", "dom.iterable"],
+        "module": "es2022",
+        "moduleResolution": "node",
+        "removeComments": false,
+        "sourceMap": true,
+        "allowJs": true,
+        "strict": true,
+        "target": "es2021",
+        "skipLibCheck": false,
+        "outDir": "dist/browser"
+    },
+    "files": ["src/index.ts"]
+}

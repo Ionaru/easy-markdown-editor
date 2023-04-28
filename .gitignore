@@ -9,9 +9,11 @@ node_modules/
 *.ipr
 *.iws
 .idea/
+.fleet/
 .vscode/
 dev_test/
 
 # Test artifacts
-cypress/screenshots
-cypress/videos
+cypress/screenshots/
+cypress/videos/
+coverage/

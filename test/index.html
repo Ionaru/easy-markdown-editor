@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Document</title>
+        <link rel="stylesheet" href="../dist/browser/easymde.css" />
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/fontawesome.min.js"
+            integrity="sha512-PoFg70xtc+rAkD9xsjaZwIMkhkgbl1TkoaRrgucfsct7SVy9KvTj5LtECit+ZjQ3ts+7xWzgfHOGzdolfWEgrw=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/solid.min.js"
+            integrity="sha512-wabaor0DW08KSK5TQlRIyYOpDrAfJxl5J0FRzH0dNNhGJbeUpHaNj7up3Kr2Bwz/abLvVcJvDrJL+RLFcyGIkg=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
+        ></script>
+
+        <style>
+            body {
+                /* background-color: grey; */
+            }
+        </style>
+    </head>
+
+    <body>
+        <button onclick="x.destruct()">DESTROY</button>
+        <button onclick="x.construct()">Render</button>
+        <hr />
+        <div id="custom-toolbar-container"></div>
+        <br />
+        <textarea id="my-text-area">
+**Moooooo**
+ooo
+`code`
+*sdhjk*
+# head?
+~~hjhj~~
+***Bold & Brash***
+last
+
+`const x = "moooo";`
+
+```js
+const x = "moooo";
+```
+</textarea
+        >
+        <script type="module">
+            // import { EasyMDE, Toolbar, defaultToolbar } from './dist/browser/index.js';
+            import {
+                EasyMDE,
+                importToolbar,
+                importDefaultToolbar,
+            } from '../dist/browser/easymde.min.js';
+            window.x = new EasyMDE({
+                element: document.getElementById('my-text-area'),
+                toolbar: true,
+                statusbar: true,
+            });
+
+            // const [{ Toolbar }, { defaultToolbar }] = await Promise.all([await importToolbar(), await importDefaultToolbar()]);
+            // const toolbar = new Toolbar(window.x, defaultToolbar);
+
+            // document.getElementById('custom-toolbar-container').appendChild(toolbar.element);
+            // window.x.destruct();
+        </script>
+    </body>
+</html>
