@@ -46,6 +46,8 @@ var bindings = {
     'redo': redo,
     'toggleSideBySide': toggleSideBySide,
     'toggleFullScreen': toggleFullScreen,
+    'indent': indent,
+    'outdent': outdent,
 };
 
 var shortcuts = {
@@ -1081,6 +1083,29 @@ function togglePreview(editor) {
 
 }
 
+
+/**
+ * Indent action.
+ * @param {EasyMDE} editor
+ */
+function indent(editor) {
+    var cm = editor.codemirror;
+    cm.execCommand('tabAndIndentMarkdownList');
+    cm.focus();
+}
+
+
+/**
+ * Outdent action.
+ * @param {EasyMDE} editor
+ */
+function outdent(editor) {
+    var cm = editor.codemirror;
+    cm.execCommand('shiftTabAndUnindentMarkdownList');
+    cm.focus();
+}
+
+
 function _replaceSelection(cm, active, startEnd, url) {
     if (cm.getWrapperElement().lastChild.classList.contains('editor-preview-active'))
         return;
@@ -1484,6 +1509,8 @@ var iconClassMap = {
     'guide': 'fa fa-question-circle',
     'undo': 'fa fa-undo',
     'redo': 'fa fa-repeat fa-redo',
+    'indent': 'fa fa-indent',
+    'outdent': 'fa fa-outdent',
 };
 
 var toolbarBuiltInButtons = {
@@ -1671,6 +1698,23 @@ var toolbarBuiltInButtons = {
         className: iconClassMap['redo'],
         noDisable: true,
         title: 'Redo',
+    },
+    'separator-6': {
+        name: 'separator-6',
+    },
+    'indent': {
+        name: 'indent',
+        action: indent,
+        className: iconClassMap['indent'],
+        noDisable: true,
+        title: 'Indent',
+    },
+    'outdent': {
+        name: 'outdent',
+        action: outdent,
+        className: iconClassMap['outdent'],
+        noDisable: true,
+        title: 'Outdent',
     },
 };
 
@@ -2905,6 +2949,8 @@ EasyMDE.redo = redo;
 EasyMDE.togglePreview = togglePreview;
 EasyMDE.toggleSideBySide = toggleSideBySide;
 EasyMDE.toggleFullScreen = toggleFullScreen;
+EasyMDE.indent = indent;
+EasyMDE.outdent = outdent;
 
 /**
  * Bind instance methods for exports.
@@ -2986,6 +3032,12 @@ EasyMDE.prototype.toggleSideBySide = function () {
 };
 EasyMDE.prototype.toggleFullScreen = function () {
     toggleFullScreen(this);
+};
+EasyMDE.prototype.indent = function () {
+    indent(this);
+};
+EasyMDE.prototype.outdent = function () {
+    outdent(this);
 };
 
 EasyMDE.prototype.isPreviewActive = function () {

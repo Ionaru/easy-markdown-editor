@@ -350,6 +350,8 @@ fullscreen | toggleFullScreen | Toggle Fullscreen<br>fa fa-arrows-alt no-disable
 guide | [This link](https://www.markdownguide.org/basic-syntax/) | Markdown Guide<br>fa fa-question-circle
 undo | undo | Undo<br>fa fa-undo
 redo | redo | Redo<br>fa fa-redo
+indent | indent | Indent<br>fa fa-indent
+outdent | outdent | Outdent<br>fa fa-outdent
 
 
 ### Toolbar customization
