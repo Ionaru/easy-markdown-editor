@@ -11,7 +11,8 @@ describe('URL prompts', () => {
 
         cy.window().then(($win) => {
             const stub = cy.stub($win, 'prompt');
-            cy.get('button.link').click().then(() => {
+            cy.get('button.link').click();
+            cy.get('button.link').then(() => {
                 expect(stub).to.be.calledWith('URL for the link:', 'https://');
             });
         });
@@ -23,7 +24,8 @@ describe('URL prompts', () => {
 
         cy.window().then(($win) => {
             const stub = cy.stub($win, 'prompt');
-            cy.get('button.image').click().then(() => {
+            cy.get('button.image').click();
+            cy.get('button.image').then(() => {
                 expect(stub).to.be.calledWith('URL of the image:', 'https://');
             });
         });
@@ -52,7 +54,8 @@ describe('URL prompts', () => {
         cy.window().then(($win) => {
             const stub = cy.stub($win, 'prompt');
             stub.returns('https://example.com');
-            cy.get('button.link').click().then(() => {
+            cy.get('button.link').click();
+            cy.get('button.link').then(() => {
                 expect(stub).to.be.calledWith('URL for the link:', 'https://');
                 stub.restore();
             });
@@ -63,7 +66,8 @@ describe('URL prompts', () => {
         cy.window().then(($win) => {
             const stub = cy.stub($win, 'prompt');
             stub.returns('https://example.eu');
-            cy.get('button.link').click().then(() => {
+            cy.get('button.link').click();
+            cy.get('button.link').then(() => {
                 expect(stub).to.be.calledWith('URL for the link:', 'https://');
                 stub.restore();
             });

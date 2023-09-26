@@ -5,5 +5,6 @@ export default defineConfig({
         excludeSpecPattern: [
             '**/*.html',
         ],
+        video: true,
     },
 });
