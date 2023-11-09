@@ -250,6 +250,14 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
 
     el.tabIndex = -1;
 
+    if (options.label) {
+        // Create label inside utton
+        var label = document.createElement('span');
+        label.innerHTML = options.label;
+        label.classList.add('label');
+        el.appendChild(label);
+    }
+
     if (iconClasses.length > 0) {
         // Create icon element and append as a child to the button
         var icon = document.createElement('i');
