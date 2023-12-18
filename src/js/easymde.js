@@ -1870,6 +1870,7 @@ function EasyMDE(options) {
     options.imagePathAbsolute = options.imagePathAbsolute || false;
     options.imageCSRFName = options.imageCSRFName || 'csrfmiddlewaretoken';
     options.imageCSRFHeader = options.imageCSRFHeader || false;
+    options.imageInputName = options.imageInputName || 'image';
 
 
     // Change unique_id to uniqueId for backwards compatibility
@@ -2689,7 +2690,7 @@ EasyMDE.prototype.createToolbar = function (items) {
                 imageInput.className = 'imageInput';
                 imageInput.type = 'file';
                 imageInput.multiple = true;
-                imageInput.name = 'image';
+                imageInput.name = self.options.imageInputName;
                 imageInput.accept = self.options.imageAccept;
                 imageInput.style.display = 'none';
                 imageInput.style.opacity = 0;
