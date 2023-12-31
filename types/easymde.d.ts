@@ -27,6 +27,8 @@ interface ArrayOneOrMore<T> extends Array<T> {
     0: T;
 }
 
+type SetRequired<T, K extends keyof T> = Omit<T, K> & Required<Pick<T, K>>;
+
 type ToolbarButton =
     'bold'
     | 'italic'
@@ -53,6 +55,32 @@ type ToolbarButton =
     | 'side-by-side'
     | 'fullscreen'
     | 'guide';
+
+interface InstanceOptions extends SetRequired<EasyMDE.Options, 'minHeight' |
+    'parsingConfig' |
+    'previewClass' |
+    'previewRender' |
+    'status' |
+    'toolbar' |
+    'uploadImage' |
+    'imageMaxSize' |
+    'imageAccept' |
+    'imagePathAbsolute' |
+    'imageCSRFName' |
+    'imageCSRFHeader' |
+    'errorCallback' |
+    'direction'> {
+    blockStyles: Required<EasyMDE.BlockStyleOptions>;
+    insertTexts: Required<EasyMDE.InsertTextOptions>;
+    shortcuts: {
+        [P in keyof EasyMDE.Shortcuts]-?: NonNullable<EasyMDE.Shortcuts[P]>;
+    };
+
+    imageTexts: Required<EasyMDE.ImageTextsOptions>;
+    errorMessages: Required<EasyMDE.ImageErrorTextsOptions>;
+
+    promptTexts: Required<EasyMDE.PromptTexts>;
+}
 
 declare namespace EasyMDE {
 
@@ -247,6 +275,7 @@ declare class EasyMDE {
     value(val: string): void;
 
     codemirror: CodeMirror.Editor;
+    options: InstanceOptions;
 
     cleanup(): void;
 
