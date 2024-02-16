@@ -878,18 +878,10 @@ function afterImageUploaded(editor, url) {
     var cm = editor.codemirror;
     var stat = getState(cm);
     var options = editor.options;
+    // TODO: Get the image name from the original file name
     var imageName = url.substr(url.lastIndexOf('/') + 1);
-    var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
-
-    // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(ext)) {
-        _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
-    } else {
-        var text_link = options.insertTexts.link;
-        text_link[0] = '[' + imageName;
-        _replaceSelection(cm, stat.link, text_link, url);
-    }
-
+    var text_link = [`${options.insertTexts.image[0]}${imageName}`, options.insertTexts.image[1]];
+    _replaceSelection(cm, stat.image, text_link, url);
     // show uploaded image filename for 1000ms
     editor.updateStatusBar('upload-image', editor.options.imageTexts.sbOnUploaded.replace('#image_name#', imageName));
     setTimeout(function () {
