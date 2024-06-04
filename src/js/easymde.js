@@ -2267,6 +2267,7 @@ EasyMDE.prototype.render = function (el) {
                     }
 
                     if (!window.EMDEimagesCache[keySrc]) {
+                        window.EMDEimagesCache[keySrc] = {};
                         var img = document.createElement('img');
                         img.onload = function () {
                             window.EMDEimagesCache[keySrc] = {
