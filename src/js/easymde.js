@@ -2233,8 +2233,9 @@ EasyMDE.prototype.render = function (el) {
 
 
     function assignImageBlockAttributes(parentEl, img) {
-        parentEl.setAttribute('data-img-src', img.url);
-        parentEl.setAttribute('style', '--bg-image:url(' + img.url + ');--width:' + img.naturalWidth + 'px;--height:' + calcHeight(img.naturalWidth, img.naturalHeight));
+        var url = (new URL(img.url, document.baseURI)).href;
+        parentEl.setAttribute('data-img-src', url);
+        parentEl.setAttribute('style', '--bg-image:url(' + url + ');--width:' + img.naturalWidth + 'px;--height:' + calcHeight(img.naturalWidth, img.naturalHeight));
         _vm.codemirror.setSize();
     }
 
