@@ -1801,7 +1801,7 @@ function EasyMDE(options) {
 
     // Handle status bar
     if (!Object.prototype.hasOwnProperty.call(options, 'status')) {
-        options.status = ['autosave', 'lines', 'words', 'cursor'];
+        options.status = ['autosave', 'lines', 'words', 'characters', 'cursor'];
 
         if (options.uploadImage) {
             options.status.unshift('upload-image');
@@ -2758,7 +2758,14 @@ EasyMDE.prototype.createStatusbar = function (status) {
         } else {
             var name = status[i];
 
-            if (name === 'words') {
+            if (name === 'characters') {
+                defaultValue = function (el) {
+                    el.innerHTML = cm.getValue().length;
+                };
+                onUpdate = function (el) {
+                    el.innerHTML = cm.getValue().length;
+                };
+            } else if (name === 'words') {
                 defaultValue = function (el) {
                     el.innerHTML = wordCount(cm.getValue());
                 };
