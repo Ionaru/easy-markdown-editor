@@ -1,6 +1,6 @@
 # EasyMDE - Markdown Editor
 <div style="text-align: right;">
-  <a href="README.md">English</a> | <a href="README_es.md">Español</a>
+  <a href="README.md">English</a> | <a href="README.es.md">Español</a>
 </div>
 
 
