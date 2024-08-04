@@ -1,4 +1,8 @@
 # EasyMDE - Markdown Editor
+<div style="text-align: right;">
+  <a href="README.md">English</a> | <a href="README_es.md">Español</a>
+</div>
+
 
 [![npm version](https://img.shields.io/npm/v/easymde.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde)
 [![npm version](https://img.shields.io/npm/v/easymde/next.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/next)
