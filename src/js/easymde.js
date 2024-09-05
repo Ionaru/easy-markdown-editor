@@ -1822,7 +1822,15 @@ function EasyMDE(options) {
     options.parsingConfig = extend({
         highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
     }, options.parsingConfig || {});
-
+    if ( options.parsingConfig.headingLevels ) {
+        var headingLevels = [];
+        for ( var l = 0, requestedLevels = options.parsingConfig.headingLevels; l < requestedLevels.length; l++ ) {
+            if ( ! isNaN( requestedLevels[ l ] ) && headingLevels.indexOf( requestedLevels[ l ] ) === -1 ) {
+                headingLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
+            }
+        }
+        options.parsingConfig.headingLevels = headingLevels;
+    }
 
     // Merging the insertTexts, with the given options
     options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
@@ -2188,6 +2196,12 @@ EasyMDE.prototype.render = function (el) {
         var cm = this.codemirror;
         cm.on('change', function () {
             cm.save();
+        });
+    }
+    if (options.parsingConfig.headingLevels) {
+        var cm = this.codemirror;
+        cm.on('beforeChange', function (cm, obj) {
+            console.log( obj );
         });
     }
 
