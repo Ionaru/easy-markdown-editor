@@ -1829,7 +1829,7 @@ function EasyMDE(options) {
                 headingLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
             }
         }
-        options.parsingConfig.headingLevels = headingLevels;
+        options.parsingConfig.headingLevels = headingLevels.sort();
     }
 
     // Merging the insertTexts, with the given options
@@ -2199,9 +2199,28 @@ EasyMDE.prototype.render = function (el) {
         });
     }
     if (options.parsingConfig.headingLevels) {
-        var cm = this.codemirror;
-        cm.on('beforeChange', function (cm, obj) {
-            console.log( obj );
+        this.codemirror.on('beforeChange', function (cm, obj) {
+            if (!obj || !obj.from || !obj.to) {
+                return false;
+            }
+            if (obj.from.line !== obj.to.line) {
+                return false;
+            }
+            if (!obj.from.ch || !obj.to.ch || obj.to.ch > 6) {
+                return false;
+            }
+            if (!obj.text || obj.text.length !== 1 || obj.text[0] !== ' ') {
+                return false;
+            }
+            var myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: obj.to.ch});
+            if (!/^#+$/.test(myText.trim())){
+                return false;
+            }
+            var allowedHeadlingLevels = cm.options.backdrop.headingLevels,
+                currHeadlingLevel = (myText.match(/#/g) || []).length;
+            if (allowedHeadlingLevels.indexOf(currHeadlingLevel) !== -1) {
+                return false;
+            }
         });
     }
 
