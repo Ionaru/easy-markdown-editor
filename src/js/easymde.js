@@ -1825,9 +1825,14 @@ function EasyMDE(options) {
     if ( options.parsingConfig.headingLevels ) {
         var headingLevels = [];
         for ( var l = 0, requestedLevels = options.parsingConfig.headingLevels; l < requestedLevels.length; l++ ) {
-            if ( ! isNaN( requestedLevels[ l ] ) && headingLevels.indexOf( requestedLevels[ l ] ) === -1 ) {
-                headingLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
+            requestedLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
+            if ( isNaN( requestedLevels[ l ] ) || headingLevels.indexOf( requestedLevels[ l ] ) !== -1 ) {
+                continue;
             }
+            if ( requestedLevels[ l ] < 1 && requestedLevels[ l ] > 6 ) {
+                continue;
+            }
+            headingLevels[ l ] = requestedLevels[ l ];
         }
         options.parsingConfig.headingLevels = headingLevels.sort();
     }
@@ -2199,27 +2204,164 @@ EasyMDE.prototype.render = function (el) {
         });
     }
     if (options.parsingConfig.headingLevels) {
-        this.codemirror.on('beforeChange', function (cm, obj) {
-            if (!obj || !obj.from || !obj.to) {
+        // If the *headingLevels* argument is present, set our custom modifiers
+        var makeBiggerHeadline = function(headline, from, to) {
+            headline = headline || '';
+            if (!from || !to) {
+                return '';
+            }
+            var level = '';
+            while (from < to) {
+                level += '#';
+                from++;
+            }
+            level += ' '; console.log(level);
+            return /#/.test(headline) ? headline.replace(/#\s*/, level) : level;
+        }
+        var headlineNeedUpdate = function(myCurrHeadline, allowedHeadlingLevels) {
+            if (!myCurrHeadline || !allowedHeadlingLevels) {
                 return false;
             }
-            if (obj.from.line !== obj.to.line) {
+            if (!/^[#]+/.test(myCurrHeadline.trim())){
                 return false;
             }
-            if (!obj.from.ch || !obj.to.ch || obj.to.ch > 6) {
-                return false;
-            }
-            if (!obj.text || obj.text.length !== 1 || obj.text[0] !== ' ') {
-                return false;
-            }
-            var myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: obj.to.ch});
-            if (!/^#+$/.test(myText.trim())){
-                return false;
-            }
-            var allowedHeadlingLevels = cm.options.backdrop.headingLevels,
-                currHeadlingLevel = (myText.match(/#/g) || []).length;
+            var currHeadlingLevel = ((myCurrHeadline || '').match(/#/g) || []).length;
             if (allowedHeadlingLevels.indexOf(currHeadlingLevel) !== -1) {
                 return false;
+            }
+            var newHeadingLevel = 0, n = 0;
+            while (n < allowedHeadlingLevels.length) {
+                if (allowedHeadlingLevels[n] > currHeadlingLevel) {
+                    newHeadingLevel = allowedHeadlingLevels[n];
+                    break;
+                }
+                n++;
+            }
+            if (!newHeadingLevel) {
+                n = allowedHeadlingLevels.length - 1;
+                while (n > -1) {
+                    if (allowedHeadlingLevels[n] < currHeadlingLevel) {
+                        newHeadingLevel = allowedHeadlingLevels[n];
+                        break;
+                    }
+                    n--;
+                }
+            }
+            if (!newHeadingLevel || newHeadingLevel === currHeadlingLevel) {
+                return false;
+            }
+            return {
+                from: currHeadlingLevel,
+                to: newHeadingLevel,
+            };
+        };
+        var checkNewHeadline = function(cm, obj) {
+            var myHeadline = cm.getRange({
+                line: obj.from.line,
+                ch: 0,
+            }, {
+                line: obj.to.line,
+                ch: obj.to.ch,
+            });
+            var levels = headlineNeedUpdate(myHeadline, cm.options.backdrop.headingLevels);
+            if (!levels || !levels.from || !levels.to) {
+                return false;
+            }
+            if (obj.from.line === obj.to.line) {
+                // Most simple case when a modification has occured on a single line
+                if (levels.to > levels.from) {
+                    // Current level is forbidden so we jump to the closest upper level allowed
+                    // We only need to update the text value before the modification is applied
+                    obj.text[0] = makeBiggerHeadline('', levels.from, levels.to);
+                }
+                else {
+                    // The current level is forbidden and we jump to the closest lower level available
+                    // A bit more complicated: we have to cancel the update and trigger a replacement with the existing string
+                    obj.cancel();
+                    var newHeadline = '';
+                    while (levels.to > 0) {
+                        newHeadline += '#';
+                        levels.to--;
+                    }
+                    newHeadline += ' ';
+                    cm.doc.replaceRange(newHeadline, {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    }, myHeadline );
+                }
+            }
+            return true;
+        };
+        var checkExistingHeadline = function(cm, obj) {
+            var myChar = cm.getRange({
+                line: obj.from.line,
+                ch: obj.from.ch,
+            }, {
+                line: obj.to.line,
+                ch: obj.to.ch + 1,
+            });
+            console.log( '==' + myChar + '==' );
+            if (!/\s|#/.test(myChar || '')) {
+                return false;
+            }
+            var myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: 8});
+            console.log( myText );
+            if ((obj.from.line === obj.to.line) && obj.text.length === 1 && obj.text[0] === '#') {
+                if (!/[^\s#]/.test(myText)) {
+                    // Newly created, skip the check for now
+                    return false;
+                }
+                var levels = headlineNeedUpdate(myText.replace(/#/, '##'), cm.options.backdrop.headingLevels);
+                if (!levels || !levels.from || !levels.to) {
+                    return false;
+                }
+                if (levels.to > levels.from) {
+                    obj.text[0] = '#';
+                    while (levels.from < levels.to) {
+                        obj.text[0] += '#';
+                        levels.from++;
+                    }
+                    return true;
+                }
+            }
+        };
+        this.codemirror.on('beforeChange', function (cm, obj) {
+            console.log(obj);
+            if (!obj || !obj.from || !obj.to || !obj.text) {
+                // Don't go further 'cause a required argument is missing...
+                return false;
+            }
+            if ((obj.from.line === obj.to.line) && obj.to.ch > 6) {
+                // No need to trigger a check if we are on the same line at character 7 or upper
+                // As we are sure the cursor is not inside a markdown header
+                return false;
+            }
+            if (/input/.test(obj.origin || '+input')) { // Something was added
+                if (!obj.text.length || !obj.text[0].length) {
+                    // Just in case
+                    return false;
+                }
+                if (obj.text.length === 1 && obj.text[0].length === 1) {
+                    // Only one character in one line is being updated
+                    if (obj.text[0] === ' ') {
+                        return checkNewHeadline(cm, obj);
+                    }
+                    else if (obj.text[0] === '#') {
+                        return checkExistingHeadline(cm, obj);
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+
+                }
+            }
+            else if (/delete/.test(obj.origin)) { // Something was removed
+                return checkExistingHeadline(cm, obj);
             }
         });
     }
