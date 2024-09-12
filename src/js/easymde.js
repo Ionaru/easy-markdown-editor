@@ -1124,6 +1124,13 @@ function _toggleHeading(cm, direction, size) {
 
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
+    var sharpLevels = cm.options.backdrop.headingLevels || [],
+        minLevel = sharpLevels.length ? sharpLevels[0] : 1,
+        maxLevel = sharpLevels.length ? sharpLevels[sharpLevels.length-1] : 6;
+    if (size && sharpLevels.length && sharpLevels.indexOf(size) === -1) {
+        cm.focus();
+        return false;
+    }
     for (var i = startPoint.line; i <= endPoint.line; i++) {
         (function (i) {
             var text = cm.getLine(i);
@@ -1132,14 +1139,20 @@ function _toggleHeading(cm, direction, size) {
             if (direction !== undefined) {
                 if (currHeadingLevel <= 0) {
                     if (direction == 'bigger') {
-                        text = '###### ' + text;
+                        text = '#'.repeat(maxLevel) + ' ' + text;
                     } else {
-                        text = '# ' + text;
+                        text = '#'.repeat(minLevel) + ' ' + text;
                     }
-                } else if (currHeadingLevel == 6 && direction == 'smaller') {
-                    text = text.substr(7);
-                } else if (currHeadingLevel == 1 && direction == 'bigger') {
-                    text = text.substr(2);
+                } else if (currHeadingLevel == maxLevel && direction == 'smaller') {
+                    text = text.substr(maxLevel + 1);
+                } else if (currHeadingLevel == minLevel && direction == 'bigger') {
+                    text = text.substr(minLevel + 1);
+                } else if (sharpLevels.length) {
+                    if (direction == 'bigger') {
+                        text = '#'.repeat(sharpLevels[sharpLevels.indexOf(currHeadingLevel)-1]) + text.replace(/^[#]+/, '' );
+                    } else {
+                        text = '#'.repeat(sharpLevels[sharpLevels.indexOf(currHeadingLevel)+1]) + text.replace(/^[#]+/, '' );
+                    }
                 } else {
                     if (direction == 'bigger') {
                         text = text.substr(1);
@@ -2205,141 +2218,138 @@ EasyMDE.prototype.render = function (el) {
     }
     if (options.parsingConfig.headingLevels) {
         // If the *headingLevels* argument is present, set our custom modifiers
-        var headlineMakeBigger = function(headline, from, to) {
-            headline = headline || '';
+        var headingMakeBigger = function(heading, from, to) {
+            heading = heading || '';
             if (!from || !to || from >= to) {
                 return '';
             }
             var level = '';
-            if (!headline.length) {
+            if (!heading.length) {
                 while (from < to) {
                     level += '#';
                     from++;
                 }
                 level += ' ';
                 return level;
-            }
-            else {
+            } else {
                 while (to > 0) {
                     level += '#';
                     to--;
                 }
                 level += ' ';
-                return /#/.test(headline) ? headline.replace(/^[#]+\s*/, level) : level;
+                return /#/.test(heading) ? heading.replace(/^[#]+\s*/, level) : level;
             }
         };
-        var headlineMakeSmaller = function(headline, from, to) {
-            headline = headline || '';
+        var headingMakeSmaller = function(heading, from, to) {
+            heading = heading || '';
             if (!from || !to || from <= to) {
                 return '';
             }
             var level = '';
-            if (!headline.length) {
+            if (!heading.length) {
                 while (from > to) {
                     level += '#';
                     from--;
                 }
                 level += ' ';
                 return level;
-            }
-            else {
+            } else {
                 while (to > 0) {
                     level += '#';
                     to--;
                 }
                 level += ' ';
-                return /#/.test(headline) ? headline.replace(/^[#]+\s*/, level) : level;
+                return /#/.test(heading) ? heading.replace(/^[#]+\s*/, level) : level;
             }
         };
-        var headlineNeedUpdate = function(myCurrHeadline, allowedHeadlingLevels, levelSearchDir) {
-            if (!myCurrHeadline || !allowedHeadlingLevels) {
+        var headingNeedUpdate = function(currHeading, allowedHeadingLevels, levelSearchDir) {
+            if (!currHeading || !allowedHeadingLevels) {
                 return false;
             }
-            myCurrHeadline = myCurrHeadline.trim();
-            if (!/^#+/.test(myCurrHeadline)){
+            currHeading = currHeading.trim();
+            if (!/^#+/.test(currHeading)){
                 return false;
             }
-            var currHeadlingLevel = (myCurrHeadline.match(/^([#]+)/g) || [''])[0].length;
-            if (allowedHeadlingLevels.indexOf(currHeadlingLevel) !== -1) {
+            var currHeadingLevel = (currHeading.match(/^([#]+)/g) || [''])[0].length;
+            if (allowedHeadingLevels.indexOf(currHeadingLevel) !== -1) {
                 return false;
             }
             levelSearchDir = levelSearchDir || 'asc';
             var newHeadingLevel = -1, n = 0;
             if (levelSearchDir === 'asc') {
-                while (n < allowedHeadlingLevels.length) {
-                    if (allowedHeadlingLevels[n] > currHeadlingLevel) {
-                        newHeadingLevel = allowedHeadlingLevels[n];
+                while (n < allowedHeadingLevels.length) {
+                    if (allowedHeadingLevels[n] > currHeadingLevel) {
+                        newHeadingLevel = allowedHeadingLevels[n];
                         break;
                     }
                     n++;
                 }
             }
             if (newHeadingLevel < 0) {
-                n = allowedHeadlingLevels.length - 1;
+                n = allowedHeadingLevels.length - 1;
                 while (n > -1) {
-                    if (allowedHeadlingLevels[n] < currHeadlingLevel) {
-                        newHeadingLevel = allowedHeadlingLevels[n];
+                    if (allowedHeadingLevels[n] < currHeadingLevel) {
+                        newHeadingLevel = allowedHeadingLevels[n];
                         break;
                     }
                     n--;
                 }
                 if (levelSearchDir === 'dsc') {
-                    currHeadlingLevel += 1;
+                    currHeadingLevel += 1;
                     if (newHeadingLevel < 0) {
                         newHeadingLevel = 0;
                     }
                 }
             }
-            if (newHeadingLevel < 0 || newHeadingLevel === currHeadlingLevel) {
+            if (newHeadingLevel < 0 || newHeadingLevel === currHeadingLevel) {
                 return false;
             }
             return {
-                from: currHeadlingLevel,
+                from: currHeadingLevel,
                 to: newHeadingLevel,
-                diff: Math.abs(newHeadingLevel - currHeadlingLevel),
+                diff: Math.abs(newHeadingLevel - currHeadingLevel),
             };
         };
-        var headlineCheckNew = function(cm, obj) {
-            var myHeadline = cm.getRange({
+        var headingCheckNew = function(cm, obj) {
+            var currHeading = cm.getRange({
                 line: obj.from.line,
                 ch: 0,
             }, {
                 line: obj.to.line,
                 ch: obj.to.ch,
             });
-            var levels = headlineNeedUpdate(myHeadline, cm.options.backdrop.headingLevels);
-            if (!levels || !levels.from || !levels.to) {
+            var myLevels = headingNeedUpdate(currHeading, cm.options.backdrop.headingLevels);
+            if (!myLevels || !myLevels.from || !myLevels.to) {
                 return false;
             }
             if (obj.from.line === obj.to.line) {
                 // Most simple case when a modification has occured on a single line
-                if (levels.to > levels.from) {
+                if (myLevels.to > myLevels.from) {
                     // Current level is forbidden so we jump to the closest upper level allowed
                     // We only need to reset the sharp numbers with the appropriate value before the modification is applied
-                    obj.text[0] = headlineMakeBigger('', levels.from, levels.to);
-                }
-                else {
+                    obj.text[0] = headingMakeBigger('', myLevels.from, myLevels.to);
+                } else {
                     // The current level is forbidden and we jump to the closest lower level available
                     // A bit more is needed: we have to cancel the requested update and trigger a replacement with the existing sharp signs
                     obj.cancel();
-                    var newHeadline = '';
-                    while (levels.to > 0) {
-                        newHeadline += '#';
-                        levels.to--;
+                    var newHeading = '';
+                    while (myLevels.to > 0) {
+                        newHeading += '#';
+                        myLevels.to--;
                     }
-                    newHeadline += ' ';
-                    cm.doc.replaceRange(newHeadline, {
+                    newHeading += ' ';
+                    cm.doc.replaceRange(newHeading, {
                         line: obj.from.line,
                         ch: 0,
                     }, {
                         line: obj.to.line,
                         ch: obj.to.ch,
-                    }, myHeadline ); // 4th arguments to keep a trace in the history when possible
+                    }, currHeading ); // 4th arguments to keep a trace in the history when possible
                 }
             }
             return true;
         };
-        var headlineCheckExisting = function(cm, obj) {
+        var headingCheckExisting = function(cm, obj) {
             var myChar = cm.getRange({
                 line: obj.from.line,
                 ch: obj.from.ch,
@@ -2360,8 +2370,7 @@ EasyMDE.prototype.render = function (el) {
                     }
                     if (!/#/.test(myText)) {
                         myText = '# ' + myText.trim(); // Wasn't headline
-                    }
-                    else {
+                    } else {
                         myText = myText.replace(/#/, '##'); // Increment one sharp sign
                     }
                     myLevels = headlineNeedUpdate(myText, cm.options.backdrop.headingLevels);
@@ -2418,11 +2427,9 @@ EasyMDE.prototype.render = function (el) {
             var myLevels = headlineNeedUpdate(row, cm.options.backdrop.headingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return row;
-            }
-            else if (myLevels.from < myLevels.to) {
+            } else if (myLevels.from < myLevels.to) {
                 return headlineMakeBigger(row, myLevels.from, myLevels.to);
-            }
-            else if (myLevels.to < myLevels.from) {
+            } else if (myLevels.to < myLevels.from) {
                 return headlineMakeSmaller(row, myLevels.from, myLevels.to);
             }
             return row;
@@ -2455,8 +2462,7 @@ EasyMDE.prototype.render = function (el) {
                     // Only one character on one line is being updated
                     if (obj.text[0] === ' ') {
                         return headlineCheckNew(cm, obj);
-                    }
-                    else if (obj.text[0] === '#') {
+                    } else if (obj.text[0] === '#') {
                         return headlineCheckExisting(cm, obj);
                     }
                 }
@@ -2499,8 +2505,7 @@ EasyMDE.prototype.render = function (el) {
                                 obj.from.ch = 0;
                             }
                         }
-                    }
-                    else { // 2nd and next rows
+                    } else { // 2nd and next rows
                         obj.text[r] = headingCheckRow(obj.text[r], cm);
                     }
                 }
