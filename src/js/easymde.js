@@ -2358,7 +2358,7 @@ EasyMDE.prototype.render = function (el) {
                 ch: obj.to.ch + 1,
             });
             if (!/\s|#/.test(myChar || '')) {
-                // Don't bother to go further if no headlines were detected
+                // Don't bother to go further if no headling were detected
                 return false;
             }
             if ((obj.from.line === obj.to.line) && obj.text.length === 1) {
@@ -2369,11 +2369,11 @@ EasyMDE.prototype.render = function (el) {
                         return false;
                     }
                     if (!/#/.test(myText)) {
-                        myText = '# ' + myText.trim(); // Wasn't headline
+                        myText = '# ' + myText.trim(); // Wasn't heading
                     } else {
                         myText = myText.replace(/#/, '##'); // Increment one sharp sign
                     }
-                    myLevels = headlineNeedUpdate(myText, cm.options.backdrop.headingLevels);
+                    myLevels = headingNeedUpdate(myText, cm.options.backdrop.headingLevels);
                     if (!myLevels) {
                         return false;
                     }
@@ -2389,7 +2389,7 @@ EasyMDE.prototype.render = function (el) {
                     return true;
                 }
                 else if (/delete/.test(obj.origin) && obj.text[0] === '') {
-                    myLevels = headlineNeedUpdate(myText.replace(/#/, ''), cm.options.backdrop.headingLevels, 'dsc');
+                    myLevels = headingNeedUpdate(myText.replace(/#/, ''), cm.options.backdrop.headingLevels, 'dsc');
                     if (!myLevels) {
                         return false;
                     }
@@ -2424,13 +2424,13 @@ EasyMDE.prototype.render = function (el) {
                 return row;
             }
             row = row.replace(/^(\s*)#/, '#');
-            var myLevels = headlineNeedUpdate(row, cm.options.backdrop.headingLevels);
+            var myLevels = headingNeedUpdate(row, cm.options.backdrop.headingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return row;
             } else if (myLevels.from < myLevels.to) {
-                return headlineMakeBigger(row, myLevels.from, myLevels.to);
+                return headingMakeBigger(row, myLevels.from, myLevels.to);
             } else if (myLevels.to < myLevels.from) {
-                return headlineMakeSmaller(row, myLevels.from, myLevels.to);
+                return headingMakeSmaller(row, myLevels.from, myLevels.to);
             }
             return row;
         };
@@ -2461,16 +2461,16 @@ EasyMDE.prototype.render = function (el) {
                 if (obj.text.length === 1 && obj.text[0].length === 1) {
                     // Only one character on one line is being updated
                     if (obj.text[0] === ' ') {
-                        return headlineCheckNew(cm, obj);
+                        return headingCheckNew(cm, obj);
                     } else if (obj.text[0] === '#') {
-                        return headlineCheckExisting(cm, obj);
+                        return headingCheckExisting(cm, obj);
                     }
                 }
             }
             else if (/delete/.test(obj.origin)) { // Something was removed
                 if (obj.text.length === 1 && !obj.text[0].length) {
                     // Only one character on one line has been removed
-                    return headlineCheckExisting(cm, obj);
+                    return headingCheckExisting(cm, obj);
                 }
             }
             if (obj.text.length < 2) {
