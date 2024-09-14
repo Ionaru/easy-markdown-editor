@@ -2361,7 +2361,7 @@ EasyMDE.prototype.render = function (el) {
                 // Don't bother to go further if no headling were detected
                 return false;
             }
-            if ((obj.from.line === obj.to.line) && obj.text.length === 1) {
+            if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
                 var myLevels, myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: 8});
                 if (/input/.test(obj.origin) && obj.text[0] === '#') {
                     if (!/[^\s#]/.test(myText)) {
@@ -2389,21 +2389,30 @@ EasyMDE.prototype.render = function (el) {
                     return true;
                 }
                 else if (/delete/.test(obj.origin) && obj.text[0] === '') {
-                    myLevels = headingNeedUpdate(myText.replace(/#/, ''), cm.options.backdrop.headingLevels, 'dsc');
-                    if (!myLevels) {
+                    var myTextPart1 = myText.substring(0, obj.from.ch),
+                        myTextPart2 = myText.substring(obj.from.ch + 1),
+                        isPart1Heading = /^#/.test(myTextPart1) ? true : false,
+                        isPart2Heading = /^#/.test(myTextPart2) ? true : false;
+                    if (!isPart1Heading && !isPart2Heading) {
+                        return false;
+                    }
+                    myText = myTextPart1 + myTextPart2;
+                    var delChar = cm.getRange({line: obj.from.line, ch: obj.from.ch}, {line: obj.to.line, ch: obj.to.ch}),
+                        searchDir = delChar === '#' ? 'dsc' : 'asc';
+                    myLevels = headingNeedUpdate(myText, cm.options.backdrop.headingLevels, searchDir);
+                    if (!myLevels || !myLevels.diff) {
                         return false;
                     }
                     obj.cancel();
-                    if (myLevels.to > myLevels.from) {
-                        return false;
-                    }
                     obj.text[0] = '';
-                    while (myLevels.to > 0) {
-                        obj.text[0] += '#';
-                        myLevels.to--;
+                    if (myLevels.to > 0) {
+                        while (myLevels.to > 0) {
+                            obj.text[0] += '#';
+                            myLevels.to--;
+                        }
                     }
                     var newText = myText.replace(new RegExp('^#' + '{' + myLevels.from + '}'), obj.text[0]);
-                    cm.doc.replaceRange(newText.replace(/^\s*/, ''), {
+                    cm.doc.replaceRange(newText, {
                         line: obj.from.line,
                         ch: 0,
                     }, {
