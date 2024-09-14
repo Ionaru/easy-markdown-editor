@@ -2362,12 +2362,19 @@ EasyMDE.prototype.render = function (el) {
                 return false;
             }
             if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
-                var myLevels, myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: 8});
+                var myLevels, myText;
                 if (/input/.test(obj.origin) && obj.text[0] === '#') {
                     if (!/[^\s#]/.test(myText)) {
                         // Newly created, skip the check for now
                         return false;
                     }
+                    myText = cm.getRange({
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: 8,
+                    });
                     if (!/#/.test(myText)) {
                         myText = '# ' + myText.trim(); // Wasn't heading
                     } else {
@@ -2389,16 +2396,49 @@ EasyMDE.prototype.render = function (el) {
                     return true;
                 }
                 else if (/delete/.test(obj.origin) && obj.text[0] === '') {
-                    var myTextPart1 = myText.substring(0, obj.from.ch),
-                        myTextPart2 = myText.substring(obj.from.ch + 1),
-                        isPart1Heading = /^#/.test(myTextPart1) ? true : false,
-                        isPart2Heading = /^#/.test(myTextPart2) ? true : false;
-                    if (!isPart1Heading && !isPart2Heading) {
+                    var delChar = cm.getRange({
+                        line: obj.from.line,
+                        ch: obj.from.ch,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    if (!delChar || !delChar.length) {
                         return false;
                     }
-                    myText = myTextPart1 + myTextPart2;
-                    var delChar = cm.getRange({line: obj.from.line, ch: obj.from.ch}, {line: obj.to.line, ch: obj.to.ch}),
+                    var searchDir = 'asc', myStart = {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, myEnd;
+                    if (delChar.length === 1) {
+                        myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: 8});
+                        var myTextPart1 = myText.substring(0, obj.from.ch),
+                            myTextPart2 = myText.substring(obj.from.ch + 1),
+                            isPart1Heading = /^#/.test(myTextPart1) ? true : false,
+                            isPart2Heading = /^#/.test(myTextPart2) ? true : false;
+                        if (!isPart1Heading && !isPart2Heading) {
+                            return false;
+                        }
+                        myText = myTextPart1 + myTextPart2;
                         searchDir = delChar === '#' ? 'dsc' : 'asc';
+                        myEnd = {
+                            line: obj.to.line,
+                            ch: 8,
+                        };
+                    } else {
+                        myText = cm.getRange({
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch + 8,
+                        });
+                        myText = myText.replace(delChar, '');
+                        myEnd = {
+                            line: obj.to.line,
+                            ch: obj.to.ch + 8,
+                        };
+                    }
                     myLevels = headingNeedUpdate(myText, cm.options.backdrop.headingLevels, searchDir);
                     if (!myLevels || !myLevels.diff) {
                         return false;
@@ -2411,18 +2451,17 @@ EasyMDE.prototype.render = function (el) {
                             myLevels.to--;
                         }
                     }
+                    if (delChar === '#') {
+                        myLevels.from--;
+                    }
                     var newText = myText.replace(new RegExp('^#' + '{' + myLevels.from + '}'), obj.text[0]);
-                    cm.doc.replaceRange(newText, {
-                        line: obj.from.line,
-                        ch: 0,
-                    }, {
-                        line: obj.to.line,
-                        ch: 8,
-                    });
+                    // Just in case do not trim on both side, only trim the space that could remain next to the cursor
+                    newText = newText.replace(/^\s*/, '');
+                    cm.doc.replaceRange(newText, myStart, myEnd);
                     // Be gentle and set back the cursor at the appropriate position
                     cm.doc.setCursor({
                         line: obj.to.line,
-                        ch: obj.to.ch - myLevels.diff,
+                        ch: (delChar === 1 ? obj.to.ch : obj.to.ch - 8) - myLevels.diff,
                     });
                     return true;
                 }
@@ -2449,8 +2488,13 @@ EasyMDE.prototype.render = function (el) {
                 // Don't go further 'cause a required argument is missing...
                 return false;
             }
+            if (!obj.origin) {
+                // If a modification was triggered by a code and not an human
+                // The origin can be "undefined", so just in case set one.
+                obj.origin = '+none';
+            }
             if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
-                if (obj.to.ch > 6) {
+                if (!/delete/.test(obj.origin) && obj.to.ch > 6) {
                     // No need to trigger a check if we are on the same line at character 7 or upper
                     // As we are sure the cursor was not inside a range containing a sharp sign
                     return false;
@@ -2460,64 +2504,63 @@ EasyMDE.prototype.render = function (el) {
                     obj.cancel();
                     return false;
                 }
-            }
-            if (!obj.origin) {
-                // If a modification was triggered by a code and not an human
-                // The origin can be "undefined", so just in case set one.
-                obj.origin = '+none';
-            }
-            if (/input/.test(obj.origin)) { // Something was added
-                if (obj.text.length === 1 && obj.text[0].length === 1) {
-                    // Only one character on one line is being updated
-                    if (obj.text[0] === ' ') {
-                        return headingCheckNew(cm, obj);
-                    } else if (obj.text[0] === '#') {
+                if (/input/.test(obj.origin)) { // Something was added
+                    if (obj.text.length === 1 && obj.text[0].length === 1) {
+                        // Only one character on one line is being updated
+                        if (obj.text[0] === ' ') {
+                            return headingCheckNew(cm, obj);
+                        } else if (obj.text[0] === '#') {
+                            return headingCheckExisting(cm, obj);
+                        }
+                    }
+                } else if (/delete/.test(obj.origin)) { // Something was removed
+                    if (obj.text.length === 1 && !obj.text[0].length) {
+                        // Only one character on one line has been removed
                         return headingCheckExisting(cm, obj);
                     }
                 }
             }
-            else if (/delete/.test(obj.origin)) { // Something was removed
-                if (obj.text.length === 1 && !obj.text[0].length) {
-                    // Only one character on one line has been removed
-                    return headingCheckExisting(cm, obj);
+            if (!/delete/.test(obj.origin)) {
+                if (obj.text.length < 2 && obj.text[0].length < 2) {
+                    return false;
                 }
-            }
-            if (obj.text.length < 2) {
-                return false;
-            }
-            // Multilines modification like a paste
-            var r;
-            if (obj.from.ch === 0) {
-                // Loop each row and check for headers
-                for (r=0; r<obj.text.length; r++) {
-                    obj.text[r] = headingCheckRow(obj.text[r], cm);
-                }
-            }
-            else if (obj.from.ch > 7) {
-                // We are sure an existing header is not involved
-                // So exclude the first row from the loop
-                for (r=1; r<obj.text.length; r++) {
-                    obj.text[r] = headingCheckRow(obj.text[r], cm);
-                }
-            }
-            else {
-                // We need to check the first row in case an existing header is involved
-                var startText, oldText, newText;
-                for (r=0; r<obj.text.length; r++) {
-                    if (!r) { // First row
-                        startText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.from.line, ch: obj.from.ch});
-                        if (/#/.test(startText)) {
-                            oldText = startText + obj.text[r];
-                            newText = headingCheckRow(oldText, cm);
-                            if (oldText !== newText) { // A modification has been made
-                                obj.text[r] = newText;
-                                obj.from.ch = 0;
-                            }
-                        }
-                    } else { // 2nd and next rows
+                // Multilines modification like a paste
+                var r;
+                if (obj.from.ch === 0) {
+                    // Loop each row and check for headers
+                    for (r=0; r<obj.text.length; r++) {
                         obj.text[r] = headingCheckRow(obj.text[r], cm);
                     }
                 }
+                else if (obj.from.ch > 7) {
+                    // We are sure an new heading is not involved with conflicting an existing one
+                    // So we can safely exclude the first row from the loop
+                    for (r=1; r<obj.text.length; r++) {
+                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                    }
+                }
+                else {
+                    // We need to check the first row in case an existing heading exists or is updated
+                    var startText, oldText, newText;
+                    for (r=0; r<obj.text.length; r++) {
+                        if (!r) { // First row
+                            startText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.from.line, ch: obj.from.ch});
+                            if (/#/.test(startText)) {
+                                oldText = startText + obj.text[r];
+                                newText = headingCheckRow(oldText, cm);
+                                if (oldText !== newText) { // A modification has been made
+                                    obj.text[r] = newText;
+                                    obj.from.ch = 0;
+                                }
+                            }
+                        } else { // 2nd and next rows
+                            obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        }
+                    }
+                }
+            } else {
+                // Multilines / multicharacters were removed
+                console.log( 'Fix me' );
             }
         });
     }
