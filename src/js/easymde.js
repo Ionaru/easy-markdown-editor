@@ -2546,7 +2546,6 @@ EasyMDE.prototype.render = function (el) {
                                 newText = headingCheckRow(oldText, cm);
                             if (oldText !== newText) { // A modification has been made
                                 obj.text[r] = newText.substring(obj.from.ch);
-                                // obj.from.ch = 0;
                             }
                         }
                     }
@@ -2558,9 +2557,16 @@ EasyMDE.prototype.render = function (el) {
                             line: obj.from.line,
                             ch: obj.from.ch + 8,
                         });
-                        console.log( obj.txt[r] );
-                        console.log( endText );
-                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        if (/#/.test(endText)) {
+                            var oldText = obj.text[r] + endText,
+                                newText = headingCheckRow(oldText, cm);
+                            if (oldText !== newText) { // A modification has been made
+                                obj.text[r] = newText.replace(endText, '');
+                            }
+                        }
+                        else {
+                            obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        }
                     }
                     else { // 2nd and next rows
                         obj.text[r] = headingCheckRow(obj.text[r], cm);
