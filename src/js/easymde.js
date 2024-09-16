@@ -2520,43 +2520,52 @@ EasyMDE.prototype.render = function (el) {
                     }
                 }
             }
+            // Multilines modification like a paste
             if (!/delete/.test(obj.origin)) {
                 if (obj.text.length < 2 && obj.text[0].length < 2) {
                     return false;
                 }
-                // Multilines modification like a paste
-                var r;
-                if (obj.from.ch === 0) {
-                    // Loop each row and check for headers
-                    for (r=0; r<obj.text.length; r++) {
-                        obj.text[r] = headingCheckRow(obj.text[r], cm);
-                    }
+                var r = 0, rEnd = obj.text.length; // Start row / End row
+                if (obj.from.ch > 7) {
+                    // We are sure an new heading is not involved or conflicting with an existing one
+                    // So we can safely exclude the first row from the verification loop
+                    r = 1;
                 }
-                else if (obj.from.ch > 7) {
-                    // We are sure an new heading is not involved with conflicting an existing one
-                    // So we can safely exclude the first row from the loop
-                    for (r=1; r<obj.text.length; r++) {
-                        obj.text[r] = headingCheckRow(obj.text[r], cm);
-                    }
-                }
-                else {
-                    // We need to check the first row in case an existing heading exists or is updated
-                    var startText, oldText, newText;
-                    for (r=0; r<obj.text.length; r++) {
-                        if (!r) { // First row
-                            startText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.from.line, ch: obj.from.ch});
-                            if (/#/.test(startText)) {
-                                oldText = startText + obj.text[r];
+                while (r < rEnd) {
+                    if (!r && obj.from.ch > 0) {
+                        // We need to check the first row in case an existing heading exists or is updated
+                        var startText = cm.getRange({
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        });
+                        if (/#/.test(startText)) {
+                            var oldText = startText + obj.text[r],
                                 newText = headingCheckRow(oldText, cm);
-                                if (oldText !== newText) { // A modification has been made
-                                    obj.text[r] = newText;
-                                    obj.from.ch = 0;
-                                }
+                            if (oldText !== newText) { // A modification has been made
+                                obj.text[r] = newText.substring(obj.from.ch);
+                                // obj.from.ch = 0;
                             }
-                        } else { // 2nd and next rows
-                            obj.text[r] = headingCheckRow(obj.text[r], cm);
                         }
                     }
+                    else if (r === rEnd - 1) {
+                        var endText = cm.getRange({
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch + 8,
+                        });
+                        console.log( obj.txt[r] );
+                        console.log( endText );
+                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                    }
+                    else { // 2nd and next rows
+                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                    }
+                    r++;
                 }
             } else {
                 // Multilines / multicharacters were removed
