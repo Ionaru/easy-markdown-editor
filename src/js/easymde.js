@@ -2521,6 +2521,7 @@ EasyMDE.prototype.render = function (el) {
                 }
             }
             // Multilines modification like a paste
+            var startText = '', endText = '', oldText = '', newText = '';
             if (!/delete/.test(obj.origin)) {
                 if (obj.text.length < 2 && obj.text[0].length < 2) {
                     return false;
@@ -2534,7 +2535,7 @@ EasyMDE.prototype.render = function (el) {
                 while (r < rEnd) {
                     if (!r && obj.from.ch > 0) {
                         // We need to check the first row in case an existing heading exists or is updated
-                        var startText = cm.getRange({
+                        startText = cm.getRange({
                             line: obj.from.line,
                             ch: 0,
                         }, {
@@ -2542,25 +2543,31 @@ EasyMDE.prototype.render = function (el) {
                             ch: obj.from.ch,
                         });
                         if (/#/.test(startText)) {
-                            var oldText = startText + obj.text[r],
-                                newText = headingCheckRow(oldText, cm);
+                            oldText = startText + obj.text[r];
+                            newText = headingCheckRow(oldText, cm);
                             if (oldText !== newText) { // A modification has been made
                                 obj.text[r] = newText.substring(obj.from.ch);
-                                // obj.from.ch = 0;
                             }
                         }
                     }
                     else if (r === rEnd - 1) {
-                        var endText = cm.getRange({
+                        endText = cm.getRange({
                             line: obj.from.line,
                             ch: obj.from.ch,
                         }, {
                             line: obj.from.line,
                             ch: obj.from.ch + 8,
                         });
-                        console.log( obj.txt[r] );
-                        console.log( endText );
-                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        if (/#/.test(endText)) {
+                            oldText = obj.text[r] + endText;
+                            newText = headingCheckRow(oldText, cm);
+                            if (oldText !== newText) { // A modification has been made
+                                obj.text[r] = newText.replace(endText, '');
+                            }
+                        }
+                        else {
+                            obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        }
                     }
                     else { // 2nd and next rows
                         obj.text[r] = headingCheckRow(obj.text[r], cm);
@@ -2569,7 +2576,44 @@ EasyMDE.prototype.render = function (el) {
                 }
             } else {
                 // Multilines / multicharacters were removed
-                console.log( 'Fix me' );
+                if (obj.from.ch > 7 || obj.text.length > 1 || obj.text[0].length > 1) {
+                    return false;
+                }
+                startText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.from.line,
+                    ch: obj.from.ch,
+                });
+                endText = cm.getRange({
+                    line: obj.to.line,
+                    ch: obj.to.ch,
+                }, {
+                    line: obj.to.line,
+                    ch: obj.to.ch + 8,
+                });
+                oldText = startText + endText;
+                if (/#/.test(oldText)) {
+                    newText = headingCheckRow(oldText, cm);
+                    if (oldText !== newText) { // A modification has been made
+                        obj.cancel();
+                        cm.doc.replaceRange('', {
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        cm.doc.replaceRange(newText, {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch + 8,
+                        });
+                    }
+                }
             }
         });
     }
