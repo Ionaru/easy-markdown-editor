@@ -2461,7 +2461,7 @@ EasyMDE.prototype.render = function (el) {
                     // Be gentle and set back the cursor at the appropriate position
                     cm.doc.setCursor({
                         line: obj.to.line,
-                        ch: obj.text[0].length + 1,
+                        ch: obj.text[0].length ? obj.text[0].length + 1 : 0,
                     });
                     return true;
                 }
