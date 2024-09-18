@@ -2461,7 +2461,7 @@ EasyMDE.prototype.render = function (el) {
                     // Be gentle and set back the cursor at the appropriate position
                     cm.doc.setCursor({
                         line: obj.to.line,
-                        ch: (delChar === 1 ? obj.to.ch : obj.to.ch - 8) - myLevels.diff,
+                        ch: obj.text[0].length + 1,
                     });
                     return true;
                 }
@@ -2544,6 +2544,7 @@ EasyMDE.prototype.render = function (el) {
                         });
                         if (/#/.test(startText)) {
                             oldText = startText + obj.text[r];
+                            oldText = oldText.replace(/#\s+#/, '##');
                             newText = headingCheckRow(oldText, cm);
                             if (oldText !== newText) { // A modification has been made
                                 obj.text[r] = newText.substring(obj.from.ch);
@@ -2560,6 +2561,7 @@ EasyMDE.prototype.render = function (el) {
                         });
                         if (/#/.test(endText)) {
                             oldText = obj.text[r] + endText;
+                            oldText = oldText.replace(/#\s+#/, '##');
                             newText = headingCheckRow(oldText, cm);
                             if (oldText !== newText) { // A modification has been made
                                 obj.text[r] = newText.replace(endText, '');
@@ -2594,6 +2596,7 @@ EasyMDE.prototype.render = function (el) {
                     ch: obj.to.ch + 8,
                 });
                 oldText = startText + endText;
+                oldText = oldText.replace(/#\s+#/, '##');
                 if (/#/.test(oldText)) {
                     newText = headingCheckRow(oldText, cm);
                     if (oldText !== newText) { // A modification has been made
