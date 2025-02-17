@@ -50,14 +50,14 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-nodejs-${{ matrix.node-version }}
           path: cypress/screenshots
           retention-days: 7
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos-nodejs-${{ matrix.node-version }}
           path: cypress/videos
           retention-days: 7
 
