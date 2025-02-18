@@ -34,6 +34,30 @@ EasyMDE.toggleItalic = (editor: EasyMDE) => {
     console.log('SomeButtonOverride');
 };
 
+console.log(editor.options.blockStyles.bold);
+console.log(editor.options.insertTexts.horizontalRule[0]);
+console.log(editor.options.minHeight);
+console.log(editor.options.parsingConfig.allowAtxHeaderWithoutSpace);
+console.log(editor.options.previewClass);
+console.log(editor.options.previewRender('Hello', document.body));
+console.log(editor.options.shortcuts.cleanBlock);
+console.log(editor.options.status);
+console.log(editor.options.toolbar);
+
+console.log(editor.options.uploadImage);
+console.log(editor.options.imageMaxSize);
+console.log(editor.options.imageAccept);
+console.log(editor.options.imagePathAbsolute);
+console.log(editor.options.imageCSRFName);
+console.log(editor.options.imageCSRFHeader);
+console.log(editor.options.imageTexts.sbInit);
+console.log(editor.options.errorMessages.fileTooLarge);
+console.log(editor.options.errorCallback('Something went oops!'));
+
+console.log(editor.options.promptTexts.image);
+
+console.log(editor.options.direction);
+
 const editor2 = new EasyMDE({
     autoDownloadFontAwesome: undefined,
     previewClass: ['my-custom-class', 'some-other-class'],
