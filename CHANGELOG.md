@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 <!-- ## [Unreleased] -->
+## [2.19.0] - 2025-02-18
+### Added
+- `updateStatusBar` type to typescript definitions (Thanks to [@borodean], [#519]).
+- `"upload-image"` option to the `ToolbarButton` typescript definitions (Thanks to [@borodean], [#520]).
+- `imageInputName` option to set a custom "name" attribute for the image input (Thanks to [@robinvandernoord], [#573]).
+
+### Fixed
+- Relative image paths using the stylesheet as the source instead of the document (Thanks to [@p1gp1g], [#591]).
+- Excessive memory usage with the `previewImagesInEditor` option (Thanks to [@p1gp1g], [#592]).
+- Parentheses in the alt text of images causing the image not to load then using `previewImagesInEditor` (Thanks to [@mayraamaral], [#608]).
+
 ## [2.18.0] - 2022-09-20
 ### Added
 - `toolbarButtonClassPrefix` option to resolve conflicts with Bootstrap classes ([#493]).
@@ -278,6 +289,12 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [#9]: https://github.com/Ionaru/easy-markdown-editor/issues/9
 
 <!-- Linked PRs -->
+[#608]: https://github.com/Ionaru/easy-markdown-editor/pull/608
+[#592]: https://github.com/Ionaru/easy-markdown-editor/pull/592
+[#591]: https://github.com/Ionaru/easy-markdown-editor/pull/591
+[#573]: https://github.com/Ionaru/easy-markdown-editor/pull/573
+[#520]: https://github.com/Ionaru/easy-markdown-editor/pull/520
+[#519]: https://github.com/Ionaru/easy-markdown-editor/pull/519
 [#492]: https://github.com/Ionaru/easy-markdown-editor/pull/492
 [#488]: https://github.com/Ionaru/easy-markdown-editor/pull/488
 [#486]: https://github.com/Ionaru/easy-markdown-editor/pull/486
@@ -417,9 +434,14 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@hlf20010508]: https://github.com/hlf20010508
 [@ZsgsDesign]: https://github.com/ZsgsDesign
 [@sghoweri]: https://github.com/sghoweri
+[@borodean]: https://github.com/borodean
+[@robinvandernoord]: https://github.com/robinvandernoord
+[@p1gp1g]: https://github.com/p1gp1g
+[@mayraamaral]: https://github.com/mayraamaral
 
 <!-- Linked versions -->
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.18.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.19.0...HEAD
+[2.19.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.18.0...2.19.0
 [2.18.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.17.0...2.18.0
 [2.17.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...2.17.0
 [2.16.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.0...2.16.1
