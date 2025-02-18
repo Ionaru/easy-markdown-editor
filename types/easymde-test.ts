@@ -82,6 +82,7 @@ const editor2 = new EasyMDE({
                     name: 'link',
                     action: 'https://github.com/Ionaru/easy-markdown-editor',
                     className: 'fa fab fa-github',
+                    text: 'A Custom Link',
                     title: 'A Custom Link',
                     noDisable: true,
                     noMobile: true,
