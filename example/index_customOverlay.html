@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Example / Preview / sideBySideFullscreen : false</title>
+    <link rel="stylesheet" href="../dist/easymde.min.css">
+    <script src="../dist/easymde.min.js"></script>
+    <style type="text/css">.cm-a-char { color: #00F !important; }</style>
+</head>
+
+<body>
+    <textarea># Good day to you Ionaru !
+
+Every  "A" character will be colored in blue !
+
+## Awesome Markdown Editor
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut pretium lorem. Proin fringilla eros sit amet ex aliquet interdum. Sed fermentum facilisis neque at commodo. Sed ornare dictum nisl quis bibendum. Sed venenatis eros turpis, imperdiet luctus mauris efficitur ut. Nunc eget orci orci. Nunc eu dolor tincidunt, porta odio vitae, rhoncus elit. Suspendisse at nisl dui. Aenean purus magna, convallis sit amet varius in, tincidunt eu libero.
+
+## Super Action Letters
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris ut pretium lorem. Proin fringilla eros sit amet ex aliquet interdum. Sed fermentum facilisis neque at commodo. Sed ornare dictum nisl quis bibendum. Sed venenatis eros turpis, imperdiet luctus mauris efficitur ut. Nunc eget orci orci. Nunc eu dolor tincidunt, porta odio vitae, rhoncus elit. Suspendisse at nisl dui. Aenean purus magna, convallis sit amet varius in, tincidunt eu libero.</textarea>
+    <script>
+        const easyMDE = new EasyMDE({
+            sideBySideFullscreen: false,
+            overlayMode: {
+                mode: {
+                    name: 'test-mode',
+                    token: function(stream) {
+                        if ('A' === (stream.peek() || '')) {
+                            stream.next();
+                            return 'a-char';
+                        }
+                        stream.next();
+                        return null;
+                    }
+                }
+            }
+        });
+        easyMDE.codemirror.focus();
+        easyMDE.codemirror.doc.replaceRange(' ', {line: 2, ch: 47}, {line: 2, ch: 48});
+        easyMDE.codemirror.doc.setCursor({line: 2, ch: 48});
+    </script>
+</body>
+
+</html>
