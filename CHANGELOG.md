@@ -4,7 +4,10 @@ All notable changes to EasyMDE will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<!-- ## [Unreleased] -->
+## [Unreleased]
+### Added
+- Support for `marked` extensions (Thanks to [@codingjoe], [#611], [#514]).
+
 ## [2.19.0] - 2025-02-18
 ### Added
 - `updateStatusBar` type to typescript definitions (Thanks to [@borodean], [#519]).
@@ -268,6 +271,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 - Cursor not always showing in "text" mode over the edit field
 
 <!-- Linked issues -->
+[#611]: https://github.com/Ionaru/easy-markdown-editor/issues/611
+[#514]: https://github.com/Ionaru/easy-markdown-editor/issues/514
 [#493]: https://github.com/Ionaru/easy-markdown-editor/issues/493
 [#478]: https://github.com/Ionaru/easy-markdown-editor/issues/478
 [#399]: https://github.com/Ionaru/easy-markdown-editor/issues/399
@@ -438,6 +443,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@robinvandernoord]: https://github.com/robinvandernoord
 [@p1gp1g]: https://github.com/p1gp1g
 [@mayraamaral]: https://github.com/mayraamaral
+[@codingjoe]: https://github.com/codingjoe
 
 <!-- Linked versions -->
 [Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.19.0...HEAD

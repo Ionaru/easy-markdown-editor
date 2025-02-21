@@ -2045,7 +2045,7 @@ EasyMDE.prototype.markdown = function (text) {
         }
 
         // Set options
-        marked.setOptions(markedOptions);
+        marked.use(markedOptions);
 
         // Convert the markdown to HTML
         var htmlText = marked.parse(text);
