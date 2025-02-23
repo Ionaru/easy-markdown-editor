@@ -262,6 +262,13 @@ const editor = new EasyMDE({
     previewClass: "my-custom-styling",
     previewClass: ["my-custom-styling", "more-custom-styling"],
 
+    extractYaml: (yaml) => {
+         // Extracts yaml from Markdown, use a third party parser to convert to json
+         // ----
+         // Key: value
+         // ---
+        console.log(yaml);
+    }
     previewRender: (plainText) => customMarkdownParser(plainText), // Returns HTML from a custom parser
     previewRender: (plainText, preview) => { // Async method
         setTimeout(() => {
