@@ -209,7 +209,7 @@ function createToolbarButton(options, enableActions, enableTooltips, shortcuts, 
     }
 
     if (options.title && enableTooltips) {
-        el.title = createTooltip(options.title, options.action, shortcuts);
+        el.title = createTooltip(options.title, options.action, shortcuts, parent.options.translations, parent.options.language);
 
         if (isMac) {
             el.title = el.title.replace('Ctrl', '⌘');
@@ -289,9 +289,16 @@ function createSep() {
     return el;
 }
 
-function createTooltip(title, action, shortcuts) {
+var translate = function (key, translations, language) {
+    if (translations && language && translations[language] && translations[language][key]) {
+        return translations[language][key];
+    }
+    return key;
+};
+
+function createTooltip(title, action, shortcuts, translations, language) {
     var actionName;
-    var tooltip = title;
+    var tooltip = translate(title, translations, language);
 
     if (action) {
         actionName = getBindingName(action);
