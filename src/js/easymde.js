@@ -878,11 +878,18 @@ function afterImageUploaded(editor, url) {
     var cm = editor.codemirror;
     var stat = getState(cm);
     var options = editor.options;
-    var imageName = url.substr(url.lastIndexOf('/') + 1);
-    var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
+    var imageName = '';
+    var isImage = false;
+    if (url.startsWith('data:')) {
+        isImage = !!url.match(/^data:\s*image\/(\w+);/);
+    } else {
+        imageName = url.substr(url.lastIndexOf('/') + 1);
+        var ext = imageName.substring(imageName.lastIndexOf('.') + 1).replace(/\?.*$/, '').toLowerCase();
+        isImage = ['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(ext);
+    }
 
     // Check if media is an image
-    if (['png', 'jpg', 'jpeg', 'gif', 'svg', 'apng', 'avif', 'webp'].includes(ext)) {
+    if (isImage) {
         _replaceSelection(cm, stat.image, options.insertTexts.uploadedImage, url);
     } else {
         var text_link = options.insertTexts.link;
@@ -2397,6 +2404,7 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     var self = this;
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
+    imageInput.value = ''; // Workaround so the 'change' event gets triggered even if the same file is selected repeatedly.
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         if (self.options.imageUploadFunction) {
