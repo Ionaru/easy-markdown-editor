@@ -1,7 +1,8 @@
 # EasyMDE - Markdown Editor
 
 [![npm version](https://img.shields.io/npm/v/easymde.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde)
-[![npm version](https://img.shields.io/npm/v/easymde/next.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/next)
+[![npm @next version](https://img.shields.io/npm/v/easymde/next.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/next)
+[![npm @v3-alpha version](https://img.shields.io/npm/v/easymde/v3-alpha.svg?style=for-the-badge)](https://www.npmjs.com/package/easymde/v/v3-alpha)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/ionaru/easy-markdown-editor/cd.yaml?branch=master&style=for-the-badge)](https://github.com/Ionaru/easy-markdown-editor/actions?query=branch%3Amaster)
 
 > This repository is a fork of

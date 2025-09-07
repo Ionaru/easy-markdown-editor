@@ -101,7 +101,7 @@ declare namespace EasyMDE {
     interface RenderingOptions {
         codeSyntaxHighlighting?: boolean;
         hljs?: any;
-        markedOptions?: marked.MarkedOptions;
+        markedOptions?: marked.MarkedExtension;
         sanitizerFunction?: (html: string) => string;
         singleLineBreaks?: boolean;
     }

@@ -18,11 +18,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: current
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: npm audit --omit=dev
 
@@ -36,28 +36,28 @@ jobs:
         node-version: [ '14', '16', '18' ]
 
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: npm ci
 
       - name: Test
         run: npm test
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: cypress-screenshots
+          name: cypress-screenshots-nodejs-${{ matrix.node-version }}
           path: cypress/screenshots
           retention-days: 7
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: cypress-videos
+          name: cypress-videos-nodejs-${{ matrix.node-version }}
           path: cypress/videos
           retention-days: 7
 
@@ -68,11 +68,11 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
           node-version: current
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - run: npm ci
 
