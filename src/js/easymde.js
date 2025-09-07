@@ -994,7 +994,7 @@ function toggleSideBySide(editor) {
     }
 
     var sideBySideRenderingFunction = function () {
-        var newValue = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
         if (newValue != null) {
             preview.innerHTML = newValue;
         }
@@ -1005,7 +1005,7 @@ function toggleSideBySide(editor) {
     }
 
     if (useSideBySideListener) {
-        var newValue = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
         if (newValue != null) {
             preview.innerHTML = newValue;
         }
@@ -1074,7 +1074,7 @@ function togglePreview(editor) {
         }
     }
 
-    var preview_result = editor.options.previewRender(editor.value(), preview);
+    var preview_result = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
     if (preview_result !== null) {
         preview.innerHTML = preview_result;
     }
@@ -1821,21 +1821,51 @@ function EasyMDE(options) {
         }
     }
 
-
-    // Add default preview rendering function
-    if (!options.previewRender) {
-        options.previewRender = function (plainText) {
-            // Note: "this" refers to the options object
-            return this.parent.markdown(plainText);
+    // Generic mardown text render filter utility
+    options.markdownFilters = (function(){
+        var registered = {},
+            queue = [];
+        return {
+            add_filter: function(name, fnc) {
+                if (typeof fnc === 'function') {
+                    registered[name] = fnc;
+                    queue.push(name);
+                    return true;
+                }
+                return false;
+            },
+            apply_filter: function(name, text) {
+                if (registered[name] && typeof registered[name] === 'function') {
+                    return registered[name].call(this, text);
+                }
+                return text;
+            },
+            apply_filters: function(text) {
+                if (!queue || !queue.length) {
+                    return text;
+                }
+                for (var q=0,fncs=registered||[],max=queue.length; q<max; q++) {
+                    var idx = queue[q];
+                    if (fncs[idx] && typeof fncs[idx] === 'function') {
+                        text = fncs[idx].call(this, text);
+                    }
+                }
+                return text;
+            },
         };
-    }
+    })();
+    // The markdown module uses tabs as indent. Switch to tabs for the preview to render properly
+    options.markdownFilters.add_filter( 'tab2space', function(text) {
+        var indents = text.match(/\n\s+/g) || [];
+        for (var i=0,tmp; i<indents.length; i++) {
+            tmp = indents[i].replace(' ', '\t');
+            text = text.replace(indents[i], tmp);
+        }
+        return text;
+    });
 
-
-    // Set default options for parsing config
-    options.parsingConfig = extend({
-        highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
-    }, options.parsingConfig || {});
-    if ( options.parsingConfig.headingLevels ) {
+    // Selective headings levels
+    if (options.parsingConfig && options.parsingConfig.headingLevels) {
         var headingLevels = [];
         for ( var l = 0, requestedLevels = options.parsingConfig.headingLevels; l < requestedLevels.length; l++ ) {
             requestedLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
@@ -1848,7 +1878,55 @@ function EasyMDE(options) {
             headingLevels[ l ] = requestedLevels[ l ];
         }
         options.parsingConfig.headingLevels = headingLevels.sort();
+        if (options.parsingConfig.headingLevels.length > 0 && !options.overlayMode) {
+            options.overlayMode = {
+                mode: {
+                    name: 'escsharp-mode',
+                    token: function(stream) {
+                        var ch = stream.peek();
+                        if (ch === '\\') {
+                            stream.next();
+                            ch = stream.peek();
+                            if (ch === '#') {
+                                stream.next();
+                                return 'sharp-escaped';
+                            }
+                        }
+                        stream.next();
+                        return null;
+                    },
+                },
+                combine: true,
+            };
+        }
+        options.markdownFilters.add_filter('sharp_list', function(text){
+            // Quick trick to trigger order list rendering
+            return text.replace(/\\#([^#]{1})/g, '1.$1');
+        });
     }
+
+    // Add default preview rendering function
+    if (!options.previewRender) {
+        if (options.previewRenderedMarkdown) {
+            options.previewRender = function (plainText, preview) {
+                plainText = options.markdownFilters.apply_filters(plainText);
+                return options.previewRenderedMarkdown(this.parent.markdown(plainText), preview);
+            };
+        }
+        else {
+            options.previewRender = function (plainText) {
+                // Note: "this" refers to the options object
+                plainText = options.markdownFilters.apply_filters(plainText);
+                return this.parent.markdown(plainText);
+            };
+        }
+    }
+
+
+    // Set default options for parsing config
+    options.parsingConfig = extend({
+        highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
+    }, options.parsingConfig || {});
 
     // Merging the insertTexts, with the given options
     options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
@@ -2149,9 +2227,14 @@ EasyMDE.prototype.render = function (el) {
         CodeMirror.defineMode('overlay-mode', function (config) {
             return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
         });
-
         mode = 'overlay-mode';
         backdrop = options.parsingConfig;
+        backdrop.name = 'gfm';
+        backdrop.gitHubSpice = false;
+    } else if (options.spellChecker !== false) {
+        mode = 'spell-checker';
+        backdrop = options.parsingConfig;
+        backdrop.name = 'gfm';
         backdrop.gitHubSpice = false;
     } else {
         mode = options.parsingConfig;
@@ -2159,11 +2242,6 @@ EasyMDE.prototype.render = function (el) {
         mode.gitHubSpice = false;
     }
     if (options.spellChecker !== false) {
-        mode = 'spell-checker';
-        backdrop = options.parsingConfig;
-        backdrop.name = 'gfm';
-        backdrop.gitHubSpice = false;
-
         if (typeof options.spellChecker === 'function') {
             options.spellChecker({
                 codeMirrorInstance: CodeMirror,
@@ -2216,7 +2294,7 @@ EasyMDE.prototype.render = function (el) {
             cm.save();
         });
     }
-    if (options.parsingConfig.headingLevels) {
+    if (options.parsingConfig.headingLevels && options.parsingConfig.headingLevels.length) {
         // If the *headingLevels* argument is present, set our custom modifiers
         var headingMakeBigger = function(heading, from, to) {
             heading = heading || '';
@@ -2266,7 +2344,7 @@ EasyMDE.prototype.render = function (el) {
             if (!currHeading || !allowedHeadingLevels) {
                 return false;
             }
-            currHeading = currHeading.trim();
+            // currHeading = currHeading.trim();
             if (!/^#+/.test(currHeading)){
                 return false;
             }
@@ -2318,7 +2396,21 @@ EasyMDE.prototype.render = function (el) {
                 line: obj.to.line,
                 ch: obj.to.ch,
             });
-            var myLevels = headingNeedUpdate(currHeading, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
+            var allowedHeadingLevels = cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels;
+            if (allowedHeadingLevels.indexOf('1') === -1 && /input/.test(obj.origin) && obj.from.line === obj.to.line && obj.text.length === 1) {
+                if (/^\s*#$/.test(currHeading) && obj.text[0] === ' ') {
+                    obj.cancel();
+                    cm.doc.replaceRange(currHeading.replace('#','\\# '), {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    return false;
+                }
+            }
+            var myLevels = headingNeedUpdate(currHeading, allowedHeadingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return false;
             }
@@ -2350,6 +2442,63 @@ EasyMDE.prototype.render = function (el) {
             return true;
         };
         var headingCheckExisting = function(cm, obj) {
+            var myText,
+                allowedHeadingLevels = cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels;
+            if (allowedHeadingLevels.indexOf('1') === -1 && obj.from.line === obj.to.line && obj.text.length === 1) {
+                myText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.to.line,
+                    ch: obj.to.ch,
+                });
+                if (/input/.test(obj.origin || '') ) {
+                    if (/^\s+$/.test(myText) && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange(myText+'\\#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                    else if (myText === '' && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange('\\#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                    else if (/^\s*\\#$/.test(myText) && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange(myText.replace('\\', '') + '#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                }
+                else if (/delete/.test(obj.origin || '') && /^\s*\\#$/.test(myText) && obj.text[0] === '') {
+                    obj.cancel();
+                    cm.doc.replaceRange(myText.replace('\\#',''), {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    return false;
+                }
+            }
             var myChar = cm.getRange({
                 line: obj.from.line,
                 ch: obj.from.ch,
@@ -2358,29 +2507,29 @@ EasyMDE.prototype.render = function (el) {
                 ch: obj.to.ch + 1,
             });
             if (!/\s|#/.test(myChar || '')) {
-                // Don't bother to go further if no headling were detected
+                // Don't bother to go further if no heading were detected
                 return false;
             }
             if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
-                var myLevels, myText;
+                var myLevels;
+                myText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.to.line,
+                    ch: 8,
+                });
                 if (/input/.test(obj.origin) && obj.text[0] === '#') {
                     if (!/[^\s#]/.test(myText)) {
                         // Newly created, skip the check for now
                         return false;
                     }
-                    myText = cm.getRange({
-                        line: obj.from.line,
-                        ch: 0,
-                    }, {
-                        line: obj.to.line,
-                        ch: 8,
-                    });
                     if (!/#/.test(myText)) {
                         myText = '# ' + myText.trim(); // Wasn't heading
                     } else {
                         myText = myText.replace(/#/, '##'); // Increment one sharp sign
                     }
-                    myLevels = headingNeedUpdate(myText, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
+                    myLevels = headingNeedUpdate(myText, allowedHeadingLevels);
                     if (!myLevels) {
                         return false;
                     }
@@ -2439,7 +2588,7 @@ EasyMDE.prototype.render = function (el) {
                             ch: obj.to.ch + 8,
                         };
                     }
-                    myLevels = headingNeedUpdate(myText, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels, searchDir);
+                    myLevels = headingNeedUpdate(myText, allowedHeadingLevels, searchDir);
                     if (!myLevels || !myLevels.diff) {
                         return false;
                     }
@@ -2471,7 +2620,7 @@ EasyMDE.prototype.render = function (el) {
             if (!row || !/^#/.test(row.trim())) {
                 return row;
             }
-            row = row.replace(/^(\s*)#/, '#');
+            // row = row.replace(/^(\s*)#/, '#');
             var myLevels = headingNeedUpdate(row, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
             if (!myLevels || !myLevels.from || !myLevels.to) {
                 return row;
@@ -2499,11 +2648,13 @@ EasyMDE.prototype.render = function (el) {
                     // As we are sure the cursor was not inside a range containing a sharp sign
                     return false;
                 }
+                /*
                 if (obj.from.ch === 0 && obj.to.ch === 0 && /\s/.test(obj.text[0] || '')) {
                     // (Force) Prevent space at the beginning of the line
                     obj.cancel();
                     return false;
                 }
+                */
                 if (/input/.test(obj.origin)) { // Something was added
                     if (obj.text.length === 1 && obj.text[0].length === 1) {
                         // Only one character on one line is being updated
@@ -2619,6 +2770,71 @@ EasyMDE.prototype.render = function (el) {
                 }
             }
         });
+        if (options.parsingConfig.headingLevels.indexOf(1) === -1) {
+            // Modify the cursor behavior to avoid being in the middle of \# (|\# {->} \#| or \#| {<-} |\#)
+            // Thanks to https://stackoverflow.com/questions/32622128/codemirror-how-to-read-editor-text-before-or-after-cursor-position
+            this.codemirror.on('cursorActivity', function(cm) {
+                var currCursor = cm.doc.getCursor(),
+                    line = currCursor.line,
+                    ch = currCursor.ch,
+                    cursorString = cm.doc.getLine(line).substr(Math.max(ch-1,0),2);
+                if (cursorString === '\\#' && currCursor.sticky) {
+                    if (currCursor.sticky === 'after') {
+                        cm.focus();
+                        cm.doc.setCursor({
+                            line: line,
+                            ch: Math.max(ch-1,0),
+                        });
+                    }
+                    else if (currCursor.sticky === 'before') {
+                        cm.focus();
+                        cm.doc.setCursor({
+                            line: line,
+                            ch: ch+1,
+                        });
+                    }
+                }
+            });
+            // Make the \# sharp combo behaves as a list
+            this.codemirror.on('keyHandled', function(cm, kn, ev) {
+                if (!kn || kn !== 'Enter' || !ev) {
+                    return true;
+                }
+                var currCursor = cm.doc.getCursor(),
+                    prevLine = currCursor.line - 1;
+                if (prevLine < 0) {
+                    return true;
+                }
+                var prevText = cm.getRange({
+                    line: prevLine,
+                    ch: 0,
+                }, {
+                    line: prevLine,
+                    ch: 20,
+                });
+                if (/^[ ]*\\#[ ]*/.test(prevText)) {
+                    var newTextLine = prevText.match(/^[ ]*\\#[ ]*/)[0];
+                    cm.doc.replaceRange(newTextLine, {
+                        line: currCursor.line,
+                        ch: 0,
+                    }, {
+                        line: currCursor.line,
+                        ch: newTextLine.length,
+                    });
+                } else if (/^ +/.test(prevText)) {
+                    var spaces = prevText.match(/ +/);
+                    if (spaces.length) {
+                        cm.doc.replaceRange(' '.repeat(spaces.length), {
+                            line: currCursor.line,
+                            ch: 0,
+                        }, {
+                            line: currCursor.line,
+                            ch: 0 + spaces.length,
+                        });
+                    }
+                }
+            });
+        }
     }
 
     this.gui = {};
@@ -3298,6 +3514,7 @@ EasyMDE.prototype.value = function (val) {
         if (this.isPreviewActive()) {
             var wrapper = cm.getWrapperElement();
             var preview = wrapper.lastChild;
+            val = this.options.markdownFilters.apply_filters(val);
             var preview_result = this.options.previewRender(val, preview);
             if (preview_result !== null) {
                 preview.innerHTML = preview_result;
