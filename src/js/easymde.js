@@ -1512,58 +1512,49 @@ var toolbarBuiltInButtons = {
     'bold': {
         name: 'bold',
         action: toggleBold,
-        className: iconClassMap['bold'],
         title: 'Bold',
         default: true,
     },
     'italic': {
         name: 'italic',
         action: toggleItalic,
-        className: iconClassMap['italic'],
         title: 'Italic',
         default: true,
     },
     'strikethrough': {
         name: 'strikethrough',
         action: toggleStrikethrough,
-        className: iconClassMap['strikethrough'],
         title: 'Strikethrough',
     },
     'heading': {
         name: 'heading',
         action: toggleHeadingSmaller,
-        className: iconClassMap['heading'],
         title: 'Heading',
         default: true,
     },
     'heading-smaller': {
         name: 'heading-smaller',
         action: toggleHeadingSmaller,
-        className: iconClassMap['heading-smaller'],
         title: 'Smaller Heading',
     },
     'heading-bigger': {
         name: 'heading-bigger',
         action: toggleHeadingBigger,
-        className: iconClassMap['heading-bigger'],
         title: 'Bigger Heading',
     },
     'heading-1': {
         name: 'heading-1',
         action: toggleHeading1,
-        className: iconClassMap['heading-1'],
         title: 'Big Heading',
     },
     'heading-2': {
         name: 'heading-2',
         action: toggleHeading2,
-        className: iconClassMap['heading-2'],
         title: 'Medium Heading',
     },
     'heading-3': {
         name: 'heading-3',
         action: toggleHeading3,
-        className: iconClassMap['heading-3'],
         title: 'Small Heading',
     },
     'separator-1': {
@@ -1572,27 +1563,23 @@ var toolbarBuiltInButtons = {
     'code': {
         name: 'code',
         action: toggleCodeBlock,
-        className: iconClassMap['code'],
         title: 'Code',
     },
     'quote': {
         name: 'quote',
         action: toggleBlockquote,
-        className: iconClassMap['quote'],
         title: 'Quote',
         default: true,
     },
     'unordered-list': {
         name: 'unordered-list',
         action: toggleUnorderedList,
-        className: iconClassMap['unordered-list'],
         title: 'Generic List',
         default: true,
     },
     'ordered-list': {
         name: 'ordered-list',
         action: toggleOrderedList,
-        className: iconClassMap['ordered-list'],
         title: 'Numbered List',
         default: true,
     },
@@ -1606,7 +1593,6 @@ var toolbarBuiltInButtons = {
     'clean-block': {
         name: 'clean-block',
         action: cleanBlock,
-        className: iconClassMap['clean-block'],
         title: 'Clean block',
     },
     'separator-2': {
@@ -1615,33 +1601,28 @@ var toolbarBuiltInButtons = {
     'link': {
         name: 'link',
         action: drawLink,
-        className: iconClassMap['link'],
         title: 'Create Link',
         default: true,
     },
     'image': {
         name: 'image',
         action: drawImage,
-        className: iconClassMap['image'],
         title: 'Insert Image',
         default: true,
     },
     'upload-image': {
         name: 'upload-image',
         action: drawUploadedImage,
-        className: iconClassMap['upload-image'],
         title: 'Import an image',
     },
     'table': {
         name: 'table',
         action: drawTable,
-        className: iconClassMap['table'],
         title: 'Insert Table',
     },
     'horizontal-rule': {
         name: 'horizontal-rule',
         action: drawHorizontalRule,
-        className: iconClassMap['horizontal-rule'],
         title: 'Insert Horizontal Line',
     },
     'separator-3': {
@@ -1650,7 +1631,6 @@ var toolbarBuiltInButtons = {
     'preview': {
         name: 'preview',
         action: togglePreview,
-        className: iconClassMap['preview'],
         noDisable: true,
         title: 'Toggle Preview',
         default: true,
@@ -1658,7 +1638,6 @@ var toolbarBuiltInButtons = {
     'side-by-side': {
         name: 'side-by-side',
         action: toggleSideBySide,
-        className: iconClassMap['side-by-side'],
         noDisable: true,
         noMobile: true,
         title: 'Toggle Side by Side',
@@ -1667,7 +1646,6 @@ var toolbarBuiltInButtons = {
     'fullscreen': {
         name: 'fullscreen',
         action: toggleFullScreen,
-        className: iconClassMap['fullscreen'],
         noDisable: true,
         noMobile: true,
         title: 'Toggle Fullscreen',
@@ -1679,7 +1657,6 @@ var toolbarBuiltInButtons = {
     'guide': {
         name: 'guide',
         action: 'https://www.markdownguide.org/basic-syntax/',
-        className: iconClassMap['guide'],
         noDisable: true,
         title: 'Markdown Guide',
         default: true,
@@ -1690,14 +1667,12 @@ var toolbarBuiltInButtons = {
     'undo': {
         name: 'undo',
         action: undo,
-        className: iconClassMap['undo'],
         noDisable: true,
         title: 'Undo',
     },
     'redo': {
         name: 'redo',
         action: redo,
-        className: iconClassMap['redo'],
         noDisable: true,
         title: 'Redo',
     },
@@ -2658,7 +2633,14 @@ EasyMDE.prototype.createToolbar = function (items) {
     var i;
     for (i = 0; i < items.length; i++) {
         if (toolbarBuiltInButtons[items[i]] != undefined) {
-            items[i] = toolbarBuiltInButtons[items[i]];
+            var button = toolbarBuiltInButtons[items[i]];
+
+            if (button.className === undefined
+                && this.options.iconClassMap[items[i]] !== undefined) {
+                button.className = this.options.iconClassMap[items[i]];
+            }
+
+            items[i] = button;
         }
     }
 
