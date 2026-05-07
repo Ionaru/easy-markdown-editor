@@ -2907,6 +2907,9 @@ EasyMDE.prototype.value = function (val) {
     }
 };
 
+EasyMDE.prototype.addBinding = function(name, method) {
+    bindings[name] = method;
+};
 
 /**
  * Bind static methods for exports.
