@@ -53,7 +53,9 @@ type ToolbarButton =
     | 'preview'
     | 'side-by-side'
     | 'fullscreen'
-    | 'guide';
+    | 'guide'
+    | 'indent'
+    | 'outdent';
 
 declare namespace EasyMDE {
 
@@ -290,6 +292,8 @@ declare class EasyMDE {
     static toggleFullScreen: (editor: EasyMDE) => void;
     static undo: (editor: EasyMDE) => void;
     static redo: (editor: EasyMDE) => void;
+    static indent: (editor: EasyMDE) => void;
+    static outdent: (editor: EasyMDE) => void;
 }
 
 export as namespace EasyMDE;
