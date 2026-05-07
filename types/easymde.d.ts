@@ -145,6 +145,7 @@ declare namespace EasyMDE {
         name: string;
         action: string | ((editor: EasyMDE) => void);
         className: string;
+        text?: string;
         title: string;
         noDisable?: boolean;
         noMobile?: boolean;
