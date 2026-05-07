@@ -1002,7 +1002,7 @@ function toggleSideBySide(editor) {
     }
 
     var sideBySideRenderingFunction = function () {
-        var newValue = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
         if (newValue != null) {
             preview.innerHTML = newValue;
         }
@@ -1013,7 +1013,7 @@ function toggleSideBySide(editor) {
     }
 
     if (useSideBySideListener) {
-        var newValue = editor.options.previewRender(editor.value(), preview);
+        var newValue = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
         if (newValue != null) {
             preview.innerHTML = newValue;
         }
@@ -1082,7 +1082,7 @@ function togglePreview(editor) {
         }
     }
 
-    var preview_result = editor.options.previewRender(editor.value(), preview);
+    var preview_result = editor.options.previewRender(editor.options.markdownFilters.apply_filters(editor.value()), preview);
     if (preview_result !== null) {
         preview.innerHTML = preview_result;
     }
@@ -1132,6 +1132,13 @@ function _toggleHeading(cm, direction, size) {
 
     var startPoint = cm.getCursor('start');
     var endPoint = cm.getCursor('end');
+    var sharpLevels = cm.options.backdrop ? (cm.options.backdrop.headingLevels || []) : (cm.options.mode ? (cm.options.mode.headingLevels || []) : []),
+        minLevel = sharpLevels.length ? sharpLevels[0] : 1,
+        maxLevel = sharpLevels.length ? sharpLevels[sharpLevels.length-1] : 6;
+    if (size && sharpLevels.length && sharpLevels.indexOf(size) === -1) {
+        cm.focus();
+        return false;
+    }
     for (var i = startPoint.line; i <= endPoint.line; i++) {
         (function (i) {
             var text = cm.getLine(i);
@@ -1140,14 +1147,20 @@ function _toggleHeading(cm, direction, size) {
             if (direction !== undefined) {
                 if (currHeadingLevel <= 0) {
                     if (direction == 'bigger') {
-                        text = '###### ' + text;
+                        text = '#'.repeat(maxLevel) + ' ' + text;
                     } else {
-                        text = '# ' + text;
+                        text = '#'.repeat(minLevel) + ' ' + text;
                     }
-                } else if (currHeadingLevel == 6 && direction == 'smaller') {
-                    text = text.substr(7);
-                } else if (currHeadingLevel == 1 && direction == 'bigger') {
-                    text = text.substr(2);
+                } else if (currHeadingLevel == maxLevel && direction == 'smaller') {
+                    text = text.substr(maxLevel + 1);
+                } else if (currHeadingLevel == minLevel && direction == 'bigger') {
+                    text = text.substr(minLevel + 1);
+                } else if (sharpLevels.length) {
+                    if (direction == 'bigger') {
+                        text = '#'.repeat(sharpLevels[sharpLevels.indexOf(currHeadingLevel)-1]) + text.replace(/^[#]+/, '' );
+                    } else {
+                        text = '#'.repeat(sharpLevels[sharpLevels.indexOf(currHeadingLevel)+1]) + text.replace(/^[#]+/, '' );
+                    }
                 } else {
                     if (direction == 'bigger') {
                         text = text.substr(1);
@@ -1837,13 +1850,105 @@ function EasyMDE(options) {
         }
     }
 
+    // Generic mardown text render filter utility
+    options.markdownFilters = (function(){
+        var registered = {},
+            queue = [];
+        return {
+            add_filter: function(name, fnc) {
+                if (typeof fnc === 'function') {
+                    registered[name] = fnc;
+                    queue.push(name);
+                    return true;
+                }
+                return false;
+            },
+            apply_filter: function(name, text) {
+                if (registered[name] && typeof registered[name] === 'function') {
+                    return registered[name].call(this, text);
+                }
+                return text;
+            },
+            apply_filters: function(text) {
+                if (!queue || !queue.length) {
+                    return text;
+                }
+                for (var q=0,fncs=registered||[],max=queue.length; q<max; q++) {
+                    var idx = queue[q];
+                    if (fncs[idx] && typeof fncs[idx] === 'function') {
+                        text = fncs[idx].call(this, text);
+                    }
+                }
+                return text;
+            },
+        };
+    })();
+    // The markdown module uses tabs as indent. Switch to tabs for the preview to render properly
+    options.markdownFilters.add_filter( 'tab2space', function(text) {
+        var indents = text.match(/\n\s+/g) || [];
+        for (var i=0,tmp; i<indents.length; i++) {
+            tmp = indents[i].replace(' ', '\t');
+            text = text.replace(indents[i], tmp);
+        }
+        return text;
+    });
+
+    // Selective headings levels
+    if (options.parsingConfig && options.parsingConfig.headingLevels) {
+        var headingLevels = [];
+        for ( var l = 0, requestedLevels = options.parsingConfig.headingLevels; l < requestedLevels.length; l++ ) {
+            requestedLevels[ l ] = parseInt( requestedLevels[ l ], 10 );
+            if ( isNaN( requestedLevels[ l ] ) || headingLevels.indexOf( requestedLevels[ l ] ) !== -1 ) {
+                continue;
+            }
+            if ( requestedLevels[ l ] < 1 && requestedLevels[ l ] > 6 ) {
+                continue;
+            }
+            headingLevels[ l ] = requestedLevels[ l ];
+        }
+        options.parsingConfig.headingLevels = headingLevels.sort();
+        if (options.parsingConfig.headingLevels.length > 0 && !options.overlayMode) {
+            options.overlayMode = {
+                mode: {
+                    name: 'escsharp-mode',
+                    token: function(stream) {
+                        var ch = stream.peek();
+                        if (ch === '\\') {
+                            stream.next();
+                            ch = stream.peek();
+                            if (ch === '#') {
+                                stream.next();
+                                return 'sharp-escaped';
+                            }
+                        }
+                        stream.next();
+                        return null;
+                    },
+                },
+                combine: true,
+            };
+        }
+        options.markdownFilters.add_filter('sharp_list', function(text){
+            // Quick trick to trigger order list rendering
+            return text.replace(/\\#([^#]{1})/g, '1.$1');
+        });
+    }
 
     // Add default preview rendering function
     if (!options.previewRender) {
-        options.previewRender = function (plainText) {
-            // Note: "this" refers to the options object
-            return this.parent.markdown(plainText);
-        };
+        if (options.previewRenderedMarkdown) {
+            options.previewRender = function (plainText, preview) {
+                plainText = options.markdownFilters.apply_filters(plainText);
+                return options.previewRenderedMarkdown(this.parent.markdown(plainText), preview);
+            };
+        }
+        else {
+            options.previewRender = function (plainText) {
+                // Note: "this" refers to the options object
+                plainText = options.markdownFilters.apply_filters(plainText);
+                return this.parent.markdown(plainText);
+            };
+        }
     }
 
 
@@ -1851,7 +1956,6 @@ function EasyMDE(options) {
     options.parsingConfig = extend({
         highlightFormatting: true, // needed for toggleCodeBlock to detect types of code
     }, options.parsingConfig || {});
-
 
     // Merging the insertTexts, with the given options
     options.insertTexts = extend({}, insertTexts, options.insertTexts || {});
@@ -2152,9 +2256,14 @@ EasyMDE.prototype.render = function (el) {
         CodeMirror.defineMode('overlay-mode', function (config) {
             return CodeMirror.overlayMode(CodeMirror.getMode(config, options.spellChecker !== false ? 'spell-checker' : 'gfm'), options.overlayMode.mode, options.overlayMode.combine);
         });
-
         mode = 'overlay-mode';
         backdrop = options.parsingConfig;
+        backdrop.name = 'gfm';
+        backdrop.gitHubSpice = false;
+    } else if (options.spellChecker !== false) {
+        mode = 'spell-checker';
+        backdrop = options.parsingConfig;
+        backdrop.name = 'gfm';
         backdrop.gitHubSpice = false;
     } else {
         mode = options.parsingConfig;
@@ -2162,11 +2271,6 @@ EasyMDE.prototype.render = function (el) {
         mode.gitHubSpice = false;
     }
     if (options.spellChecker !== false) {
-        mode = 'spell-checker';
-        backdrop = options.parsingConfig;
-        backdrop.name = 'gfm';
-        backdrop.gitHubSpice = false;
-
         if (typeof options.spellChecker === 'function') {
             options.spellChecker({
                 codeMirrorInstance: CodeMirror,
@@ -2218,6 +2322,548 @@ EasyMDE.prototype.render = function (el) {
         cm.on('change', function () {
             cm.save();
         });
+    }
+    if (options.parsingConfig.headingLevels && options.parsingConfig.headingLevels.length) {
+        // If the *headingLevels* argument is present, set our custom modifiers
+        var headingMakeBigger = function(heading, from, to) {
+            heading = heading || '';
+            if (!from || !to || from >= to) {
+                return '';
+            }
+            var level = '';
+            if (!heading.length) {
+                while (from < to) {
+                    level += '#';
+                    from++;
+                }
+                level += ' ';
+                return level;
+            } else {
+                while (to > 0) {
+                    level += '#';
+                    to--;
+                }
+                level += ' ';
+                return /#/.test(heading) ? heading.replace(/^[#]+\s*/, level) : level;
+            }
+        };
+        var headingMakeSmaller = function(heading, from, to) {
+            heading = heading || '';
+            if (!from || !to || from <= to) {
+                return '';
+            }
+            var level = '';
+            if (!heading.length) {
+                while (from > to) {
+                    level += '#';
+                    from--;
+                }
+                level += ' ';
+                return level;
+            } else {
+                while (to > 0) {
+                    level += '#';
+                    to--;
+                }
+                level += ' ';
+                return /#/.test(heading) ? heading.replace(/^[#]+\s*/, level) : level;
+            }
+        };
+        var headingNeedUpdate = function(currHeading, allowedHeadingLevels, levelSearchDir) {
+            if (!currHeading || !allowedHeadingLevels) {
+                return false;
+            }
+            // currHeading = currHeading.trim();
+            if (!/^#+/.test(currHeading)){
+                return false;
+            }
+            var currHeadingLevel = (currHeading.match(/^([#]+)/g) || [''])[0].length;
+            if (allowedHeadingLevels.indexOf(currHeadingLevel) !== -1) {
+                return false;
+            }
+            levelSearchDir = levelSearchDir || 'asc';
+            var newHeadingLevel = -1, n = 0;
+            if (levelSearchDir === 'asc') {
+                while (n < allowedHeadingLevels.length) {
+                    if (allowedHeadingLevels[n] > currHeadingLevel) {
+                        newHeadingLevel = allowedHeadingLevels[n];
+                        break;
+                    }
+                    n++;
+                }
+            }
+            if (newHeadingLevel < 0) {
+                n = allowedHeadingLevels.length - 1;
+                while (n > -1) {
+                    if (allowedHeadingLevels[n] < currHeadingLevel) {
+                        newHeadingLevel = allowedHeadingLevels[n];
+                        break;
+                    }
+                    n--;
+                }
+                if (levelSearchDir === 'dsc') {
+                    currHeadingLevel += 1;
+                    if (newHeadingLevel < 0) {
+                        newHeadingLevel = 0;
+                    }
+                }
+            }
+            if (newHeadingLevel < 0 || newHeadingLevel === currHeadingLevel) {
+                return false;
+            }
+            return {
+                from: currHeadingLevel,
+                to: newHeadingLevel,
+                diff: Math.abs(newHeadingLevel - currHeadingLevel),
+            };
+        };
+        var headingCheckNew = function(cm, obj) {
+            var currHeading = cm.getRange({
+                line: obj.from.line,
+                ch: 0,
+            }, {
+                line: obj.to.line,
+                ch: obj.to.ch,
+            });
+            var allowedHeadingLevels = cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels;
+            if (allowedHeadingLevels.indexOf('1') === -1 && /input/.test(obj.origin) && obj.from.line === obj.to.line && obj.text.length === 1) {
+                if (/^\s*#$/.test(currHeading) && obj.text[0] === ' ') {
+                    obj.cancel();
+                    cm.doc.replaceRange(currHeading.replace('#','\\# '), {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    return false;
+                }
+            }
+            var myLevels = headingNeedUpdate(currHeading, allowedHeadingLevels);
+            if (!myLevels || !myLevels.from || !myLevels.to) {
+                return false;
+            }
+            if (obj.from.line === obj.to.line) {
+                // Most simple case when a modification has occured on a single line
+                if (myLevels.to > myLevels.from) {
+                    // Current level is forbidden so we jump to the closest upper level allowed
+                    // We only need to reset the sharp numbers with the appropriate value before the modification is applied
+                    obj.text[0] = headingMakeBigger('', myLevels.from, myLevels.to);
+                } else {
+                    // The current level is forbidden and we jump to the closest lower level available
+                    // A bit more is needed: we have to cancel the requested update and trigger a replacement with the existing sharp signs
+                    obj.cancel();
+                    var newHeading = '';
+                    while (myLevels.to > 0) {
+                        newHeading += '#';
+                        myLevels.to--;
+                    }
+                    newHeading += ' ';
+                    cm.doc.replaceRange(newHeading, {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    }, currHeading ); // 4th arguments to keep a trace in the history when possible
+                }
+            }
+            return true;
+        };
+        var headingCheckExisting = function(cm, obj) {
+            var myText,
+                allowedHeadingLevels = cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels;
+            if (allowedHeadingLevels.indexOf('1') === -1 && obj.from.line === obj.to.line && obj.text.length === 1) {
+                myText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.to.line,
+                    ch: obj.to.ch,
+                });
+                if (/input/.test(obj.origin || '') ) {
+                    if (/^\s+$/.test(myText) && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange(myText+'\\#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                    else if (myText === '' && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange('\\#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                    else if (/^\s*\\#$/.test(myText) && obj.text[0] === '#') {
+                        obj.cancel();
+                        cm.doc.replaceRange(myText.replace('\\', '') + '#', {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        return false;
+                    }
+                }
+                else if (/delete/.test(obj.origin || '') && /^\s*\\#$/.test(myText) && obj.text[0] === '') {
+                    obj.cancel();
+                    cm.doc.replaceRange(myText.replace('\\#',''), {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    return false;
+                }
+            }
+            var myChar = cm.getRange({
+                line: obj.from.line,
+                ch: obj.from.ch,
+            }, {
+                line: obj.to.line,
+                ch: obj.to.ch + 1,
+            });
+            if (!/\s|#/.test(myChar || '')) {
+                // Don't bother to go further if no heading were detected
+                return false;
+            }
+            if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
+                var myLevels;
+                myText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.to.line,
+                    ch: 8,
+                });
+                if (/input/.test(obj.origin) && obj.text[0] === '#') {
+                    if (!/[^\s#]/.test(myText)) {
+                        // Newly created, skip the check for now
+                        return false;
+                    }
+                    if (!/#/.test(myText)) {
+                        myText = '# ' + myText.trim(); // Wasn't heading
+                    } else {
+                        myText = myText.replace(/#/, '##'); // Increment one sharp sign
+                    }
+                    myLevels = headingNeedUpdate(myText, allowedHeadingLevels);
+                    if (!myLevels) {
+                        return false;
+                    }
+                    if (myLevels.to < myLevels.from) {
+                        obj.cancel();
+                        return false;
+                    }
+                    obj.text[0] = '#';
+                    while (myLevels.from < myLevels.to) {
+                        obj.text[0] += '#';
+                        myLevels.from++;
+                    }
+                    return true;
+                }
+                else if (/delete/.test(obj.origin) && obj.text[0] === '') {
+                    var delChar = cm.getRange({
+                        line: obj.from.line,
+                        ch: obj.from.ch,
+                    }, {
+                        line: obj.to.line,
+                        ch: obj.to.ch,
+                    });
+                    if (!delChar || !delChar.length) {
+                        return false;
+                    }
+                    var searchDir = 'asc', myStart = {
+                        line: obj.from.line,
+                        ch: 0,
+                    }, myEnd;
+                    if (delChar.length === 1) {
+                        myText = cm.getRange({line: obj.from.line, ch: 0}, {line: obj.to.line, ch: 8});
+                        var myTextPart1 = myText.substring(0, obj.from.ch),
+                            myTextPart2 = myText.substring(obj.from.ch + 1),
+                            isPart1Heading = /^#/.test(myTextPart1) ? true : false,
+                            isPart2Heading = /^#/.test(myTextPart2) ? true : false;
+                        if (!isPart1Heading && !isPart2Heading) {
+                            return false;
+                        }
+                        myText = myTextPart1 + myTextPart2;
+                        searchDir = delChar === '#' ? 'dsc' : 'asc';
+                        myEnd = {
+                            line: obj.to.line,
+                            ch: 8,
+                        };
+                    } else {
+                        myText = cm.getRange({
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch + 8,
+                        });
+                        myText = myText.replace(delChar, '');
+                        myEnd = {
+                            line: obj.to.line,
+                            ch: obj.to.ch + 8,
+                        };
+                    }
+                    myLevels = headingNeedUpdate(myText, allowedHeadingLevels, searchDir);
+                    if (!myLevels || !myLevels.diff) {
+                        return false;
+                    }
+                    obj.cancel();
+                    obj.text[0] = '';
+                    if (myLevels.to > 0) {
+                        while (myLevels.to > 0) {
+                            obj.text[0] += '#';
+                            myLevels.to--;
+                        }
+                    }
+                    if (delChar === '#') {
+                        myLevels.from--;
+                    }
+                    var newText = myText.replace(new RegExp('^#' + '{' + myLevels.from + '}'), obj.text[0]);
+                    // Just in case do not trim on both side, only trim the space that could remain next to the cursor
+                    newText = newText.replace(/^\s*/, '');
+                    cm.doc.replaceRange(newText, myStart, myEnd);
+                    // Be gentle and set back the cursor at the appropriate position
+                    cm.doc.setCursor({
+                        line: obj.to.line,
+                        ch: obj.text[0].length ? obj.text[0].length + 1 : 0,
+                    });
+                    return true;
+                }
+            }
+        };
+        var headingCheckRow = function(row, cm) {
+            if (!row || !/^#/.test(row.trim())) {
+                return row;
+            }
+            // row = row.replace(/^(\s*)#/, '#');
+            var myLevels = headingNeedUpdate(row, cm.options.backdrop ? cm.options.backdrop.headingLevels : cm.options.mode.headingLevels);
+            if (!myLevels || !myLevels.from || !myLevels.to) {
+                return row;
+            } else if (myLevels.from < myLevels.to) {
+                return headingMakeBigger(row, myLevels.from, myLevels.to);
+            } else if (myLevels.to < myLevels.from) {
+                return headingMakeSmaller(row, myLevels.from, myLevels.to);
+            }
+            return row;
+        };
+        this.codemirror.on('beforeChange', function (cm, obj) {
+            // console.log(obj);
+            if (!obj || !obj.from || !obj.to || !obj.text || !obj.text.length) {
+                // Don't go further 'cause a required argument is missing...
+                return false;
+            }
+            if (!obj.origin) {
+                // If a modification was triggered by a code and not an human
+                // The origin can be "undefined", so just in case set one.
+                obj.origin = '+none';
+            }
+            if ((obj.from.line === obj.to.line) && obj.text.length < 2) {
+                if (!/delete/.test(obj.origin) && obj.to.ch > 6) {
+                    // No need to trigger a check if we are on the same line at character 7 or upper
+                    // As we are sure the cursor was not inside a range containing a sharp sign
+                    return false;
+                }
+                /*
+                if (obj.from.ch === 0 && obj.to.ch === 0 && /\s/.test(obj.text[0] || '')) {
+                    // (Force) Prevent space at the beginning of the line
+                    obj.cancel();
+                    return false;
+                }
+                */
+                if (/input/.test(obj.origin)) { // Something was added
+                    if (obj.text.length === 1 && obj.text[0].length === 1) {
+                        // Only one character on one line is being updated
+                        if (obj.text[0] === ' ') {
+                            return headingCheckNew(cm, obj);
+                        } else if (obj.text[0] === '#') {
+                            return headingCheckExisting(cm, obj);
+                        }
+                    }
+                } else if (/delete/.test(obj.origin)) { // Something was removed
+                    if (obj.text.length === 1 && !obj.text[0].length) {
+                        // Only one character on one line has been removed
+                        return headingCheckExisting(cm, obj);
+                    }
+                }
+            }
+            // Multilines modification like a paste
+            var startText = '', endText = '', oldText = '', newText = '';
+            if (!/delete/.test(obj.origin)) {
+                if (obj.text.length < 2 && obj.text[0].length < 2) {
+                    return false;
+                }
+                var r = 0, rEnd = obj.text.length; // Start row / End row
+                if (obj.from.ch > 7) {
+                    // We are sure an new heading is not involved or conflicting with an existing one
+                    // So we can safely exclude the first row from the verification loop
+                    r = 1;
+                }
+                while (r < rEnd) {
+                    if (!r && obj.from.ch > 0) {
+                        // We need to check the first row in case an existing heading exists or is updated
+                        startText = cm.getRange({
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        });
+                        if (/#/.test(startText)) {
+                            oldText = startText + obj.text[r];
+                            oldText = oldText.replace(/#\s+#/, '##');
+                            newText = headingCheckRow(oldText, cm);
+                            if (oldText !== newText) { // A modification has been made
+                                obj.text[r] = newText.substring(obj.from.ch);
+                            }
+                        }
+                    }
+                    else if (r === rEnd - 1) {
+                        endText = cm.getRange({
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch + 8,
+                        });
+                        if (/#/.test(endText)) {
+                            oldText = obj.text[r] + endText;
+                            oldText = oldText.replace(/#\s+#/, '##');
+                            newText = headingCheckRow(oldText, cm);
+                            if (oldText !== newText) { // A modification has been made
+                                obj.text[r] = newText.replace(endText, '');
+                            }
+                        }
+                        else {
+                            obj.text[r] = headingCheckRow(obj.text[r], cm);
+                        }
+                    }
+                    else { // 2nd and next rows
+                        obj.text[r] = headingCheckRow(obj.text[r], cm);
+                    }
+                    r++;
+                }
+            } else {
+                // Multilines / multicharacters were removed
+                if (obj.from.ch > 7 || obj.text.length > 1 || obj.text[0].length > 1) {
+                    return false;
+                }
+                startText = cm.getRange({
+                    line: obj.from.line,
+                    ch: 0,
+                }, {
+                    line: obj.from.line,
+                    ch: obj.from.ch,
+                });
+                endText = cm.getRange({
+                    line: obj.to.line,
+                    ch: obj.to.ch,
+                }, {
+                    line: obj.to.line,
+                    ch: obj.to.ch + 8,
+                });
+                oldText = startText + endText;
+                oldText = oldText.replace(/#\s+#/, '##');
+                if (/#/.test(oldText)) {
+                    newText = headingCheckRow(oldText, cm);
+                    if (oldText !== newText) { // A modification has been made
+                        obj.cancel();
+                        cm.doc.replaceRange('', {
+                            line: obj.from.line,
+                            ch: obj.from.ch,
+                        }, {
+                            line: obj.to.line,
+                            ch: obj.to.ch,
+                        });
+                        cm.doc.replaceRange(newText, {
+                            line: obj.from.line,
+                            ch: 0,
+                        }, {
+                            line: obj.from.line,
+                            ch: obj.from.ch + 8,
+                        });
+                    }
+                }
+            }
+        });
+        if (options.parsingConfig.headingLevels.indexOf(1) === -1) {
+            // Modify the cursor behavior to avoid being in the middle of \# (|\# {->} \#| or \#| {<-} |\#)
+            // Thanks to https://stackoverflow.com/questions/32622128/codemirror-how-to-read-editor-text-before-or-after-cursor-position
+            this.codemirror.on('cursorActivity', function(cm) {
+                var currCursor = cm.doc.getCursor(),
+                    line = currCursor.line,
+                    ch = currCursor.ch,
+                    cursorString = cm.doc.getLine(line).substr(Math.max(ch-1,0),2);
+                if (cursorString === '\\#' && currCursor.sticky) {
+                    if (currCursor.sticky === 'after') {
+                        cm.focus();
+                        cm.doc.setCursor({
+                            line: line,
+                            ch: Math.max(ch-1,0),
+                        });
+                    }
+                    else if (currCursor.sticky === 'before') {
+                        cm.focus();
+                        cm.doc.setCursor({
+                            line: line,
+                            ch: ch+1,
+                        });
+                    }
+                }
+            });
+            // Make the \# sharp combo behaves as a list
+            this.codemirror.on('keyHandled', function(cm, kn, ev) {
+                if (!kn || kn !== 'Enter' || !ev) {
+                    return true;
+                }
+                var currCursor = cm.doc.getCursor(),
+                    prevLine = currCursor.line - 1;
+                if (prevLine < 0) {
+                    return true;
+                }
+                var prevText = cm.getRange({
+                    line: prevLine,
+                    ch: 0,
+                }, {
+                    line: prevLine,
+                    ch: 20,
+                });
+                if (/^[ ]*\\#[ ]*/.test(prevText)) {
+                    var newTextLine = prevText.match(/^[ ]*\\#[ ]*/)[0];
+                    cm.doc.replaceRange(newTextLine, {
+                        line: currCursor.line,
+                        ch: 0,
+                    }, {
+                        line: currCursor.line,
+                        ch: newTextLine.length,
+                    });
+                } else if (/^ +/.test(prevText)) {
+                    var spaces = prevText.match(/ +/);
+                    if (spaces.length) {
+                        cm.doc.replaceRange(' '.repeat(spaces.length), {
+                            line: currCursor.line,
+                            ch: 0,
+                        }, {
+                            line: currCursor.line,
+                            ch: 0 + spaces.length,
+                        });
+                    }
+                }
+            });
+        }
     }
 
     this.gui = {};
@@ -2897,6 +3543,7 @@ EasyMDE.prototype.value = function (val) {
         if (this.isPreviewActive()) {
             var wrapper = cm.getWrapperElement();
             var preview = wrapper.lastChild;
+            val = this.options.markdownFilters.apply_filters(val);
             var preview_result = this.options.previewRender(val, preview);
             if (preview_result !== null) {
                 preview.innerHTML = preview_result;
