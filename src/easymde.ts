@@ -8,7 +8,7 @@ import { marked } from "marked";
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
 import { NotConstructedError } from "./errors/not-constructed-error.js";
 import { importDefaultToolbar, importToolbar } from "./imports.js";
-import type { InputOptions, Options } from "./options.js";
+import { resolveOptions, type InputOptions, type Options } from "./options.js";
 
 import "./styles.scss";
 
@@ -27,16 +27,8 @@ export class EasyMDE {
             throw new TypeError("EasyMDE: Use EasyMDE.create(options) to create an editor.");
         }
 
-        this.#options = {
-            ...options,
-            blockStyles: {
-                bold: "**",
-                italic: "*",
-                strikethrough: "~~",
-                code: "`",
-            },
-        };
-        this.#element = EasyMDE.#verifyAndReturnElement(options.element);
+        this.#options = resolveOptions(options);
+        this.#element = EasyMDE.#verifyAndReturnElement(this.#options.element);
         marked.parse("# EasyMDE", { async: false });
     }
 

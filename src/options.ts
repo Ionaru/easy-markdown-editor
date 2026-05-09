@@ -1,10 +1,7 @@
+import type { Extension } from "@codemirror/state";
 import type { MarkedOptions } from "marked";
 
 import type { EasyMDE } from "./easymde.js";
-
-interface ArrayOneOrMore<T> extends Array<T> {
-    0: T;
-}
 
 type ToolbarButton =
     | "bold"
@@ -32,40 +29,11 @@ type ToolbarButton =
     | "fullscreen"
     | "guide";
 
-interface TimeFormatOptions {
-    locale?: string | string[];
-    format?: Intl.DateTimeFormatOptions;
-}
-
-interface AutoSaveOptions {
-    enabled?: boolean;
-    delay?: number;
-    submit_delay?: number;
-    uniqueId: string;
-    timeFormat?: TimeFormatOptions;
-    text?: string;
-}
-
 interface BlockStyleOptions {
     bold?: string;
     code?: string;
     strikethrough?: string;
     italic?: string;
-}
-
-type CustomAttributes = Record<string, string>;
-
-interface InsertTextOptions {
-    horizontalRule?: readonly string[];
-    image?: readonly string[];
-    link?: readonly string[];
-    table?: readonly string[];
-}
-
-interface ParsingOptions {
-    allowAtxHeaderWithoutSpace?: boolean;
-    strikethrough?: boolean;
-    underscoresBreakWords?: boolean;
 }
 
 interface PromptTexts {
@@ -74,42 +42,13 @@ interface PromptTexts {
 }
 
 interface RenderingOptions {
-    codeSyntaxHighlighting?: boolean;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    hljs?: any;
     markedOptions?: MarkedOptions;
     sanitizerFunction?: (html: string) => string;
-    singleLineBreaks?: boolean;
-}
-
-interface Shortcuts {
-    [action: string]: string | undefined | null;
-
-    toggleBlockquote?: string | null;
-    toggleBold?: string | null;
-    cleanBlock?: string | null;
-    toggleHeadingSmaller?: string | null;
-    toggleItalic?: string | null;
-    drawLink?: string | null;
-    toggleUnorderedList?: string | null;
-    togglePreview?: string | null;
-    toggleCodeBlock?: string | null;
-    drawImage?: string | null;
-    toggleOrderedList?: string | null;
-    toggleHeadingBigger?: string | null;
-    toggleSideBySide?: string | null;
-    toggleFullScreen?: string | null;
-}
-
-interface StatusBarItem {
-    className: string;
-    defaultValue: (element: HTMLElement) => void;
-    onUpdate: (element: HTMLElement) => void;
 }
 
 interface ToolbarDropdownIcon {
     name: string;
-    children: ArrayOneOrMore<ToolbarIcon | ToolbarButton>;
+    children: [ToolbarIcon | ToolbarButton, ...(ToolbarIcon | ToolbarButton)[]];
     className: string;
     title: string;
     noDisable?: boolean;
@@ -124,105 +63,53 @@ interface ToolbarIcon {
     noDisable?: boolean;
     noMobile?: boolean;
     icon?: string;
-    attributes?: CustomAttributes;
+    attributes?: Record<string, string>;
 }
 
-interface ImageTextsOptions {
-    sbInit?: string;
-    sbOnDragEnter?: string;
-    sbOnDrop?: string;
-    sbProgress?: string;
-    sbOnUploaded?: string;
-    sizeUnits?: string;
-}
+type ToolbarConfig = boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
 
-interface ImageErrorTextsOptions {
-    noFileGiven?: string;
-    typeNotAllowed?: string;
-    fileTooLarge?: string;
-    importError?: string;
-}
-
-interface OverlayModeOptions {
-    // mode: CodeMirror.Mode<any>;
-    combine?: boolean;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-interface SpellCheckerOptions {
-    // codeMirrorInstance: CodeMirror.Editor;
-}
+export const DEFAULT_BLOCK_STYLES: Required<BlockStyleOptions> = {
+    bold: "**",
+    italic: "*",
+    strikethrough: "~~",
+    code: "`",
+};
 
 export interface InputOptions {
-    autoDownloadFontAwesome?: boolean;
-    autofocus?: boolean;
-    autosave?: AutoSaveOptions;
-    autoRefresh?: boolean | { delay: number };
-    blockStyles?: BlockStyleOptions;
     element: HTMLTextAreaElement;
-    forceSync?: boolean;
-    hideIcons?: readonly string[];
+    toolbar?: ToolbarConfig;
+    statusbar?: boolean;
+    blockStyles?: BlockStyleOptions;
+    unorderedListStyle?: "*" | "-" | "+";
     indentWithTabs?: boolean;
-    initialValue?: string;
-    insertTexts?: InsertTextOptions;
-    lineNumbers?: boolean;
+    tabSize?: number;
     lineWrapping?: boolean;
+    lineNumbers?: boolean;
     minHeight?: string;
     maxHeight?: string;
-    parsingConfig?: ParsingOptions;
     placeholder?: string;
-    previewClass?: string | readonly string[];
-    previewImagesInEditor?: boolean;
-    previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
+    forceSync?: boolean;
     promptURLs?: boolean;
-    renderingConfig?: RenderingOptions;
-    shortcuts?: Shortcuts;
-    showIcons?: readonly ToolbarButton[];
-    spellChecker?: boolean | ((options: SpellCheckerOptions) => void);
-    inputStyle?: "textarea" | "contenteditable";
-    nativeSpellcheck?: boolean;
-    sideBySideFullscreen?: boolean;
-    status?: boolean | readonly (string | StatusBarItem)[];
-    statusbar?: boolean;
-    styleSelectedText?: boolean;
-    tabSize?: number;
-    toolbar?: boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
-    toolbarTips?: boolean;
-    onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
-    theme?: string;
-    scrollbarStyle?: string;
-    unorderedListStyle?: "*" | "-" | "+";
-
-    uploadImage?: boolean;
-    imageMaxSize?: number;
-    imageAccept?: string;
-    imageUploadFunction?: (
-        file: File,
-        onSuccess: (url: string) => void,
-        onError: (error: string) => void,
-    ) => void;
-    imageUploadEndpoint?: string;
-    imagePathAbsolute?: boolean;
-    imageCSRFToken?: string;
-    imageTexts?: ImageTextsOptions;
-    errorMessages?: ImageErrorTextsOptions;
-    errorCallback?: (errorMessage: string) => void;
-
     promptTexts?: PromptTexts;
-    syncSideBySidePreviewScroll?: boolean;
-
-    overlayMode?: OverlayModeOptions;
-
-    direction?: "ltr" | "rtl";
+    codemirrorExtensions?: Extension;
+    previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
+    renderingConfig?: RenderingOptions;
 }
 
-export interface Options {
-    statusbar?: boolean;
-    toolbar?: boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
+export type Options = Omit<InputOptions, "toolbar" | "statusbar" | "blockStyles"> & {
+    toolbar: ToolbarConfig;
+    statusbar: boolean;
+    blockStyles: Required<BlockStyleOptions>;
+};
+
+export const resolveOptions = (input: InputOptions): Options => ({
+    ...input,
+    toolbar: input.toolbar ?? true,
+    statusbar: input.statusbar ?? true,
     blockStyles: {
-        bold: string;
-        code: string;
-        strikethrough: string;
-        italic: string;
-    };
-}
+        bold: input.blockStyles?.bold ?? DEFAULT_BLOCK_STYLES.bold,
+        italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,
+        strikethrough: input.blockStyles?.strikethrough ?? DEFAULT_BLOCK_STYLES.strikethrough,
+        code: input.blockStyles?.code ?? DEFAULT_BLOCK_STYLES.code,
+    },
+});
