@@ -162,29 +162,28 @@ export class EasyMDE {
         });
 
         const easyMDEContainer = this.#createContainer();
+        this.#element.insertAdjacentElement("afterend", easyMDEContainer);
+        this.#container = easyMDEContainer;
 
         if (this.options.toolbar !== false) {
-            easyMDEContainer.append(this.#createToolbar());
+            this.addPlugin(new Toolbar(this, defaultToolbar));
         }
 
         easyMDEContainer.append(this.codemirror.dom);
 
         if (this.options.statusbar !== false) {
-            easyMDEContainer.append(this.#createStatusBar());
+            this.addPlugin(new StatusBar(this));
         }
 
-        this.#element.insertAdjacentElement("afterend", easyMDEContainer);
-
         this.codemirror.focus();
-
-        this.#container = easyMDEContainer;
     }
 
     destroy(): void {
         this.#element.value = this.getValue();
 
-        for (const plugin of this.#plugins) {
-            void plugin.destroy();
+        let plugin: IEasyMDEPlugin | undefined;
+        while ((plugin = this.#plugins.pop())) {
+            plugin.unmount();
         }
 
         this.codemirror.destroy();
@@ -198,18 +197,8 @@ export class EasyMDE {
 
     addPlugin(plugin: IEasyMDEPlugin): IEasyMDEPlugin {
         this.#plugins.push(plugin);
+        plugin.mount();
         return plugin;
-    }
-
-    #createToolbar(): HTMLDivElement {
-        const toolbar = new Toolbar(this, defaultToolbar);
-        this.addPlugin(toolbar);
-        return toolbar.element;
-    }
-
-    #createStatusBar(): HTMLDivElement {
-        const statusBar = new StatusBar(this);
-        return statusBar.element;
     }
 
     #createContainer(): HTMLDivElement {
@@ -219,10 +208,13 @@ export class EasyMDE {
     }
 }
 
-export type IEasyMDEPluginClass = new (easyMDE: EasyMDE) => IEasyMDEPlugin;
+export type IEasyMDEPluginClass<TArgs extends unknown[] = []> = new (
+    easyMDE: EasyMDE,
+    ...args: TArgs
+) => IEasyMDEPlugin;
 
 export interface IEasyMDEPlugin {
-    build(arguments_: unknown): Promise<void>;
-
-    destroy(): Promise<void>;
+    readonly element: HTMLElement;
+    mount(): void;
+    unmount(): void;
 }

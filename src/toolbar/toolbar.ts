@@ -1,13 +1,13 @@
 import { StateEffect } from "@codemirror/state";
 import { ViewPlugin, ViewUpdate } from "@codemirror/view";
 
-import { EasyMDE, type IEasyMDEPlugin } from "../easymde.js";
+import { EasyMDE, type IEasyMDEPlugin, type IEasyMDEPluginClass } from "../easymde.js";
 import type { IToolbarButtonOptions } from "./default-toolbar.js";
 
 export class Toolbar implements IEasyMDEPlugin {
     static readonly #activeClass = "enabled";
 
-    element: HTMLDivElement;
+    readonly element: HTMLDivElement;
 
     constructor(
         private editor: EasyMDE,
@@ -34,38 +34,13 @@ export class Toolbar implements IEasyMDEPlugin {
         }
 
         this.editor.codemirror.dispatch();
-
-        // Add the toolbar to the editor.
-
-        // const cmWrapper = this.codemirror.getWrapperElement();
-        // if (cmWrapper.parentNode) {
-        //     cmWrapper.parentNode.insertBefore(toolBar, cmWrapper);
-        // }
-
-        // return toolBar;
     }
 
-    // eslint-disable-next-line @typescript-eslint/require-await
-    async build(toolbarLayout: IToolbarButtonOptions[][]) {
-        for (const toolBarButtonSection of toolbarLayout) {
-            const toolBarSection: (HTMLButtonElement | HTMLSpanElement)[] = [];
-
-            for (const toolBarButtonOptions of toolBarButtonSection) {
-                toolBarSection.push(this.#createToolBarButton(toolBarButtonOptions));
-            }
-
-            // Create a separator if this is not the last toolbar section.
-            if (toolbarLayout.indexOf(toolBarButtonSection) !== toolbarLayout.length - 1) {
-                toolBarSection.push(this.#createToolBarSeparator());
-            }
-
-            for (const toolBarEntry of toolBarSection) {
-                this.element.append(toolBarEntry);
-            }
-        }
+    mount(): void {
+        this.editor.container.append(this.element);
     }
-    // eslint-disable-next-line @typescript-eslint/require-await
-    async destroy() {
+
+    unmount(): void {
         this.element.remove();
     }
 
@@ -126,3 +101,5 @@ export class Toolbar implements IEasyMDEPlugin {
         return buttonElement;
     }
 }
+
+Toolbar satisfies IEasyMDEPluginClass<[IToolbarButtonOptions[][]]>;

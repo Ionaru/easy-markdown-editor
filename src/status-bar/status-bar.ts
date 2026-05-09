@@ -1,11 +1,11 @@
 import { SelectionRange, StateEffect, Line } from "@codemirror/state";
 import { ViewPlugin, ViewUpdate } from "@codemirror/view";
 
-import { EasyMDE } from "../easymde.js";
+import { EasyMDE, type IEasyMDEPlugin, type IEasyMDEPluginClass } from "../easymde.js";
 import { countWords } from "../utils/count-words.js";
 
-export class StatusBar {
-    element: HTMLDivElement;
+export class StatusBar implements IEasyMDEPlugin {
+    readonly element: HTMLDivElement;
 
     #characterCount = 0;
     #wordCount = 0;
@@ -90,6 +90,14 @@ export class StatusBar {
         `;
     }
 
+    mount(): void {
+        this.editor.container.append(this.element);
+    }
+
+    unmount(): void {
+        this.element.remove();
+    }
+
     #getSelectionDirection(selection: SelectionRange): "right" | "left" | undefined {
         return selection.from === this.#selectionStart
             ? "right"
@@ -99,3 +107,5 @@ export class StatusBar {
               : undefined;
     }
 }
+
+StatusBar satisfies IEasyMDEPluginClass;
