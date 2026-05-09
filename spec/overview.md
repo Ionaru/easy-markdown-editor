@@ -4,11 +4,11 @@
 
 These labels appear in the **Scope split** table below:
 
-| Label | Meaning |
-| ----- | ------- |
+| Label            | Meaning                                                                                                                                                             |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **MVP (beta.1)** | First shippable prerelease, `3.0.0-beta.1`: write Markdown, preview, core toolbar, sync construction, trimmed icons, minimal web component, baseline accessibility. |
-| **Stable (1.0)** | **`EasyMDE v3.0.0`** on npm — not “major 1” of the product line; the first stable V3. |
-| **Post-1.0** | After **`v3.0.0`** (`3.0.x+`), tracked in [milestone-e-post-stable.md](milestone-e-post-stable.md). |
+| **Stable (1.0)** | **`EasyMDE v3.0.0`** on npm — not “major 1” of the product line; the first stable V3.                                                                               |
+| **Post-1.0**     | After **`v3.0.0`** (`3.0.x+`), tracked in [milestone-e-post-stable.md](milestone-e-post-stable.md).                                                                 |
 
 **Toolchain:** V3 builds with **Vite+** (`vp`); [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) mentions Rollup as an example of a modern bundler — the project satisfies “modern toolchain” without being Rollup-specific.
 
@@ -28,44 +28,44 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 
 ## Scope split
 
-| Feature                                                      | MVP (beta.1) | Stable (1.0) | Post-1.0 |
-| ------------------------------------------------------------ | :----------: | :----------: | :------: |
-| Writing markdown in CodeMirror 6                             |      ✅      |              |          |
-| Preview rendering (marked + sanitize)                        |      ✅      |              |          |
-| Core inline toolbar actions (bold/italic/strikethrough/code) |      ✅      |              |          |
-| Heading, quote, list, clean-block toolbar actions            |      ✅      |              |          |
-| Link & image insertion                                       |      ✅      |              |          |
-| Horizontal rule, table                                       |      ✅      |              |          |
-| Undo / redo                                                  |      ✅      |              |          |
-| Keyboard shortcuts (default map)                             |      ✅      |              |          |
-| Consumer CodeMirror extensions (`codemirrorExtensions`)           |      ✅      |              |          |
-| Form sync (textarea write-back on submit)                    |      ✅      |              |          |
-| Public API (`value()`, `toTextArea()`, `isPreviewActive()`)  |      ✅      |              |          |
-| Plugin lifecycle (mount/unmount)                             |      ✅      |              |          |
-| Trim FontAwesome bundle                                      |      ✅      |              |          |
-| Accessibility (ARIA, keyboard toolbar nav)                   |      ✅      |              |          |
-| Web component (`<easy-markdown-editor>`)                     |      ✅      |              |          |
-| Side-by-side mode                                            |              |      ✅      |          |
-| Fullscreen mode                                              |              |      ✅      |          |
-| Dark mode / theming CSS vars                                 |              |      ✅      |          |
-| Custom toolbar (hideIcons, showIcons, custom items)          |              |      ✅      |          |
-| Sanitizer hook / DOMPurify wiring                            |              |      ✅      |          |
-| E2E / integration tests                                      |              |      ✅      |          |
-| Demo & docs                                                  |              |      ✅      |          |
-| npm beta publish                                             |              |      ✅      |          |
-| Autosave plugin                                              |              |              |    ✅    |
-| Image upload (paste / drop / dialog)                         |              |              |    ✅    |
-| Custom shortcut overrides                                    |              |              |    ✅    |
-| Status bar customization                                     |              |              |    ✅    |
-| RTL direction support                                        |              |              |    ✅    |
-| Spellcheck decision                                          |              |              |    ✅    |
-| Task list (checkbox) toggle (`- [ ]` / `- [x]`)               |              |      ✅      |          |
-| Markdown guide / help toolbar action                         |              |      ✅      |          |
-| Toolbar icons: non-FA / raw SVG (see Milestone A A4)          |              |      ✅      |          |
+| Feature                                                                                                                             | MVP (beta.1) | Stable (1.0) | Post-1.0 |
+| ----------------------------------------------------------------------------------------------------------------------------------- | :----------: | :----------: | :------: |
+| Writing markdown in CodeMirror 6                                                                                                    |      ✅      |              |          |
+| Preview rendering (marked + sanitize)                                                                                               |      ✅      |              |          |
+| Core inline toolbar actions (bold/italic/strikethrough/code)                                                                        |      ✅      |              |          |
+| Heading, quote, list, clean-block toolbar actions                                                                                   |      ✅      |              |          |
+| Link & image insertion                                                                                                              |      ✅      |              |          |
+| Horizontal rule, table                                                                                                              |      ✅      |              |          |
+| Undo / redo                                                                                                                         |      ✅      |              |          |
+| Keyboard shortcuts (default map)                                                                                                    |      ✅      |              |          |
+| Consumer CodeMirror extensions (`codemirrorExtensions`)                                                                             |      ✅      |              |          |
+| Form sync (textarea write-back on submit)                                                                                           |      ✅      |              |          |
+| Public API (`value()`, `toTextArea()`, `isPreviewActive()`)                                                                         |      ✅      |              |          |
+| Plugin lifecycle (mount/unmount)                                                                                                    |      ✅      |              |          |
+| Trim FontAwesome bundle                                                                                                             |      ✅      |              |          |
+| Accessibility (ARIA, keyboard toolbar nav)                                                                                          |      ✅      |              |          |
+| Web component (`<easy-markdown-editor>`)                                                                                            |      ✅      |              |          |
+| Side-by-side mode                                                                                                                   |              |      ✅      |          |
+| Fullscreen mode                                                                                                                     |              |      ✅      |          |
+| Dark mode / theming CSS vars                                                                                                        |              |      ✅      |          |
+| Custom toolbar (hideIcons, showIcons, custom items)                                                                                 |              |      ✅      |          |
+| Sanitizer hook / DOMPurify wiring                                                                                                   |              |      ✅      |          |
+| E2E / integration tests                                                                                                             |              |      ✅      |          |
+| Demo & docs                                                                                                                         |              |      ✅      |          |
+| npm beta publish                                                                                                                    |              |      ✅      |          |
+| Autosave plugin                                                                                                                     |              |              |    ✅    |
+| Image upload (paste / drop / dialog)                                                                                                |              |              |    ✅    |
+| Custom shortcut overrides                                                                                                           |              |              |    ✅    |
+| Status bar customization                                                                                                            |              |              |    ✅    |
+| RTL direction support                                                                                                               |              |              |    ✅    |
+| Spellcheck decision                                                                                                                 |              |              |    ✅    |
+| Task list (checkbox) toggle (`- [ ]` / `- [x]`)                                                                                     |              |      ✅      |          |
+| Markdown guide / help toolbar action                                                                                                |              |      ✅      |          |
+| Toolbar icons: non-FA / raw SVG (see Milestone A A4)                                                                                |              |      ✅      |          |
 | Consumer lifecycle hooks (narrow callback set; [plugins-and-extensions.md §7](plugins-and-extensions.md#7-events--hooks-issue-447)) |              |      ✅      |          |
-| `package.json` `exports` / subpath imports (single package)   |              |      ✅      |          |
-| Optional multipackage split (`easymde-core`, etc.)            |              |              |    ✅    |
-| Extended event API (multi-subscriber / ordering guarantees)   |              |              |    ✅    |
+| `package.json` `exports` / subpath imports (single package)                                                                         |              |      ✅      |          |
+| Optional multipackage split (`easymde-core`, etc.)                                                                                  |              |              |    ✅    |
+| Extended event API (multi-subscriber / ordering guarantees)                                                                         |              |              |    ✅    |
 
 **Canonical scope:** The table above is the single source of truth for what ships in each phase. Supporting docs defer to this file.
 

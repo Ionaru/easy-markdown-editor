@@ -55,8 +55,7 @@ Wire into `defaultToolbar`: replace the inert `heading` button with a set of: `h
 **File:** `src/toolbar/buttons/toggle-quote.ts` (new)
 
 ```ts
-export const toggleQuote = (editorView: EditorView): void =>
-    toggleLine(editorView, ">");
+export const toggleQuote = (editorView: EditorView): void => toggleLine(editorView, ">");
 ```
 
 (or accept `EasyMDE` if you expose `editor.codemirror` at the boundary — **`toggleLine`** always receives **`EditorView`**.)
@@ -219,8 +218,8 @@ Create a CM6 keymap using `keymap.of([...])` and `Prec.high`:
 | Ctrl+Z                | Cmd+Z        | undo                 |
 | Ctrl+Y / Shift+Ctrl+Z | Shift+Cmd+Z  | redo                 |
 | Ctrl+Alt+1..6         | Cmd+Alt+1..6 | toggleHeading1..6    |
-| F9                    | F9           | toggleSideBySide      |
-| F11                   | F11          | toggleFullscreen      |
+| F9                    | F9           | toggleSideBySide     |
+| F11                   | F11          | toggleFullscreen     |
 
 For **`v3.0.0-beta.x`**, if layout APIs do not yet exist the implementation MAY omit these bindings or leave them dormant; they **must** call the Stable public methods once Milestone **C** ships.
 

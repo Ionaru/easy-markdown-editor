@@ -67,9 +67,9 @@ export interface IEasyMDEPlugin {
 **By Stable (`v3.0.0`):**
 
 - Support **custom toolbar icons without Font Awesome** as a normative part of `IToolbarButtonOptions` (exact field names ship with implementation), for example one or more of:
-  - inline **SVG string** (sanitised / constrained to `<svg>` subtree),
-  - **`HTMLElement`** supplied by the consumer,
-  - or a small documented **`icon` resolver** hook that returns an element to place inside the button.
+    - inline **SVG string** (sanitised / constrained to `<svg>` subtree),
+    - **`HTMLElement`** supplied by the consumer,
+    - or a small documented **`icon` resolver** hook that returns an element to place inside the button.
 - Font Awesome remains **one** backend: default toolbar buttons may keep using `@fortawesome` + `registerIcons`; custom buttons may use the non-FA surfaces above.
 - README must document the recommended approach for “raw SVG” from [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) / [#491](https://github.com/Ionaru/easy-markdown-editor/issues/491).
 

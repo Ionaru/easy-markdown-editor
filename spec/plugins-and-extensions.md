@@ -222,11 +222,11 @@ Consumer sets `renderingConfig: { markedOptions: { gfm: true }, sanitizerFunctio
 
 Add a **small, typed** set of optional callbacks on `InputOptions` / `Options` (exact names and payloads ship with implementation), for example:
 
-| Callback (illustrative name) | When it runs |
-| ---------------------------- | ------------ |
-| `onDocumentChange` | After the editor document changed and the transaction committed (debouncing policy documented if any). |
-| `onPreviewToggle` | When preview mode is turned on or off. |
-| `onLayoutModeChange` | When side-by-side or fullscreen enters or exits (payload: which mode, boolean active). |
+| Callback (illustrative name) | When it runs                                                                                           |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `onDocumentChange`           | After the editor document changed and the transaction committed (debouncing policy documented if any). |
+| `onPreviewToggle`            | When preview mode is turned on or off.                                                                 |
+| `onLayoutModeChange`         | When side-by-side or fullscreen enters or exits (payload: which mode, boolean active).                 |
 
 Rules:
 
@@ -267,17 +267,17 @@ flowchart LR
 
 Built-in surfaces MUST use the APIs in this table once the listed milestone lands. **TBD** indicates spec ahead of implementation.
 
-| Feature                       | Editor plugin             | CM6 extensions                  | Marked / sanitize        | Milestone                                                    |
-| ----------------------------- | ------------------------- | ------------------------------- | ------------------------ | ------------------------------------------------------------ |
-| Default toolbar               | Yes                       | Toolbar actions use editor APIs | No                       | [A](milestone-a-foundations.md), [B](milestone-b-toolbar.md) |
-| Status bar                    | Yes                       | Reads doc/state via `EasyMDE`   | No                       | [A](milestone-a-foundations.md)                              |
-| Preview pane (DOM shell)      | Yes                       | —                               | Uses shared pipeline     | [A](milestone-a-foundations.md) A5                           |
-| Default keymap / undo         | Via merge helper (`§3.3`) | Yes                             | No                       | [A](milestone-a-foundations.md), [B](milestone-b-toolbar.md) |
+| Feature                       | Editor plugin                                                                   | CM6 extensions                  | Marked / sanitize        | Milestone                                                    |
+| ----------------------------- | ------------------------------------------------------------------------------- | ------------------------------- | ------------------------ | ------------------------------------------------------------ |
+| Default toolbar               | Yes                                                                             | Toolbar actions use editor APIs | No                       | [A](milestone-a-foundations.md), [B](milestone-b-toolbar.md) |
+| Status bar                    | Yes                                                                             | Reads doc/state via `EasyMDE`   | No                       | [A](milestone-a-foundations.md)                              |
+| Preview pane (DOM shell)      | Yes                                                                             | —                               | Uses shared pipeline     | [A](milestone-a-foundations.md) A5                           |
+| Default keymap / undo         | Via merge helper (`§3.3`)                                                       | Yes                             | No                       | [A](milestone-a-foundations.md), [B](milestone-b-toolbar.md) |
 | Side-by-side layout           | Uses **Preview** + container/grid CSS (`§2.2`; no separate unexplained subtree) | —                               | Same pipeline as preview | [C](milestone-c-layout.md)                                   |
-| Fullscreen layout             | Container **`EasyMDE` mode** + CSS (`§2.2`); optional trap via CM helpers | Possible focus helpers            | No                       | [C](milestone-c-layout.md)                                   |
-| Syntax highlighting in editor | —                         | Included in base stack          | No                       | Current + [A](milestone-a-foundations.md)                    |
-| Form sync / `value()`         | —                         | CM `doc`                        | No                       | [A](milestone-a-foundations.md) A6–A7                        |
-| Web component wrapper         | Embeds `EasyMDE`          | Same as instance                | Same as instance         | [A](milestone-a-foundations.md) A8                           |
+| Fullscreen layout             | Container **`EasyMDE` mode** + CSS (`§2.2`); optional trap via CM helpers       | Possible focus helpers          | No                       | [C](milestone-c-layout.md)                                   |
+| Syntax highlighting in editor | —                                                                               | Included in base stack          | No                       | Current + [A](milestone-a-foundations.md)                    |
+| Form sync / `value()`         | —                                                                               | CM `doc`                        | No                       | [A](milestone-a-foundations.md) A6–A7                        |
+| Web component wrapper         | Embeds `EasyMDE`                                                                | Same as instance                | Same as instance         | [A](milestone-a-foundations.md) A8                           |
 
 ---
 

@@ -45,7 +45,7 @@ Ensure `:focus-visible` produces a visible ring on toolbar buttons. Remove `outl
 | `src/utils/count-words.spec.ts`     | Space, tab, newline, multi-space, empty doc                                            |
 | `src/utils/toggle-line.spec.ts`     | All cases: single line, multi-line, already-applied, partial, heading prefix collision |
 | `src/toolbar/build-toolbar.spec.ts` | `toolbar: false`, `toolbar: array`, `hideIcons`, `showIcons` resolution                |
-| `src/preview/preview.spec.ts`       | Shared pipeline §4, `renderingConfig`, script stripped, `previewRender` override                                       |
+| `src/preview/preview.spec.ts`       | Shared pipeline §4, `renderingConfig`, script stripped, `previewRender` override       |
 | `src/easymde.spec.ts`               | `value()`, `value(text)`, `construct()` / `destruct()` cycle, form-submit sync         |
 
 ### Integration tests
