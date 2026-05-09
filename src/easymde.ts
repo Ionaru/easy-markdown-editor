@@ -69,18 +69,10 @@ export class EasyMDE {
     }
 
     get value(): string {
-        return this.getValue();
-    }
-
-    set value(value: string) {
-        this.setValue(value);
-    }
-
-    getValue(): string {
         return this.codemirror.state.doc.toString();
     }
 
-    setValue(value: string): void {
+    set value(value: string) {
         this.codemirror.dispatch({
             changes: {
                 from: 0,
@@ -191,7 +183,7 @@ export class EasyMDE {
         }
         this.container.classList.toggle("preview-active", next);
         if (next) {
-            this.#preview?.render(this.getValue());
+            this.#preview?.render(this.value);
         }
         if (this.options.toolbar !== false) {
             // Empty transaction wakes toolbar buttons whose `active` callback
@@ -204,21 +196,19 @@ export class EasyMDE {
         return this.#container?.classList.contains("preview-active") ?? false;
     }
 
-    destroy(): void {
-        this.#element.value = this.getValue();
-
+    destruct(): void {
+        if (this.#codemirror) {
+            this.#element.value = this.value;
+        }
         let plugin: IEasyMDEPlugin | undefined;
         while ((plugin = this.#plugins.pop())) {
             plugin.unmount();
         }
-
-        this.codemirror.destroy();
-        this.container.remove();
-
-        this.#container = undefined;
+        this.#codemirror?.destroy();
         this.#codemirror = undefined;
         this.#preview = undefined;
-
+        this.#container?.remove();
+        this.#container = undefined;
         this.#element.hidden = false;
     }
 

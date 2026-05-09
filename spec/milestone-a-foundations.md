@@ -120,17 +120,16 @@ Connect `Preview` to the live update listener so a future side-by-side mode can 
 Add to `EasyMDE`:
 
 ```ts
-value(): string
-value(text: string): void
-toTextArea(): void    // teardown: alias for `destruct()`
+get value(): string
+set value(text: string)
+destruct(): void
 isPreviewActive(): boolean
-cleanup(): void       // removes event listeners without destroying the DOM (for SPA teardown)
 ```
 
-**Teardown naming:** Canonical method is **`destruct()`** (`toTextArea()` aliases it — V2-aligned name). Optionally export **`destroy()`** as documented identity alias for lingering V2 examples only ([plugins-and-extensions.md §2.2](plugins-and-extensions.md#22-registration-and-lifecycle)).
+**Value access:** Property-style getter/setter (`editor.value` / `editor.value = "..."`) — matches `<textarea>.value` shape and avoids overload-signature noise. No `getValue()` / `setValue()` methods; no callable `value()` overload.
 
-- `value()` returns `this.codemirror.state.doc.toString()`.
-- `value(text)` dispatches a `replaceAll` transaction on the CM state.
+- `get value` returns `this.codemirror.state.doc.toString()`.
+- `set value` dispatches a full-document replacement transaction on the CM state (`changes: { from: 0, to: doc.length, insert: text }`).
 - Export all public types from `src/index.ts`.
 
 ---
@@ -143,7 +142,7 @@ On `construct()`:
 
 1. Find the nearest `<form>` ancestor of the textarea (`element.closest('form')`).
 2. Attach a `submit` listener that calls `this.#element.value = this.value()` before the form submits.
-3. Store the listener reference so `destruct()` / `cleanup()` can remove it.
+3. Store the listener reference so `destruct()` can remove it.
 
 For `forceSync` mode:
 
@@ -159,7 +158,7 @@ Implement `<easy-markdown-editor>` as a thin wrapper (**[decisions.md](decisions
 
 - On `connectedCallback`, locate a `<textarea>` child (slot or auto-created) and construct `EasyMDE` on it.
 - Observed attributes: `value`, `placeholder`, **`toolbar`** (**boolean semantics only**: attribute `"false"` hides the default toolbar; custom toolbar definitions stay **JavaScript-only** via the class API), **`statusbar`** (same), **`theme`**.
-- On `disconnectedCallback`, call **`easyMDE.destruct()`**. If the build ships **`destroy()`** as a compat alias ([plugins-and-extensions.md §2.2](plugins-and-extensions.md#22-registration-and-lifecycle)), callers may call either with identical semantics.
+- On `disconnectedCallback`, call **`easyMDE.destruct()`**.
 - Expose a `value` JS property that proxies `easyMDE.value()`.
 
 ---
@@ -182,8 +181,8 @@ Update the spec (`toggle-block.spec.ts` does not cover this; add `count-words.sp
 ## Acceptance criteria for Milestone A
 
 - [ ] `new EasyMDE({ element })` is synchronous; no race condition.
-- [ ] `easyMDE.value()` returns the current editor text.
-- [ ] `easyMDE.value('new text')` updates the editor.
+- [ ] `easyMDE.value` returns the current editor text.
+- [ ] `easyMDE.value = 'new text'` updates the editor.
 - [ ] `easyMDE.togglePreview()` shows a rendered HTML preview of the Markdown content.
 - [ ] `easyMDE.isPreviewActive()` returns the correct boolean.
 - [ ] Submitting a `<form>` containing the editor writes the current content to the textarea before submission.

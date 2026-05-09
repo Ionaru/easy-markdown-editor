@@ -1,11 +1,17 @@
-export { EasyMDE } from "./easymde.js";
-export type { IEasyMDEPlugin, IEasyMDEPluginClass } from "./easymde.js";
-export type { InputOptions, Options } from "./options.js";
 import { dom } from "@fortawesome/fontawesome-svg-core";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 import { registerIcons } from "./register-icons.js";
 import { defaultToolbar } from "./toolbar/default-toolbar.js";
+
+export { EasyMDE } from "./easymde.js";
+export type { IEasyMDEPlugin, IEasyMDEPluginClass } from "./easymde.js";
+export type { InputOptions, Options } from "./options.js";
+export { Preview } from "./preview/preview.js";
+export { StatusBar } from "./status-bar/status-bar.js";
+export { Toolbar } from "./toolbar/toolbar.js";
+export { defaultToolbar };
+export type { IToolbarButtonOptions } from "./toolbar/default-toolbar.js";
 
 const defaultToolbarIcons = new Set<IconDefinition>();
 for (const section of defaultToolbar) {

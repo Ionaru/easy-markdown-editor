@@ -34,11 +34,11 @@ describe("EasyMDE", () => {
         expect(editor.element).toBe(textArea);
         expect(editor.container).toBeInstanceOf(HTMLDivElement);
         expect(editor.codemirror.dom.isConnected).toBe(true);
-        expect(editor.getValue()).toBe("Hello **world**");
+        expect(editor.value).toBe("Hello **world**");
         expect(editor.isRendered).toBe(true);
         expect(textArea.hidden).toBe(true);
 
-        editor.destroy();
+        editor.destruct();
 
         expect(textArea.hidden).toBe(false);
         expect(editor.isRendered).toBe(false);
@@ -52,12 +52,12 @@ describe("EasyMDE", () => {
             statusbar: false,
         });
 
-        editor.setValue("Changed");
+        editor.value = "Changed";
 
-        expect(editor.getValue()).toBe("Changed");
+        expect(editor.value).toBe("Changed");
         expect(textArea.value).toBe("Original");
 
-        editor.destroy();
+        editor.destruct();
 
         expect(textArea.value).toBe("Changed");
     });
@@ -83,7 +83,7 @@ describe("EasyMDE", () => {
         const preview = editor.container.querySelector(".easymde-preview");
         const statusbar = editor.container.querySelector(".easymde-statusbar");
 
-        editor.destroy();
+        editor.destruct();
 
         expect(toolbar?.isConnected).toBe(false);
         expect(preview?.isConnected).toBe(false);
@@ -144,7 +144,7 @@ describe("EasyMDE", () => {
         editor.addPlugin(makeStubPlugin(editor, () => calls.push("A")));
         editor.addPlugin(makeStubPlugin(editor, () => calls.push("B")));
 
-        editor.destroy();
+        editor.destruct();
 
         expect(calls).toEqual(["B", "A"]);
     });

@@ -64,9 +64,9 @@ Legacy note: Implementations predating this spec may still expose `build`/`destr
 
 - **`EasyMDE.addPlugin(plugin)`** pushes the plugin, then calls **`plugin.mount()`** immediately (same tick as registration).
 
-- **Destructor name:** **`EasyMDE.destruct()`** is the canonical public teardown method (`toTextArea()` may alias it; see milestones). **`destroy()`** is **allowed only as a documented compat alias for V2 embedders**, identical behaviour to **`destruct()`** — do not diverge meanings.
+- **Destructor name:** **`EasyMDE.destruct()`** is the canonical public teardown method.
 
-- **Destruction:** For each registered **`IEasyMDEPlugin`**, **`destruct()`** (or **`destroy()`**) calls **`plugin.unmount()`** in **reverse registration order** (last added, first torn down)—symmetric stack discipline.
+- **Destruction:** For each registered **`IEasyMDEPlugin`**, **`destruct()`** calls **`plugin.unmount()`** in **reverse registration order** (last added, first torn down)—symmetric stack discipline.
 
 **DOM insert order** inside `.easymde-container`:
 
