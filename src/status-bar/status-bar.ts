@@ -1,8 +1,8 @@
 import { SelectionRange, StateEffect, Line } from "@codemirror/state";
 import { ViewPlugin, ViewUpdate } from "@codemirror/view";
 
-import { EasyMDE } from "../easymde";
-import { countWords } from "../utils/count-words";
+import { EasyMDE } from "../easymde.js";
+import { countWords } from "../utils/count-words.js";
 
 export class StatusBar {
     element: HTMLDivElement;
@@ -29,8 +29,7 @@ export class StatusBar {
             this.editor.codemirror.state.selection.main.to,
         );
         this.#cursorLine = line.number;
-        this.#cursorColumn =
-            this.editor.codemirror.state.selection.main.to - line.from + 1;
+        this.#cursorColumn = this.editor.codemirror.state.selection.main.to - line.from + 1;
         this.#selectionStart = this.editor.codemirror.state.selection.main.from;
         this.#selectionEnd = this.editor.codemirror.state.selection.main.to;
 
@@ -45,8 +44,7 @@ export class StatusBar {
                         this.#wordCount = countWords(document);
                         this.#lineCount = document.lines;
 
-                        const direction =
-                            this.#getSelectionDirection(selection);
+                        const direction = this.#getSelectionDirection(selection);
                         const toLine = document.lineAt(selection.to);
                         const fromLine = document.lineAt(selection.from);
 
@@ -55,8 +53,7 @@ export class StatusBar {
                         if (direction === "left") {
                             // Cursor is at the start of the selection.
                             cursorLine = fromLine;
-                            this.#cursorColumn =
-                                selection.from - cursorLine.from;
+                            this.#cursorColumn = selection.from - cursorLine.from;
                         } else {
                             // Cursor is at the end of the selection, or there is no selection.
                             cursorLine = toLine;
@@ -93,9 +90,7 @@ export class StatusBar {
         `;
     }
 
-    #getSelectionDirection(
-        selection: SelectionRange,
-    ): "right" | "left" | undefined {
+    #getSelectionDirection(selection: SelectionRange): "right" | "left" | undefined {
         return selection.from === this.#selectionStart
             ? "right"
             : // eslint-disable-next-line sonarjs/no-nested-conditional

@@ -4,15 +4,9 @@ $light-border-color: #d1d1d1;
 
 :root {
     --easymde-border-color: #{$light-border-color};
-    --easymde-enabled-color: #{color.adjust(
-            $light-border-color,
-            $lightness: 5%
-        )};
+    --easymde-enabled-color: #{color.adjust($light-border-color, $lightness: 5%)};
     --easymde-hover-color: #{$light-border-color};
-    --easymde-active-color: #{color.adjust(
-            $light-border-color,
-            $lightness: -5%
-        )};
+    --easymde-active-color: #{color.adjust($light-border-color, $lightness: -5%)};
 }
 
 // @media (prefers-color-scheme: dark) {

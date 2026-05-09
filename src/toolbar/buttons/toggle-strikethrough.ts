@@ -1,13 +1,15 @@
-import { EasyMDE } from "../../easymde";
-import { toggleBlock } from "../../utils/toggle-block";
-import { IToolbarButtonOptions } from "../default-toolbar";
+import { faStrikethrough } from "@fortawesome/free-solid-svg-icons";
+
+import { EasyMDE } from "../../easymde.js";
+import { toggleBlock } from "../../utils/toggle-block.js";
+import type { IToolbarButtonOptions } from "../default-toolbar.js";
 
 export const toggleStrikethrough = (editor: EasyMDE) =>
     toggleBlock(editor.codemirror, editor.options.blockStyles.strikethrough);
 
 export const toggleStrikethroughButton: IToolbarButtonOptions = {
     action: toggleStrikethrough,
-    icon: "fas fa-strikethrough",
+    icon: faStrikethrough,
     name: "strikethrough",
     title: "Strikethrough",
 };

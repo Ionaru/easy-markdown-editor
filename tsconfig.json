@@ -1,20 +1,21 @@
 {
     "compilerOptions": {
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "esModuleInterop": true,
-        "noFallthroughCasesInSwitch": true,
-        "declaration": false,
-        "lib": ["esnext", "dom", "dom.iterable"],
-        "module": "es2022",
-        "moduleResolution": "bundler",
-        "removeComments": false,
-        "sourceMap": true,
-        "allowJs": true,
+        "target": "esnext",
+        "lib": ["es2023", "dom"],
+        "moduleDetection": "force",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "resolveJsonModule": true,
+        "types": ["vite-plus/client"],
         "strict": true,
-        "target": "es2021",
-        "skipLibCheck": false
-    },
-    "files": ["src/index.ts"]
+        "noUnusedLocals": true,
+        "noUncheckedIndexedAccess": true,
+        "declaration": true,
+        "noEmit": true,
+        "allowImportingTsExtensions": true,
+        "esModuleInterop": true,
+        "isolatedModules": true,
+        "verbatimModuleSyntax": true,
+        "skipLibCheck": true
+    }
 }

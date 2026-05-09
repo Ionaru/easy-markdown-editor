@@ -1,5 +1,12 @@
-export { EasyMDE } from "./easymde";
-export * from "./imports";
+export { createEasyMDE, EasyMDE } from "./easymde.js";
+export type { IEasyMDEPlugin, IEasyMDEPluginClass } from "./easymde.js";
+export * from "./imports.js";
+export type { InputOptions, Options } from "./options.js";
+import { library, dom } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+
+library.add(fas);
+dom.watch();
 
 export class EasyMarkdownEditor extends HTMLElement {
     name = "World";

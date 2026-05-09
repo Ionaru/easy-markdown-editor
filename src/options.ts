@@ -1,6 +1,6 @@
-import { MarkedOptions } from "marked";
+import type { MarkedOptions } from "marked";
 
-import { EasyMDE } from "./easymde";
+import type { EasyMDE } from "./easymde.js";
 
 interface ArrayOneOrMore<T> extends Array<T> {
     0: T;
@@ -173,10 +173,7 @@ export interface InputOptions {
     placeholder?: string;
     previewClass?: string | readonly string[];
     previewImagesInEditor?: boolean;
-    previewRender?: (
-        markdownPlaintext: string,
-        previewElement: HTMLElement,
-    ) => string;
+    previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
     promptURLs?: boolean;
     renderingConfig?: RenderingOptions;
     shortcuts?: Shortcuts;
@@ -186,11 +183,10 @@ export interface InputOptions {
     nativeSpellcheck?: boolean;
     sideBySideFullscreen?: boolean;
     status?: boolean | readonly (string | StatusBarItem)[];
+    statusbar?: boolean;
     styleSelectedText?: boolean;
     tabSize?: number;
-    toolbar?:
-        | boolean
-        | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
+    toolbar?: boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
     toolbarTips?: boolean;
     onToggleFullScreen?: (goingIntoFullScreen: boolean) => void;
     theme?: string;
@@ -222,9 +218,7 @@ export interface InputOptions {
 
 export interface Options {
     statusbar?: boolean;
-    toolbar?:
-        | boolean
-        | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
+    toolbar?: boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
     blockStyles: {
         bold: string;
         code: string;

@@ -14,6 +14,4 @@ node_modules/
 dev_test/
 
 # Test artifacts
-cypress/screenshots/
-cypress/videos/
 coverage/

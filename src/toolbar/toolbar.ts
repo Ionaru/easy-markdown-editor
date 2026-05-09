@@ -1,9 +1,8 @@
 import { StateEffect } from "@codemirror/state";
 import { ViewPlugin, ViewUpdate } from "@codemirror/view";
 
-import { EasyMDE, IEasyMDEPlugin } from "../easymde";
-
-import { IToolbarButtonOptions } from "./default-toolbar";
+import { EasyMDE, type IEasyMDEPlugin } from "../easymde.js";
+import type { IToolbarButtonOptions } from "./default-toolbar.js";
 
 export class Toolbar implements IEasyMDEPlugin {
     static readonly #activeClass = "enabled";
@@ -21,16 +20,11 @@ export class Toolbar implements IEasyMDEPlugin {
             const toolBarSection: (HTMLButtonElement | HTMLSpanElement)[] = [];
 
             for (const toolBarButtonOptions of toolBarButtonSection) {
-                toolBarSection.push(
-                    this.#createToolBarButton(toolBarButtonOptions),
-                );
+                toolBarSection.push(this.#createToolBarButton(toolBarButtonOptions));
             }
 
             // Create a separator if this is not the last toolbar section.
-            if (
-                toolbarLayout.indexOf(toolBarButtonSection) !==
-                toolbarLayout.length - 1
-            ) {
+            if (toolbarLayout.indexOf(toolBarButtonSection) !== toolbarLayout.length - 1) {
                 toolBarSection.push(this.#createToolBarSeparator());
             }
 
@@ -57,16 +51,11 @@ export class Toolbar implements IEasyMDEPlugin {
             const toolBarSection: (HTMLButtonElement | HTMLSpanElement)[] = [];
 
             for (const toolBarButtonOptions of toolBarButtonSection) {
-                toolBarSection.push(
-                    this.#createToolBarButton(toolBarButtonOptions),
-                );
+                toolBarSection.push(this.#createToolBarButton(toolBarButtonOptions));
             }
 
             // Create a separator if this is not the last toolbar section.
-            if (
-                toolbarLayout.indexOf(toolBarButtonSection) !==
-                toolbarLayout.length - 1
-            ) {
+            if (toolbarLayout.indexOf(toolBarButtonSection) !== toolbarLayout.length - 1) {
                 toolBarSection.push(this.#createToolBarSeparator());
             }
 
@@ -87,11 +76,8 @@ export class Toolbar implements IEasyMDEPlugin {
         return separatorElement;
     }
 
-    #createToolBarButton(
-        toolBarButtonOptions: IToolbarButtonOptions,
-    ): HTMLButtonElement {
-        const buttonElement: HTMLButtonElement =
-            document.createElement("button");
+    #createToolBarButton(toolBarButtonOptions: IToolbarButtonOptions): HTMLButtonElement {
+        const buttonElement: HTMLButtonElement = document.createElement("button");
         buttonElement.tabIndex = -1;
         buttonElement.classList.add(toolBarButtonOptions.name);
 
@@ -113,28 +99,18 @@ export class Toolbar implements IEasyMDEPlugin {
         }
 
         if (typeof toolBarButtonOptions.active === "boolean") {
-            buttonElement.classList.toggle(
-                Toolbar.#activeClass,
-                toolBarButtonOptions.active,
-            );
+            buttonElement.classList.toggle(Toolbar.#activeClass, toolBarButtonOptions.active);
         } else if (typeof toolBarButtonOptions.active === "function") {
             this.editor.codemirror.dispatch({
                 effects: StateEffect.appendConfig.of(
                     ViewPlugin.define(() => ({
                         update: async (update: ViewUpdate) => {
-                            if (
-                                typeof toolBarButtonOptions.active ===
-                                "function"
-                            ) {
-                                const result =
-                                    await toolBarButtonOptions.active(
-                                        this.editor,
-                                        update,
-                                    );
-                                buttonElement.classList.toggle(
-                                    Toolbar.#activeClass,
-                                    result,
+                            if (typeof toolBarButtonOptions.active === "function") {
+                                const result = await toolBarButtonOptions.active(
+                                    this.editor,
+                                    update,
                                 );
+                                buttonElement.classList.toggle(Toolbar.#activeClass, result);
                             }
                         },
                     })),
@@ -144,7 +120,7 @@ export class Toolbar implements IEasyMDEPlugin {
 
         // Set the button icon.
         const buttonIcon = document.createElement("i");
-        buttonIcon.className = toolBarButtonOptions.icon;
+        buttonIcon.className = "fa-solid fa-" + toolBarButtonOptions.icon.iconName;
 
         buttonElement.append(buttonIcon);
         return buttonElement;

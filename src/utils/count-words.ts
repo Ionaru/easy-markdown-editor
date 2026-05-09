@@ -5,7 +5,6 @@ export const countWords = (document: Text) =>
         .toJSON()
         .reduce(
             (previous, current) =>
-                previous +
-                (current ? current.split(" ").filter(Boolean).length : 0),
+                previous + (current ? current.split(" ").filter(Boolean).length : 0),
             0,
         );

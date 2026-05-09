@@ -1,11 +1,21 @@
 import { ViewUpdate } from "@codemirror/view";
+import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
+import {
+    faEraser,
+    faHeading,
+    faImage,
+    faLink,
+    faListOl,
+    faListUl,
+    faQuestion,
+    faQuoteLeft,
+} from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../easymde";
-
-import { toggleBoldButton } from "./buttons/toggle-bold";
-import { toggleCodeButton } from "./buttons/toggle-code";
-import { toggleItalicButton } from "./buttons/toggle-italic";
-import { toggleStrikethroughButton } from "./buttons/toggle-strikethrough";
+import { EasyMDE } from "../easymde.js";
+import { toggleBoldButton } from "./buttons/toggle-bold.js";
+import { toggleCodeButton } from "./buttons/toggle-code.js";
+import { toggleItalicButton } from "./buttons/toggle-italic.js";
+import { toggleStrikethroughButton } from "./buttons/toggle-strikethrough.js";
 
 export interface IToolbarButtonOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,7 +24,7 @@ export interface IToolbarButtonOptions {
         | boolean
         | ((editor: EasyMDE, update: ViewUpdate) => boolean)
         | ((editor: EasyMDE, update: ViewUpdate) => Promise<boolean>);
-    icon: string;
+    icon: IconDefinition;
     readonly name: string;
     title: string;
 }
@@ -26,7 +36,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         toggleStrikethroughButton,
         {
             // action: toggleHeadingSmaller,
-            icon: "fas fa-header fa-heading",
+            icon: faHeading,
             name: "heading",
             title: "Heading",
         },
@@ -35,25 +45,25 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         toggleCodeButton,
         {
             // action: toggleBlockquote,
-            icon: "fas fa-quote-left",
+            icon: faQuoteLeft,
             name: "quote",
             title: "Quote",
         },
         {
             // action: toggleUnorderedList,
-            icon: "fas fa-list-ul",
+            icon: faListUl,
             name: "unordered-list",
             title: "Generic List",
         },
         {
             // action: toggleOrderedList,
-            icon: "fas fa-list-ol",
+            icon: faListOl,
             name: "ordered-list",
             title: "Numbered List",
         },
         {
             // action: cleanBlock,
-            icon: "fas fa-eraser",
+            icon: faEraser,
             name: "clean-block",
             title: "Clean block",
         },
@@ -61,13 +71,13 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     [
         {
             // action: drawLink,
-            icon: "fas fa-link",
+            icon: faLink,
             name: "link",
             title: "Create Link",
         },
         {
             // action: drawImage,
-            icon: "fas fa-image",
+            icon: faImage,
             name: "image",
             title: "Insert Image",
             // }, {
@@ -101,7 +111,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     [
         {
             action: "https://simplemde.com/markdown-guide",
-            icon: "fas fa-question",
+            icon: faQuestion,
             name: "guide",
             // noDisable: true,
             title: "Markdown Guide",
