@@ -39,19 +39,12 @@ This is a longer sentence!
 </textarea
         >
         <script type="module">
-            // import { createEasyMDE, Toolbar, defaultToolbar } from './dist/browser/index.js';
-            import { createEasyMDE, importToolbar, importDefaultToolbar } from "../dist/index.mjs";
-            window.x = await createEasyMDE({
+            import { EasyMDE } from "../dist/index.mjs";
+            window.x = new EasyMDE({
                 element: document.getElementById("my-text-area"),
                 toolbar: true,
                 statusbar: true,
             });
-
-            // const [{ Toolbar }, { defaultToolbar }] = await Promise.all([await importToolbar(), await importDefaultToolbar()]);
-            // const toolbar = new Toolbar(window.x, defaultToolbar);
-
-            // document.getElementById('custom-toolbar-container').appendChild(toolbar.element);
-            // window.x.destroy();
         </script>
 
         <easy-markdown-editor name="meow"></easy-markdown-editor>

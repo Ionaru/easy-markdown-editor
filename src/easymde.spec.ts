@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import { createEasyMDE, EasyMDE } from "./easymde.js";
+import { EasyMDE } from "./easymde.js";
 
 const createTextArea = (value: string): HTMLTextAreaElement => {
     const textArea = document.createElement("textarea");
@@ -14,10 +14,10 @@ describe("EasyMDE", () => {
         document.body.innerHTML = "";
     });
 
-    it("creates a ready editor instance", async () => {
+    it("creates a ready editor instance", () => {
         const textArea = createTextArea("Hello **world**");
 
-        const editor = await EasyMDE.create({
+        const editor = new EasyMDE({
             element: textArea,
             toolbar: false,
             statusbar: false,
@@ -36,9 +36,9 @@ describe("EasyMDE", () => {
         expect(editor.isRendered).toBe(false);
     });
 
-    it("updates the editor value and syncs it back on destroy", async () => {
+    it("updates the editor value and syncs it back on destroy", () => {
         const textArea = createTextArea("Original");
-        const editor = await createEasyMDE({
+        const editor = new EasyMDE({
             element: textArea,
             toolbar: false,
             statusbar: false,

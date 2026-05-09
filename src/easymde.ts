@@ -7,14 +7,14 @@ import { marked } from "marked";
 
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
 import { NotConstructedError } from "./errors/not-constructed-error.js";
-import { importDefaultToolbar, importToolbar } from "./imports.js";
 import { resolveOptions, type InputOptions, type Options } from "./options.js";
+import { StatusBar } from "./status-bar/status-bar.js";
+import { defaultToolbar } from "./toolbar/default-toolbar.js";
+import { Toolbar } from "./toolbar/toolbar.js";
 
 import "./styles.scss";
 
 export class EasyMDE {
-    static readonly #constructionToken = Symbol("EasyMDE construction");
-
     readonly #element: HTMLTextAreaElement;
     #container?: HTMLDivElement;
     #codemirror?: EditorView;
@@ -22,20 +22,11 @@ export class EasyMDE {
 
     readonly #plugins: IEasyMDEPlugin[] = [];
 
-    private constructor(options: InputOptions, constructionToken: symbol) {
-        if (constructionToken !== EasyMDE.#constructionToken) {
-            throw new TypeError("EasyMDE: Use EasyMDE.create(options) to create an editor.");
-        }
-
+    constructor(options: InputOptions) {
         this.#options = resolveOptions(options);
         this.#element = EasyMDE.#verifyAndReturnElement(this.#options.element);
         marked.parse("# EasyMDE", { async: false });
-    }
-
-    static async create(options: InputOptions): Promise<EasyMDE> {
-        const editor = new EasyMDE(options, EasyMDE.#constructionToken);
-        await editor.#construct();
-        return editor;
+        this.construct();
     }
 
     get container(): HTMLDivElement {
@@ -98,7 +89,7 @@ export class EasyMDE {
         });
     }
 
-    async #construct(): Promise<void> {
+    construct(): void {
         if (this.#container && this.#codemirror) {
             throw new AlreadyConstructedError();
         }
@@ -173,13 +164,13 @@ export class EasyMDE {
         const easyMDEContainer = this.#createContainer();
 
         if (this.options.toolbar !== false) {
-            easyMDEContainer.append(await this.#createToolbar());
+            easyMDEContainer.append(this.#createToolbar());
         }
 
         easyMDEContainer.append(this.codemirror.dom);
 
         if (this.options.statusbar !== false) {
-            easyMDEContainer.append(await this.#createStatusBar());
+            easyMDEContainer.append(this.#createStatusBar());
         }
 
         this.#element.insertAdjacentElement("afterend", easyMDEContainer);
@@ -210,18 +201,13 @@ export class EasyMDE {
         return plugin;
     }
 
-    async #createToolbar(): Promise<HTMLDivElement> {
-        const [{ Toolbar }, { defaultToolbar }] = await Promise.all([
-            importToolbar(),
-            importDefaultToolbar(),
-        ]);
+    #createToolbar(): HTMLDivElement {
         const toolbar = new Toolbar(this, defaultToolbar);
         this.addPlugin(toolbar);
         return toolbar.element;
     }
 
-    async #createStatusBar(): Promise<HTMLDivElement> {
-        const { StatusBar } = await import("./status-bar/status-bar.js");
+    #createStatusBar(): HTMLDivElement {
         const statusBar = new StatusBar(this);
         return statusBar.element;
     }
@@ -232,8 +218,6 @@ export class EasyMDE {
         return container;
     }
 }
-
-export const createEasyMDE = (options: InputOptions): Promise<EasyMDE> => EasyMDE.create(options);
 
 export type IEasyMDEPluginClass = new (easyMDE: EasyMDE) => IEasyMDEPlugin;
 

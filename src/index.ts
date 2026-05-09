@@ -1,6 +1,5 @@
-export { createEasyMDE, EasyMDE } from "./easymde.js";
+export { EasyMDE } from "./easymde.js";
 export type { IEasyMDEPlugin, IEasyMDEPluginClass } from "./easymde.js";
-export * from "./imports.js";
 export type { InputOptions, Options } from "./options.js";
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
