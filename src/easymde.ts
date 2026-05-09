@@ -3,11 +3,11 @@ import { HighlightStyle, defaultHighlightStyle, syntaxHighlighting } from "@code
 import { EditorState } from "@codemirror/state";
 import { drawSelection, EditorView } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
-import { marked } from "marked";
 
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
 import { NotConstructedError } from "./errors/not-constructed-error.js";
 import { resolveOptions, type InputOptions, type Options } from "./options.js";
+import { Preview } from "./preview/preview.js";
 import { StatusBar } from "./status-bar/status-bar.js";
 import { defaultToolbar } from "./toolbar/default-toolbar.js";
 import { Toolbar } from "./toolbar/toolbar.js";
@@ -22,10 +22,11 @@ export class EasyMDE {
 
     readonly #plugins: IEasyMDEPlugin[] = [];
 
+    #preview?: Preview;
+
     constructor(options: InputOptions) {
         this.#options = resolveOptions(options);
         this.#element = EasyMDE.#verifyAndReturnElement(this.#options.element);
-        marked.parse("# EasyMDE", { async: false });
         this.construct();
     }
 
@@ -171,11 +172,36 @@ export class EasyMDE {
 
         easyMDEContainer.append(this.codemirror.dom);
 
+        const preview = new Preview(this);
+        this.addPlugin(preview);
+        this.#preview = preview;
+
         if (this.options.statusbar !== false) {
             this.addPlugin(new StatusBar(this));
         }
 
         this.codemirror.focus();
+    }
+
+    togglePreview(): void {
+        const next = !this.isPreviewActive();
+        if (next && this.#preview) {
+            // Lock preview to editor's current height so toggling does not resize the container.
+            this.#preview.element.style.minHeight = `${this.codemirror.dom.offsetHeight}px`;
+        }
+        this.container.classList.toggle("preview-active", next);
+        if (next) {
+            this.#preview?.render(this.getValue());
+        }
+        if (this.options.toolbar !== false) {
+            // Empty transaction wakes toolbar buttons whose `active` callback
+            // is registered as a CodeMirror ViewPlugin update listener.
+            this.codemirror.dispatch({});
+        }
+    }
+
+    isPreviewActive(): boolean {
+        return this.#container?.classList.contains("preview-active") ?? false;
     }
 
     destroy(): void {
@@ -191,6 +217,7 @@ export class EasyMDE {
 
         this.#container = undefined;
         this.#codemirror = undefined;
+        this.#preview = undefined;
 
         this.#element.hidden = false;
     }

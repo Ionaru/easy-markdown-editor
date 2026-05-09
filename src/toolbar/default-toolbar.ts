@@ -2,6 +2,7 @@ import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     faEraser,
+    faEye,
     faHeading,
     faImage,
     faLink,
@@ -80,32 +81,15 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
             icon: faImage,
             name: "image",
             title: "Insert Image",
-            // }, {
-            //     // action: drawHorizontalRule,
-            //     icon: 'fas fa-minus',
-            //     name: 'horizontal-rule',
-            //     title: 'Insert Horizontal Line',
-            // }], [{
-            //     action: NewMDE.togglePreview,
-            //     icon: 'fas fa-eye',
-            //     name: 'preview',
-            //     // noDisable: true,
-            //     // noMobile: true,
-            //     title: 'Toggle Preview',
-            // }, {
-            //     action: NewMDE.toggleSideBySide,
-            //     icon: 'fas fa-columns',
-            //     name: 'side-by-side',
-            //     // noDisable: true,
-            //     // noMobile: true,
-            //     title: 'Toggle Side by Side',
-            // }, {
-            //     action: NewMDE.toggleFullScreen,
-            //     icon: 'fas fa-arrows-alt',
-            //     name: 'fullscreen',
-            //     // noDisable: true,
-            //     // noMobile: true,
-            //     title: 'Toggle Fullscreen',
+        },
+    ],
+    [
+        {
+            action: (editor: EasyMDE) => editor.togglePreview(),
+            active: (editor: EasyMDE) => editor.isPreviewActive(),
+            icon: faEye,
+            name: "preview",
+            title: "Toggle Preview",
         },
     ],
     [
@@ -113,20 +97,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
             action: "https://simplemde.com/markdown-guide",
             icon: faQuestion,
             name: "guide",
-            // noDisable: true,
             title: "Markdown Guide",
-            // }], [{
-            //     action: NewMDE.undo,
-            //     icon: 'fas fa-undo',
-            //     name: 'undo',
-            //     // noDisable: true,
-            //     title: 'Undo',
-            // }, {
-            //     action: NewMDE.redo,
-            //     icon: 'fas fa-repeat',
-            //     name: 'redo',
-            //     // noDisable: true,
-            //     title: 'Redo',
         },
     ],
 ];

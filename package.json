@@ -38,6 +38,7 @@
         "@fortawesome/free-solid-svg-icons": "^7.2.0",
         "@lezer/highlight": "^1.2.3",
         "@lezer/markdown": "^1.6.3",
+        "dompurify": "^3.4.2",
         "escape-string-regexp": "^5.0.0",
         "marked": "^18.0.3"
     },
@@ -73,6 +74,7 @@
         "@lezer/lr": "1.4.10",
         "@lezer/markdown": "1.6.3",
         "@marijn/find-cluster-break": "1.0.2",
+        "dompurify": "3.4.2",
         "escape-string-regexp": "5.0.0",
         "marked": "18.0.3",
         "style-mod": "4.1.3",

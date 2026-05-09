@@ -14,10 +14,11 @@ export default defineConfig({
                 onlyBundle: false,
                 alwaysBundle: [
                     "@codemirror/*",
-                    "@lezer/*",
                     "@fortawesome/*",
-                    "marked",
+                    "@lezer/*",
+                    "dompurify",
                     "escape-string-regexp",
+                    "marked",
                 ],
             },
         },

@@ -1,0 +1,71 @@
+import { afterEach, describe, expect, it } from "vitest";
+
+import { createEditor } from "../test-utils.js";
+import { Preview } from "./preview.js";
+
+describe("Preview", () => {
+    afterEach(() => {
+        document.body.innerHTML = "";
+    });
+
+    it("creates an element with the easymde-preview class", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        expect(preview.element).toBeInstanceOf(HTMLDivElement);
+        expect(preview.element.classList.contains("easymde-preview")).toBe(true);
+    });
+
+    it("mounts the element into the editor container and unmounts on teardown", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        preview.mount();
+        expect(editor.container.contains(preview.element)).toBe(true);
+
+        preview.unmount();
+        expect(editor.container.contains(preview.element)).toBe(false);
+    });
+
+    it("renders Markdown into sanitized HTML on render()", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        preview.render("# Hello\n\n**world**");
+
+        expect(preview.element.innerHTML).toContain("<h1>Hello</h1>");
+        expect(preview.element.innerHTML).toContain("<strong>world</strong>");
+    });
+
+    it("strips XSS payloads from rendered output", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        preview.render("<script>alert(1)</script>safe");
+
+        expect(preview.element.innerHTML).not.toContain("<script");
+        expect(preview.element.innerHTML).toContain("safe");
+    });
+
+    it("replaces previous content on re-render", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        preview.render("# First");
+        preview.render("# Second");
+
+        expect(preview.element.innerHTML).not.toContain("First");
+        expect(preview.element.innerHTML).toContain("<h1>Second</h1>");
+    });
+
+    it("honors renderingConfig.markedOptions", () => {
+        const editor = createEditor({
+            renderingConfig: { markedOptions: { breaks: true } },
+        });
+        const preview = new Preview(editor);
+
+        preview.render("line1\nline2");
+
+        expect(preview.element.innerHTML).toContain("<br>");
+    });
+});
