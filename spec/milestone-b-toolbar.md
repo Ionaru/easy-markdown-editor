@@ -55,8 +55,11 @@ Wire into `defaultToolbar`: replace the inert `heading` button with a set of: `h
 **File:** `src/toolbar/buttons/toggle-quote.ts` (new)
 
 ```ts
-export const toggleQuote = (editor: EasyMDE) => toggleLine(editor.codemirror, ">");
+export const toggleQuote = (editorView: EditorView): void =>
+    toggleLine(editorView, ">");
 ```
+
+(or accept `EasyMDE` if you expose `editor.codemirror` at the boundary — **`toggleLine`** always receives **`EditorView`**.)
 
 Active when all selection lines start with `> `.
 
@@ -154,7 +157,35 @@ Image upload (paste / drop / file dialog) is a separate feature tracked in Miles
 
 ---
 
-## B11 — Undo / redo
+## B11 — Task list (checkbox)
+
+**Files:** `src/toolbar/buttons/toggle-task.ts` (new), extend `src/utils/toggle-line.ts` or add list-specific helpers as needed
+
+GitHub-style task list items: `- [ ]` (unchecked) and `- [x]` or `- [X]` (checked).
+
+- Toggle adds or removes the checkbox prefix on every line intersecting the selection (same line-surgery model as `toggleLine`).
+- Typing rules should align with V2 behaviour where possible; see [original-analysis.md](original-analysis.md) (line-prefix / task list gap).
+- Active state: all intersected lines are task-list lines with a consistent checked/unchecked state when applicable.
+
+Wire into `defaultToolbar` (V2 includes a task-list control in its default set).
+
+**Tests:** mirror `toggle-line` coverage (single line, multi-line, idempotent toggle, mixed list/task lines).
+
+---
+
+## B12 — Markdown guide / help
+
+**File:** `src/toolbar/buttons/open-guide.ts` (new), `src/options.ts` (option wiring)
+
+- The default toolbar’s **guide** / **help** button opens Markdown syntax documentation in a new browser tab (or same-tab if documented otherwise — default: `target="_blank"` + `rel="noopener"`).
+- Add **`toolbarGuideUrl`** (or retain / alias V2’s field name if it already exists in `InputOptions`) — `string`, defaulting to a sensible public Markdown reference URL documented in the README.
+- If the URL is empty / disabled, hide the button or no-op per `toolbar` builder rules.
+
+**Acceptance:** the default toolbar control that maps to V2’s `guide` / `guide-link` id performs a deterministic open action.
+
+---
+
+## B13 — Undo / redo
 
 **Files:** `src/easymde.ts`, `src/toolbar/buttons/undo.ts`, `src/toolbar/buttons/redo.ts` (new)
 
@@ -165,7 +196,7 @@ Image upload (paste / drop / file dialog) is a separate feature tracked in Miles
 
 ---
 
-## B12 — Keyboard shortcuts
+## B14 — Keyboard shortcuts
 
 **File:** `src/keymap.ts` (new)
 
@@ -188,6 +219,12 @@ Create a CM6 keymap using `keymap.of([...])` and `Prec.high`:
 | Ctrl+Z                | Cmd+Z        | undo                 |
 | Ctrl+Y / Shift+Ctrl+Z | Shift+Cmd+Z  | redo                 |
 | Ctrl+Alt+1..6         | Cmd+Alt+1..6 | toggleHeading1..6    |
+| F9                    | F9           | toggleSideBySide      |
+| F11                   | F11          | toggleFullscreen      |
+
+For **`v3.0.0-beta.x`**, if layout APIs do not yet exist the implementation MAY omit these bindings or leave them dormant; they **must** call the Stable public methods once Milestone **C** ships.
+
+Bindings for **toggleSideBySide** and **toggleFullscreen** wire to [milestone-c-layout.md](milestone-c-layout.md); they ride in **`src/keymap.ts`** so the **entire default map** lives in Milestone **B**.
 
 Use `standardKeymap` from `@codemirror/commands` as a base (provides basic editing). Override with EasyMDE-specific bindings.
 
@@ -197,7 +234,7 @@ The `shortcuts` option override (from `InputOptions`) is deferred to post-stable
 
 ---
 
-## B13 — Custom toolbar configuration
+## B15 — Custom toolbar configuration
 
 **File:** `src/toolbar/build-toolbar.ts` (new)
 
@@ -217,6 +254,8 @@ Use this in `easymde.ts` instead of hard-wiring `defaultToolbar`.
 
 - [ ] All V2 default toolbar buttons have working actions.
 - [ ] `toggleLine` is tested for all selection shapes and prefix types.
+- [ ] Task list toggle matches V2 semantics for `- [ ]` / `- [x]` lines.
+- [ ] Guide / help opens the configured URL from the default toolbar.
 - [ ] Heading cycling (smaller/bigger) works correctly through H1–H6 and wraps.
 - [ ] Unordered and ordered lists apply/remove correctly on multi-line selections.
 - [ ] Undo / redo work in both the toolbar and via Ctrl+Z / Ctrl+Y.

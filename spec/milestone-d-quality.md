@@ -45,7 +45,7 @@ Ensure `:focus-visible` produces a visible ring on toolbar buttons. Remove `outl
 | `src/utils/count-words.spec.ts`     | Space, tab, newline, multi-space, empty doc                                            |
 | `src/utils/toggle-line.spec.ts`     | All cases: single line, multi-line, already-applied, partial, heading prefix collision |
 | `src/toolbar/build-toolbar.spec.ts` | `toolbar: false`, `toolbar: array`, `hideIcons`, `showIcons` resolution                |
-| `src/preview/preview.spec.ts`       | Render Markdown → HTML, sanitization (script tag stripped), `previewRender` override   |
+| `src/preview/preview.spec.ts`       | Shared pipeline §4, `renderingConfig`, script stripped, `previewRender` override                                       |
 | `src/easymde.spec.ts`               | `value()`, `value(text)`, `construct()` / `destruct()` cycle, form-submit sync         |
 
 ### Integration tests
@@ -84,15 +84,16 @@ This allows `vp dev` to spin up a live-reloading demo during development.
 Rewrite the readme for V3. Sections:
 
 1. **Quick start** — install, basic usage (`new EasyMDE({ element })`), preview.
-2. **Options reference** — one table per options group (display, behaviour, toolbar, preview, etc.). Mark `@deprecated` items. Clearly note which V2 options are dropped.
+2. **Options reference** — one table per options group (display, behaviour, toolbar, Markdown preview **`previewRender`** / **`renderingConfig`** (`markedOptions`, `sanitizerFunction`), **`codemirrorExtensions`**, lifecycle callbacks from [plugins §7](plugins-and-extensions.md#7-events--hooks-issue-447), etc.). Mark `@deprecated` items. Clearly note which V2 options are dropped. Naming matches [plugins-and-extensions.md §3–§4](plugins-and-extensions.md).
 3. **Toolbar customisation** — custom button arrays, `hideIcons`, `showIcons`, custom button shape.
 4. **Keyboard shortcuts** — full default map, note that overrides are post-1.0.
 5. **Plugin API** — `IEasyMDEPlugin` interface, `addPlugin`, basic example.
 6. **Web component** — `<easy-markdown-editor>` attribute reference.
 7. **Migrating from V2** — table of what changed, what was removed, what behaves differently.
 8. **Contributing** — link to `CONTRIBUTING.md`, how to run `vp dev`, `vp test`, `vp check`.
+9. **Toolchain** — document **Vite+** and the `vp` CLI ([AGENTS.md](../AGENTS.md)); [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) cites Rollup as an example of modern bundling — V3 satisfies “modern toolchain” without being Rollup-specific.
 
----
+Lifecycle callbacks planned for Stable (`v3.0.0`) are specified in [plugins-and-extensions.md §7](plugins-and-extensions.md#7-events--hooks-issue-447); include them in the options reference when implemented.
 
 ## D5 — npm beta publish
 

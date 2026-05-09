@@ -2,7 +2,7 @@
 
 Normative specification for how EasyMDE V3 exposes three extension surfaces: **Editor plugins** (DOM lifecycle), **CodeMirror 6 extensions** (editing behaviour), and the **Marked** pipeline (Markdown → HTML for preview). Implementation must **dogfood** these APIs: built-in features use the same contracts as third-party code.
 
-**Related:** [overview.md](overview.md), [decisions.md](decisions.md) (§2 sanitization, §6 plugin interface), [milestone-a-foundations.md](milestone-a-foundations.md) (A3, A5), [milestone-c-layout.md](milestone-c-layout.md), [milestone-e-post-stable.md](milestone-e-post-stable.md) (future bundled plugins).
+**Related:** [overview.md](overview.md), [decisions.md](decisions.md) (§2 sanitization, §6 plugin interface, §8 exports), [milestone-a-foundations.md](milestone-a-foundations.md) (A3, A5), [milestone-c-layout.md](milestone-c-layout.md), [milestone-e-post-stable.md](milestone-e-post-stable.md) (future bundled plugins), **§7** [Events & hooks](#7-events--hooks-issue-447) ([issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447)).
 
 ---
 
@@ -63,20 +63,26 @@ Legacy note: Implementations predating this spec may still expose `build`/`destr
 ### 2.2 Registration and lifecycle
 
 - **`EasyMDE.addPlugin(plugin)`** pushes the plugin, then calls **`plugin.mount()`** immediately (same tick as registration).
-- **Destruction:** `destruct()` / `destroy()` calls **`unmount()`** on each registered plugin **in reverse registration order** (last added, first torn down)—symmetric stack discipline.
+
+- **Destructor name:** **`EasyMDE.destruct()`** is the canonical public teardown method (`toTextArea()` may alias it; see milestones). **`destroy()`** is **allowed only as a documented compat alias for V2 embedders**, identical behaviour to **`destruct()`** — do not diverge meanings.
+
+- **Destruction:** For each registered **`IEasyMDEPlugin`**, **`destruct()`** (or **`destroy()`**) calls **`plugin.unmount()`** in **reverse registration order** (last added, first torn down)—symmetric stack discipline.
 
 **DOM insert order** inside `.easymde-container`:
 
-1. Toolbar (when enabled)
-2. CodeMirror root element
-3. Status bar (when enabled)
-4. **Custom plugins** registered via `addPlugin`, in registration order
+1. Toolbar (when enabled — **`IEasyMDEPlugin`**)
+2. CodeMirror editor root (`EditorView` holder created by **`EasyMDE`**)
+3. Preview pane (**`Preview`** from [milestone-a-foundations.md](milestone-a-foundations.md) A5 — **`IEasyMDEPlugin`**; sibling of CM; visibility from CSS unless side-by-side)
+4. Status bar (when enabled — **`IEasyMDEPlugin`**)
+5. **Custom plugins** (**not** Toolbar / Preview / StatusBar) registered via **`addPlugin`**, in registration order
 
-**Late registration:** `addPlugin()` after construction is allowed ONLY if documented in the release; the normative target is “register during construction” for built-ins. If late registration is supported, `mount()` must append `element` after existing chrome (custom plugin region).
+Implementations MAY wrap nodes 2–3 in an inner wrapper for CSS grid (side-by-side). **Fullscreen**/**side-by-side** are **modes** on **`.easymde-container`** (+ inner layout CSS per [milestone-c-layout.md](milestone-c-layout.md)); no extra unexplained DOM subtree unless an optional shell refactor is intentionally dogfooded **and** justified here.
+
+**Late registration (`addPlugin` after `EasyMDE.construct()` completes):** **unsupported** for **`v3.0.x`**. Embedders MUST pass built-in knobs via **`InputOptions`** (or **`codemirrorExtensions`**). Revisit only in a MINOR that explicitly permits it—until then callers MUST NOT rely on deferred registration.
 
 ### 2.3 Dogfooding (1.0)
 
-Built-in **Toolbar**, **StatusBar**, **Preview** pane wrapper, and layout shells for **fullscreen** / **side-by-side** (once present) MUST implement **`IEasyMDEPlugin`** and MUST NOT use a parallel undocumented DOM pathway. Exceptions require an explicit rationale in this document (prefer none).
+Built-in **Toolbar**, **StatusBar**, and **Preview** MUST implement **`IEasyMDEPlugin`**. Layout modes (**fullscreen**, **side-by-side**) SHOULD be implemented via container CSS + methods on **`EasyMDE`** alone; introducing a standalone **fullscreen/split-shell** plugin MUST still dogfood **`IEasyMDEPlugin`** **and** be documented above in §**2.2**.
 
 ---
 
@@ -127,6 +133,8 @@ All Markdown → HTML paths for **preview**, **side-by-side**, and any other bui
 
 3. **Not required for 1.0 public API:** arbitrary `marked.use` of **custom tokenizer extensions** from consumer code. If exposed later, it MUST go through the isolated instance, not the global singleton.
 
+**Field names on `InputOptions` / `Options`:** `previewRender`, `renderingConfig.markedOptions`, and `renderingConfig.sanitizerFunction` live alongside all other resolved keys enumerated in [milestone-a-foundations.md](milestone-a-foundations.md) **A1** (implementations SHOULD keep this list and §4 aligned).
+
 ### 4.3 Terminology (Marked docs)
 
 - **MarkedExtension** — object passed to `marked.use({ ... })` on the **instance**: options, `hooks`, `renderer` / `tokenizer` overrides, and `extensions: [...]` for custom syntax ([Using Pro](https://marked.js.org/using_pro)).
@@ -137,9 +145,9 @@ All Markdown → HTML paths for **preview**, **side-by-side**, and any other bui
 Two layers appear in the ecosystem:
 
 - Marked **hooks `postprocess`** with DOMPurify ([official example](https://marked.js.org/using_pro)).
-- EasyMDE **`sanitizerFunction`** / DOMPurify per [decisions.md](decisions.md) §2.
+- EasyMDE **`renderingConfig.sanitizerFunction`** / DOMPurify per [decisions.md](decisions.md) §2.
 
-**Normative rule:** EasyMDE applies **one** sanitization step at the end of the pipeline (implementation may use `hooks.postprocess` internally or a string function—transparent to the consumer). Consumers MUST NOT need to choose between duplicate incompatible hooks if they set `sanitizerFunction`.
+**Normative rule:** EasyMDE applies **one** sanitization step at the end of the pipeline (implementation may use `hooks.postprocess` internally or a string function—transparent to the consumer). Consumers MUST NOT need to choose between duplicate incompatible hooks if they set **`renderingConfig.sanitizerFunction`**.
 
 ### 4.5 `previewRender` vs Marked
 
@@ -201,7 +209,61 @@ Consumer sets `renderingConfig: { markedOptions: { gfm: true }, sanitizerFunctio
 
 ---
 
-## 7. Appendix A — Dogfooding matrix (1.0 roadmap)
+## 7. Events & hooks (issue #447)
+
+[Issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) calls for **easier event hooks** than V2. This section splits that goal by release phase (see [overview.md — Release phases](overview.md#release-phases)).
+
+### 7.1 MVP / always — CodeMirror as the hook layer
+
+- **`codemirrorExtensions`** (§3): consumers attach **`EditorView.updateListener`**, keymaps, and other CM6 extensions for low-level document/view notifications.
+- This is the **baseline** hook surface for beta: no separate EasyMDE event bus is required to ship MVP.
+
+### 7.2 Stable (`v3.0.0`) — narrow `InputOptions` callbacks
+
+Add a **small, typed** set of optional callbacks on `InputOptions` / `Options` (exact names and payloads ship with implementation), for example:
+
+| Callback (illustrative name) | When it runs |
+| ---------------------------- | ------------ |
+| `onDocumentChange` | After the editor document changed and the transaction committed (debouncing policy documented if any). |
+| `onPreviewToggle` | When preview mode is turned on or off. |
+| `onLayoutModeChange` | When side-by-side or fullscreen enters or exits (payload: which mode, boolean active). |
+
+Rules:
+
+- Callbacks MUST NOT throw into EasyMDE internals; errors are the consumer’s responsibility.
+- Callbacks are **single-function** options (not multi-subscriber). Multiple listeners are out of scope for Stable—use CM6 listeners or small wrappers.
+
+Document every callback in the README options table ([milestone-d-quality.md](milestone-d-quality.md) D4).
+
+### 7.3 Post-stable — extended event API
+
+Reserved for a richer model if needed:
+
+- **Multi-subscriber** APIs, **EventTarget-style** dispatch, or **ordering guarantees** across listeners.
+- **Optional multipackage** ergonomics may influence packaging (`easymde-core` vs full); see [overview.md](overview.md) Post-1.0 rows.
+
+No normative design until demand is proven — avoid speculative surface area before `v3.0.0`.
+
+```mermaid
+flowchart LR
+  subgraph mvp [MVP_beta]
+    CMExt[CM6_extensions]
+  end
+  subgraph stable [Stable_v3]
+    OptCb[InputOptions_callbacks]
+    Exports[package_exports_doc]
+  end
+  subgraph post [Post_stable]
+    MultiPkg[multipackage]
+    RichEvt[rich_event_API]
+  end
+  mvp --> stable
+  stable --> post
+```
+
+---
+
+## 8. Appendix A — Dogfooding matrix (1.0 roadmap)
 
 Built-in surfaces MUST use the APIs in this table once the listed milestone lands. **TBD** indicates spec ahead of implementation.
 
@@ -211,21 +273,21 @@ Built-in surfaces MUST use the APIs in this table once the listed milestone land
 | Status bar                    | Yes                       | Reads doc/state via `EasyMDE`   | No                       | [A](milestone-a-foundations.md)                              |
 | Preview pane (DOM shell)      | Yes                       | —                               | Uses shared pipeline     | [A](milestone-a-foundations.md) A5                           |
 | Default keymap / undo         | Via merge helper (`§3.3`) | Yes                             | No                       | [A](milestone-a-foundations.md), [B](milestone-b-toolbar.md) |
-| Side-by-side layout           | Yes (pane chrome)         | —                               | Same pipeline as preview | [C](milestone-c-layout.md)                                   |
-| Fullscreen layout             | Yes                       | Possible focus trap             | No                       | [C](milestone-c-layout.md)                                   |
+| Side-by-side layout           | Uses **Preview** + container/grid CSS (`§2.2`; no separate unexplained subtree) | —                               | Same pipeline as preview | [C](milestone-c-layout.md)                                   |
+| Fullscreen layout             | Container **`EasyMDE` mode** + CSS (`§2.2`); optional trap via CM helpers | Possible focus helpers            | No                       | [C](milestone-c-layout.md)                                   |
 | Syntax highlighting in editor | —                         | Included in base stack          | No                       | Current + [A](milestone-a-foundations.md)                    |
 | Form sync / `value()`         | —                         | CM `doc`                        | No                       | [A](milestone-a-foundations.md) A6–A7                        |
 | Web component wrapper         | Embeds `EasyMDE`          | Same as instance                | Same as instance         | [A](milestone-a-foundations.md) A8                           |
 
 ---
 
-## 8. Appendix B — Future bundled plugins (post-1.0)
+## 9. Appendix B — Future bundled plugins (post-1.0)
 
 **Autosave** and **image upload** ([milestone-e-post-stable.md](milestone-e-post-stable.md)) SHOULD be implemented as **Editor plugins** (and optional CM6 listeners for paste/drop) on top of the same public surfaces. They are **not** required for 1.0 scope per [overview.md](overview.md).
 
 ---
 
-## 9. Derived documentation
+## 10. Derived documentation
 
 User-facing **README** and demo should summarize the three surfaces and link to this spec; full prose is tracked under [milestone-d-quality.md](milestone-d-quality.md).
 

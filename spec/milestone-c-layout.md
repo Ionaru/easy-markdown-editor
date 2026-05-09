@@ -85,7 +85,7 @@ Depends on Milestone A (preview pipeline) and Milestone B (toolbar actions).
 
 ### Toolbar button
 
-`src/toolbar/buttons/toggle-fullscreen.ts`. Keyboard shortcut: F11 (add to keymap in `src/keymap.ts`). Add to default toolbar.
+`src/toolbar/buttons/toggle-fullscreen.ts`. **Default key bindings** for side-by-side and fullscreen are listed in [milestone-b-toolbar.md — B14](milestone-b-toolbar.md#b14--keyboard-shortcuts) (F9 / F11). Add to default toolbar.
 
 ---
 
@@ -138,6 +138,8 @@ if (options.theme) {
 ```
 
 Consumers override variables by targeting `[data-easymde-theme="custom"]` in their own CSS. The V3 bundle ships no named themes beyond the light/dark default — this is a deliberate departure from V2's `simplemde` theme.
+
+For [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447), **“updated standard look”** means this **tokenized default theme** (light + automatic dark via `prefers-color-scheme`, plus optional `data-easymde-theme` overrides) shipped with **`v3.0.0`**. A **full visual redesign** (new layout paradigm, illustration-heavy chrome, marketing-grade polish) is **out of scope for Stable** unless separately scheduled — track such work as **Post-`v3.0.0`** in [overview.md](overview.md).
 
 ### Acceptance criteria for Milestone C
 

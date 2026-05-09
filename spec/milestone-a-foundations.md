@@ -10,7 +10,7 @@ Milestone A is a prerequisite for all other milestones.
 **Files:** `src/options.ts`
 
 - Introduce `resolveOptions(input: InputOptions): Options` that applies all defaults.
-- Expand `Options` to include every field that will have a runtime effect in milestones A–D (at minimum: `toolbar`, `statusbar`, `blockStyles`, `unorderedListStyle`, `indentWithTabs`, `tabSize`, `lineWrapping`, `lineNumbers`, `minHeight`, `maxHeight`, `placeholder`, `forceSync`, `promptURLs`, `promptTexts`, `previewRender`, `sanitizerFunction`).
+- Expand `Options` to include every field that will have a runtime effect in milestones A–D (at minimum): `toolbar`, `statusbar`, `blockStyles`, `unorderedListStyle`, `indentWithTabs`, `tabSize`, `lineWrapping`, `lineNumbers`, `minHeight`, `maxHeight`, `placeholder`, `forceSync`, `promptURLs`, `promptTexts`; **`codemirrorExtensions`** ([plugins-and-extensions.md §3](plugins-and-extensions.md#31-consumer-facing-api-10-target)); and for preview/Marked the names in [plugins-and-extensions.md §4.2](plugins-and-extensions.md#42-marked-api-policy-10): top-level **`previewRender`**, and nested **`renderingConfig`** with **`markedOptions`** and **`sanitizerFunction`** (no parallel top-level duplicate for the sanitizer).
 - Strip fields from `InputOptions` that will not be supported in V3 (or mark them `/** @deprecated */` and document the intention).
 - Call `resolveOptions` at the start of `EasyMDE.construct()` and use the resolved value everywhere.
 
@@ -20,10 +20,10 @@ Milestone A is a prerequisite for all other milestones.
 
 **Files:** `src/easymde.ts`, `src/imports.ts`
 
-- Remove the `void this.construct()` call from the constructor.
-- Remove the `async` keyword from `construct()`.
+- Remove the `void this.construct()` fire-and-forget pattern and all `async` from `construct()`.
 - Eagerly import `Toolbar`, `defaultToolbar`, and `StatusBar` — remove `src/imports.ts` if it becomes dead.
-- `construct()` becomes a synchronous public method; callers can call it immediately after `new EasyMDE(opts)`, or the constructor can call it directly (the "no async constructor" pattern).
+- **Normative UX:** **`new EasyMDE(opts)` invokes `construct()` synchronously before the constructor returns** so a freshly constructed instance is immediately usable (**no** latent async race).
+- Keep **`construct()` public** **only if** embedding patterns need a guarded “prepare options → mount” sequence; README MUST state that **`new`** is the normal path — any manual pattern calls **`construct()`** exactly once afterward (same synchronous rules).
 - Update the `NotConstructedError` / `AlreadyConstructedError` guard to match.
 
 ---
@@ -53,13 +53,27 @@ export interface IEasyMDEPlugin {
 
 ---
 
-## A4 — Trim FontAwesome bundle
+## A4 — Trim FontAwesome bundle & icon surfaces
 
-**Files:** `src/index.ts`, `src/toolbar/default-toolbar.ts`
+**Files:** `src/index.ts`, `src/toolbar/default-toolbar.ts`, `src/toolbar/*` (button types as needed)
+
+**By MVP (beta.1):**
 
 - Replace `library.add(fas)` with individual icon imports for only the icons used by the default toolbar (~12 icons).
-- Export a `registerIcons(...icons: IconDefinition[]): void` helper so consumers can add icons for their custom toolbar buttons without importing `fas`.
-- Add a note in `decisions.md` about whether consumers are expected to call `registerIcons` or if the web component handles it.
+- Export a `registerIcons(...icons: IconDefinition[]): void` helper so consumers can add Font Awesome icon definitions for custom toolbar buttons without importing `fas`.
+
+**Documentation:** Consumers call **`registerIcons`** for custom FA buttons; **`registerIcons`** is **not** auto-invoked by the web component (**[decisions.md](decisions.md)** §**8** MVP bullet).
+
+**By Stable (`v3.0.0`):**
+
+- Support **custom toolbar icons without Font Awesome** as a normative part of `IToolbarButtonOptions` (exact field names ship with implementation), for example one or more of:
+  - inline **SVG string** (sanitised / constrained to `<svg>` subtree),
+  - **`HTMLElement`** supplied by the consumer,
+  - or a small documented **`icon` resolver** hook that returns an element to place inside the button.
+- Font Awesome remains **one** backend: default toolbar buttons may keep using `@fortawesome` + `registerIcons`; custom buttons may use the non-FA surfaces above.
+- README must document the recommended approach for “raw SVG” from [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) / [#491](https://github.com/Ionaru/easy-markdown-editor/issues/491).
+
+Implementation order: ship **trimmed FA + `registerIcons`** first; **non-FA / SVG** completes by Stable, not blocking beta.
 
 ---
 
@@ -78,7 +92,7 @@ class Preview implements IEasyMDEPlugin {
 }
 ```
 
-- `render` calls `marked.parse(markdown)` then applies a sanitizer (see `decisions.md` §2 for the default strategy).
+- `render` calls the shared Markdown → HTML pipeline from [plugins-and-extensions.md §4](plugins-and-extensions.md) (`renderMarkdownToHtmlForPreview`-style helper): dedicated per-instance **`Marked`** + optional **`previewRender`** override, then **`renderingConfig.sanitizerFunction`** (or safe built-in default per [decisions.md](decisions.md) §2). Never assigns raw HTML without that final step.
 - Sets `this.element.innerHTML` to the sanitized HTML.
 - `element` has `class="easymde-preview"` and is hidden by default via CSS.
 
@@ -108,10 +122,12 @@ Add to `EasyMDE`:
 ```ts
 value(): string
 value(text: string): void
-toTextArea(): void    // alias for destruct()
+toTextArea(): void    // teardown: alias for `destruct()`
 isPreviewActive(): boolean
 cleanup(): void       // removes event listeners without destroying the DOM (for SPA teardown)
 ```
+
+**Teardown naming:** Canonical method is **`destruct()`** (`toTextArea()` aliases it — V2-aligned name). Optionally export **`destroy()`** as documented identity alias for lingering V2 examples only ([plugins-and-extensions.md §2.2](plugins-and-extensions.md#22-registration-and-lifecycle)).
 
 - `value()` returns `this.codemirror.state.doc.toString()`.
 - `value(text)` dispatches a `replaceAll` transaction on the CM state.
@@ -139,11 +155,11 @@ For `forceSync` mode:
 
 **Files:** `src/index.ts` (or new `src/web-component.ts`)
 
-Implement `<easy-markdown-editor>` as a thin wrapper (see `decisions.md` §3):
+Implement `<easy-markdown-editor>` as a thin wrapper (**[decisions.md](decisions.md) §3**, option **B**):
 
 - On `connectedCallback`, locate a `<textarea>` child (slot or auto-created) and construct `EasyMDE` on it.
-- Observed attributes: `value`, `placeholder`, `toolbar` (boolean), `statusbar` (boolean), `theme`.
-- On `disconnectedCallback`, call `easyMDE.destruct()`.
+- Observed attributes: `value`, `placeholder`, **`toolbar`** (**boolean semantics only**: attribute `"false"` hides the default toolbar; custom toolbar definitions stay **JavaScript-only** via the class API), **`statusbar`** (same), **`theme`**.
+- On `disconnectedCallback`, call **`easyMDE.destruct()`**. If the build ships **`destroy()`** as a compat alias ([plugins-and-extensions.md §2.2](plugins-and-extensions.md#22-registration-and-lifecycle)), callers may call either with identical semantics.
 - Expose a `value` JS property that proxies `easyMDE.value()`.
 
 ---

@@ -2,6 +2,8 @@
 
 Comparison against EasyMDE V2 (the reference) and the goals expressed in issue #447.
 
+**Release phase boundaries** (MVP vs Stable vs Post-1.0): authoritative in [overview.md](overview.md). This document lists gaps; it does not redefine ship dates when the two diverge.
+
 ## Critical gaps — block the MVP
 
 ### 1. Preview rendering
@@ -80,11 +82,17 @@ Issue #447 explicitly listed "built-in dark mode" as a goal. `styles.scss` has a
 
 ### 16. HTML sanitization in preview
 
-Rendering user-supplied Markdown to HTML without sanitization is an XSS vector. A default safe path is required before production (either DOMPurify, escape-only, or a required `sanitizerFunction`). See `decisions.md`.
+Rendering user-supplied Markdown to HTML without sanitization is an XSS vector. Even at MVP/beta there must be a safe default preview path ([overview.md](overview.md)); Stable completes hook/DOMPurify wiring per [decisions.md](decisions.md) §2 and [plugins-and-extensions.md §4](plugins-and-extensions.md).
 
-### 17. Image upload (paste / drop / dialog)
+---
 
-V2's image upload with CSRF, size/type validation, and server endpoint support. Large V2 feature; a natural plugin candidate for V3.
+## Post-stable / deferred (overview.md)
+
+Features below are intentional **Post-1.0** scope per [overview.md](overview.md); they remain V2 parity gaps but do not gate `v3.0.0`.
+
+### Image upload (paste / drop / dialog)
+
+V2's image upload with CSRF, size/type validation, and server endpoint support. Implemented as an editor plugin ([milestone-e-post-stable.md](milestone-e-post-stable.md) E1), not Stable.
 
 ---
 
@@ -92,11 +100,13 @@ V2's image upload with CSRF, size/type validation, and server endpoint support. 
 
 ### A. Async constructor
 
-`EasyMDE`'s constructor fires `void this.construct()`. There is no way for consumers to `await` readiness, and `isRendered` is a boolean that can be false after construction completes. Solution: static `EasyMDE.create(opts)` factory, or synchronous construction (move dynamic imports to eager).
+`EasyMDE`'s constructor fires `void this.construct()`. There is no way for consumers to `await` readiness, and `isRendered` is a boolean that can be false after construction completes.
+
+**Resolution (normative):** **Synchronous construction** — eager imports and a sync `construct()` per [decisions.md](decisions.md) §1 (**resolved**) and [milestone-a-foundations.md](milestone-a-foundations.md) **A2**. A static `EasyMDE.create()` factory is **not** the planned direction.
 
 ### B. Plugin lifecycle contract
 
-`IEasyMDEPlugin` requires `build(args: unknown)` and `destroy()`. No built-in plugin honours this: `Toolbar` builds in its constructor; `StatusBar` is not even registered as a plugin. The contract should be `{ mount(container): HTMLElement; unmount(): void }` and `addPlugin` should drive the lifecycle.
+Legacy code uses `build`/`destroy` on `IEasyMDEPlugin`; no built-in plugin honours this consistently (`Toolbar` builds in constructor; `StatusBar` is not wired). Normative **`IEasyMDEPlugin`**: **`element`**, **`mount()`**, **`unmount()`** — see [plugins-and-extensions.md §2](plugins-and-extensions.md) / [decisions.md](decisions.md) §6 — with **`destruct()` + `addPlugin`** driving lifecycle ([milestone-a-foundations.md](milestone-a-foundations.md) A3).
 
 ### C. `Toolbar.build()` duplication
 
@@ -124,3 +134,7 @@ Only `toggle-block.spec.ts` exists. The toolbar wiring, status bar, preview, pub
 ### H. Dev server story
 
 `tests/index.html` loads from `../dist/` and requires a prior `vp pack`. There is no `vp dev` path that serves source directly.
+
+---
+
+**See also:** [plugins-and-extensions.md §7 — Events & hooks](plugins-and-extensions.md#7-events--hooks-issue-447) ([issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447)). Event/hook scope by release phase lives there; this gap list stays implementation-focused.

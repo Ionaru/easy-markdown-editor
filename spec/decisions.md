@@ -15,7 +15,7 @@ These are open questions that need an answer before or during coding. Deferring 
 **Recommendation:** **B** (synchronous construction).  
 The toolbar and status bar are not optional in the default flow; the dynamic import provides no measurable performance benefit for a library of this size. Sync construction is simpler to reason about, document, and test. If consumers need a render-later pattern they can pass `toolbar: false` and call a `render()` method manually.
 
-**Status:** open
+**Status:** resolved — implementation target is [milestone-a-foundations.md](milestone-a-foundations.md) **A2**. The static `EasyMDE.create()` / async-factory approach described in older drafts of [gap-analysis.md](gap-analysis.md) is **withdrawn**.
 
 ---
 
@@ -25,15 +25,15 @@ The preview pipeline renders arbitrary Markdown to HTML. Without sanitization th
 
 **Options:**
 
-- A) Require consumers to pass `sanitizerFunction`; throw if omitted (opt-out impossible). Very safe, but breaks drop-in use.
-- B) Bundle DOMPurify as a default and apply it automatically; `sanitizerFunction` overrides. Adds a dependency.
+- A) Require consumers to pass `renderingConfig.sanitizerFunction`; throw if omitted (opt-out impossible). Very safe, but breaks drop-in use.
+- B) Bundle DOMPurify as a default and apply it automatically; `renderingConfig.sanitizerFunction` overrides when set. Adds a dependency.
 - C) Default to HTML-escaping any raw HTML in Markdown input (no embedded HTML rendered). Safest, but breaks Markdown that intentionally embeds HTML.
 - D) Render unsanitized by default, document the risk, let consumers bring their own sanitizer. Matches V2 behaviour.
 
 **Recommendation:** **B** (bundle DOMPurify as optional peer dependency, apply by default).  
-A library that is safe by default is more valuable than one that is flexible but footgunny. Make DOMPurify a peer dep so bundle-size-conscious consumers can replace it. If DOMPurify is not available, fall back to HTML escape (option C).
+A library that is safe by default is more valuable than one that is flexible but footgunny. Make DOMPurify a peer dep so bundle-size-conscious consumers can replace it. If DOMPurify is not available, fall back to HTML escape (option C). Consumer override hook: **`renderingConfig.sanitizerFunction`** ([plugins-and-extensions.md §4](plugins-and-extensions.md)).
 
-**Status:** open
+**Status:** **resolved policy** — MVP/beta never assigns raw preview HTML ([overview.md](overview.md)); Stable finalizes optional-peer DOMPurify + documented overrides in **`renderingConfig`** per **B** above.
 
 ---
 
@@ -46,9 +46,9 @@ A library that is safe by default is more valuable than one that is flexible but
 - C) Full parity: every `InputOptions` field maps to an attribute or a property on the element.
 
 **Recommendation:** **B** (minimal wrapper).  
-Option A discards functionality that may be useful for framework-agnostic embedding. Option C is a massive surface to maintain. A small attribute set (value, placeholder, toolbar, statusbar, theme) is enough for the dominant "drop it in a form" use case, and the JS API covers everything else.
+Option A discards functionality that may be useful for framework-agnostic embedding. Option C is a massive surface to maintain. A small attribute set (value, placeholder, toolbar, statusbar, theme) is enough for the dominant "drop it in a form" use case, and the JS API covers everything else. **`toolbar` / `statusbar` attributes**: boolean switches only (**`toolbar="false"`** hides default toolbar — custom **`toolbar`** arrays remain **JavaScript-only**).
 
-**Status:** open
+**Status:** **resolved intent** (`B`), detail in [milestone-a-foundations.md](milestone-a-foundations.md) A8
 
 ---
 
@@ -106,9 +106,9 @@ export interface IEasyMDEPlugin {
 }
 ```
 
-`addPlugin` calls `mount()` after registering, and `destruct()` calls `unmount()` on each registered plugin. The `element` property lets `EasyMDE.construct()` append the plugin's DOM in order (toolbar → editor → status bar → custom plugins).
+`addPlugin` calls `mount()` after registering, and teardown calls `unmount()` on each plugin in reverse order (canonical API: **`EasyMDE.destruct()`** — see [plugins-and-extensions.md §2.2](plugins-and-extensions.md#22-registration-and-lifecycle)). DOM order matches **toolbar → editor → preview → status bar → custom plugins** (`element` appended per **§2.2**).
 
-**Status:** open (interface agreed in spec; implementation tracks [milestone-a-foundations.md](milestone-a-foundations.md) A3)
+**Status:** **normative** (`mount`/`unmount`/`element`) — duplicated in plugins doc; remaining work is purely implementation ([milestone-a-foundations.md](milestone-a-foundations.md) A3)
 
 ---
 
@@ -124,19 +124,26 @@ Do we want a single `Options` type (fully resolved) or separate `InputOptions` (
 
 ## 8. Module exports surface
 
-What should `import { ... } from 'easymde'` expose?
+What should `import { ... } from 'easymde'` expose, and how should **tree-shaking** / **subpath imports** work?
 
-**Minimum for beta:**
+### Minimum for MVP (beta)
 
 - `EasyMDE` class
 - `IEasyMDEPlugin` interface
-- `InputOptions`, `Options` types
-- `importToolbar`, `importDefaultToolbar` (keep for consumers building custom toolbars; but remove if construction goes sync)
+- `InputOptions`, `Options` types (as they exist for that release)
+- Any helpers still required if toolbar construction remains lazy-split (prefer removal per §1 **resolved** — eager imports).
+- Consumers register **custom Font Awesome** icon definitions via **`registerIcons(...)`** when wiring custom toolbar buttons ([milestone-a-foundations.md](milestone-a-foundations.md) A4).
+- **Web component:** `<easy-markdown-editor>` does **not** invoke **`registerIcons(...)`** — host scripts must register glyphs they need beyond the trimmed default bundle.
 
-**Defer to stable:**
+### By Stable (`v3.0.0`)
 
-- Individual button actions (`toggleBold`, `toggleItalic`, …) for consumers who compose custom toolbars programmatically
-- `Toolbar`, `StatusBar` classes
-- `registerIcons()` helper
+- **`package.json` `exports` map** and documented **subpath** entry points (e.g. styles or optional entry) so consumers know what is public and bundlers tree-shake predictably.
+- **`registerIcons()`** exported for Font Awesome–based custom buttons.
+- Optional **individual button actions** (`toggleBold`, `toggleItalic`, …) for programmatic custom toolbars — nice-to-have; ship when stable API is frozen.
+- Optional export of **`Toolbar`** / **`StatusBar`** classes if embedders need them; otherwise keep internal until demand is clear.
 
-**Status:** open
+### Post-stable
+
+- **Multipackage split** (e.g. `easymde-core` vs full `easymde`) per [overview.md](overview.md) — only if download-size or dependency isolation requirements justify the publishing complexity.
+
+**Status:** open (details TBD; phase split above is normative)

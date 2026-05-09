@@ -1,5 +1,17 @@
 # EasyMDE V3 — Overview & Scope
 
+## Release phases
+
+These labels appear in the **Scope split** table below:
+
+| Label | Meaning |
+| ----- | ------- |
+| **MVP (beta.1)** | First shippable prerelease, `3.0.0-beta.1`: write Markdown, preview, core toolbar, sync construction, trimmed icons, minimal web component, baseline accessibility. |
+| **Stable (1.0)** | **`EasyMDE v3.0.0`** on npm — not “major 1” of the product line; the first stable V3. |
+| **Post-1.0** | After **`v3.0.0`** (`3.0.x+`), tracked in [milestone-e-post-stable.md](milestone-e-post-stable.md). |
+
+**Toolchain:** V3 builds with **Vite+** (`vp`); [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447) mentions Rollup as an example of a modern bundler — the project satisfies “modern toolchain” without being Rollup-specific.
+
 ## Vision (from issue #447)
 
 V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maintenance, and an outdated build pipeline. The goals stated by the maintainer are:
@@ -26,6 +38,7 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 | Horizontal rule, table                                       |      ✅      |              |          |
 | Undo / redo                                                  |      ✅      |              |          |
 | Keyboard shortcuts (default map)                             |      ✅      |              |          |
+| Consumer CodeMirror extensions (`codemirrorExtensions`)           |      ✅      |              |          |
 | Form sync (textarea write-back on submit)                    |      ✅      |              |          |
 | Public API (`value()`, `toTextArea()`, `isPreviewActive()`)  |      ✅      |              |          |
 | Plugin lifecycle (mount/unmount)                             |      ✅      |              |          |
@@ -46,6 +59,17 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 | Status bar customization                                     |              |              |    ✅    |
 | RTL direction support                                        |              |              |    ✅    |
 | Spellcheck decision                                          |              |              |    ✅    |
+| Task list (checkbox) toggle (`- [ ]` / `- [x]`)               |              |      ✅      |          |
+| Markdown guide / help toolbar action                         |              |      ✅      |          |
+| Toolbar icons: non-FA / raw SVG (see Milestone A A4)          |              |      ✅      |          |
+| Consumer lifecycle hooks (narrow callback set; [plugins-and-extensions.md §7](plugins-and-extensions.md#7-events--hooks-issue-447)) |              |      ✅      |          |
+| `package.json` `exports` / subpath imports (single package)   |              |      ✅      |          |
+| Optional multipackage split (`easymde-core`, etc.)            |              |              |    ✅    |
+| Extended event API (multi-subscriber / ordering guarantees)   |              |              |    ✅    |
+
+**Canonical scope:** The table above is the single source of truth for what ships in each phase. Supporting docs defer to this file.
+
+**Preview HTML safety:** MVP/beta ships preview behind a safe pipeline (minimal default: escaping / equivalent so preview never assigns raw unsanitized HTML). The Stable row **Sanitizer hook / DOMPurify wiring** denotes the finalized optional-peer dependency, documented overrides, and `renderingConfig` integration per [decisions.md](decisions.md) §2 — not permission to skip safety before that.
 
 ## Milestones
 
@@ -57,4 +81,4 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 | D   | Quality, a11y, docs    | [milestone-d-quality.md](milestone-d-quality.md)         |
 | E   | Post-stable additions  | [milestone-e-post-stable.md](milestone-e-post-stable.md) |
 
-Supporting reference: [current-state.md](current-state.md), [gap-analysis.md](gap-analysis.md), [decisions.md](decisions.md), [plugins-and-extensions.md](plugins-and-extensions.md)
+Supporting reference: [current-state.md](current-state.md), [gap-analysis.md](gap-analysis.md), [decisions.md](decisions.md), [plugins-and-extensions.md](plugins-and-extensions.md) (including [§7 — Events & hooks](plugins-and-extensions.md#7-events--hooks-issue-447))
