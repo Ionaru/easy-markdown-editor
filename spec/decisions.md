@@ -88,6 +88,8 @@ Browser spellcheck has improved significantly; every major browser supports it i
 
 ## 6. `IEasyMDEPlugin` lifecycle shape
 
+**Normative detail:** [plugins-and-extensions.md](plugins-and-extensions.md) §2 (Editor plugins).
+
 Current interface is `{ build(args: unknown): Promise<void>; destroy(): Promise<void> }`. Problems:
 
 - `build` takes `unknown` arguments — not type-safe, and no caller passes arguments.
@@ -106,7 +108,7 @@ export interface IEasyMDEPlugin {
 
 `addPlugin` calls `mount()` after registering, and `destruct()` calls `unmount()` on each registered plugin. The `element` property lets `EasyMDE.construct()` append the plugin's DOM in order (toolbar → editor → status bar → custom plugins).
 
-**Status:** open
+**Status:** open (interface agreed in spec; implementation tracks [milestone-a-foundations.md](milestone-a-foundations.md) A3)
 
 ---
 

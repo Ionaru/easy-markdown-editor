@@ -1,6 +1,6 @@
 # Milestone D — Quality, Accessibility, Docs
 
-**Goal:** The editor is safe to ship publicly.  
+**Goal:** The editor is safe to ship publicly.
 Depends on Milestones A–C.
 
 ---

@@ -57,4 +57,4 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 | D   | Quality, a11y, docs    | [milestone-d-quality.md](milestone-d-quality.md)         |
 | E   | Post-stable additions  | [milestone-e-post-stable.md](milestone-e-post-stable.md) |
 
-Supporting reference: [current-state.md](current-state.md), [gap-analysis.md](gap-analysis.md), [decisions.md](decisions.md)
+Supporting reference: [current-state.md](current-state.md), [gap-analysis.md](gap-analysis.md), [decisions.md](decisions.md), [plugins-and-extensions.md](plugins-and-extensions.md)

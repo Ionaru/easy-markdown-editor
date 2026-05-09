@@ -1,5 +1,5 @@
 allowBuilds:
-  '@parcel/watcher': set this to true or false
+  "@parcel/watcher": set this to true or false
 catalog:
   vite: npm:@voidzero-dev/vite-plus-core@latest
   vite-plus: latest
