@@ -1,6 +1,6 @@
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { EditorState } from "@codemirror/state";
+import { EditorState, type Extension } from "@codemirror/state";
 import { drawSelection, EditorView } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 
@@ -23,6 +23,9 @@ export class EasyMDE {
     readonly #plugins: IEasyMDEPlugin[] = [];
 
     #preview?: Preview;
+
+    #form?: HTMLFormElement;
+    #handleFormSubmit?: () => void;
 
     constructor(options: InputOptions) {
         this.#options = resolveOptions(options);
@@ -133,20 +136,32 @@ export class EasyMDE {
             },
         ]);
 
+        const extensions: Extension[] = [
+            EditorView.lineWrapping,
+            syntaxHighlighting(highlightStyle),
+            syntaxHighlighting(defaultHighlightStyle),
+            markdown({
+                base: markdownLanguage,
+                // codeLanguages: languages,
+            }),
+            drawSelection(),
+        ];
+
+        if (this.#options.forceSync) {
+            extensions.push(
+                EditorView.updateListener.of((update) => {
+                    if (update.docChanged) {
+                        this.#element.value = update.state.doc.toString();
+                    }
+                }),
+            );
+        }
+
         this.#element.hidden = true;
         this.#codemirror = new EditorView({
             state: EditorState.create({
                 doc: this.#element.value,
-                extensions: [
-                    EditorView.lineWrapping,
-                    syntaxHighlighting(highlightStyle),
-                    syntaxHighlighting(defaultHighlightStyle),
-                    markdown({
-                        base: markdownLanguage,
-                        // codeLanguages: languages,
-                    }),
-                    drawSelection(),
-                ],
+                extensions,
                 selection: {
                     anchor: this.#element.value.length,
                 },
@@ -170,6 +185,16 @@ export class EasyMDE {
 
         if (this.options.statusbar !== false) {
             this.addPlugin(new StatusBar(this));
+        }
+
+        const form = this.#element.closest("form");
+        if (form) {
+            const handler = (): void => {
+                this.#element.value = this.value;
+            };
+            form.addEventListener("submit", handler);
+            this.#form = form;
+            this.#handleFormSubmit = handler;
         }
 
         this.codemirror.focus();
@@ -199,6 +224,11 @@ export class EasyMDE {
     destruct(): void {
         if (this.#codemirror) {
             this.#element.value = this.value;
+        }
+        if (this.#form && this.#handleFormSubmit) {
+            this.#form.removeEventListener("submit", this.#handleFormSubmit);
+            this.#form = undefined;
+            this.#handleFormSubmit = undefined;
         }
         let plugin: IEasyMDEPlugin | undefined;
         while ((plugin = this.#plugins.pop())) {

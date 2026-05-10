@@ -148,4 +148,71 @@ describe("EasyMDE", () => {
 
         expect(calls).toEqual(["B", "A"]);
     });
+
+    it("syncs editor value to textarea on form submit", () => {
+        const form = document.createElement("form");
+        document.body.append(form);
+        const textArea = document.createElement("textarea");
+        textArea.value = "orig";
+        form.append(textArea);
+
+        const editor = new EasyMDE({ element: textArea, toolbar: false, statusbar: false });
+        editor.value = "changed";
+
+        expect(textArea.value).toBe("orig");
+
+        form.addEventListener("submit", (event) => event.preventDefault());
+        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+
+        expect(textArea.value).toBe("changed");
+    });
+
+    it("removes the form submit listener on destruct", () => {
+        const form = document.createElement("form");
+        form.addEventListener("submit", (event) => event.preventDefault());
+        document.body.append(form);
+        const textArea = document.createElement("textarea");
+        textArea.value = "orig";
+        form.append(textArea);
+
+        const editor = new EasyMDE({ element: textArea, toolbar: false, statusbar: false });
+        editor.value = "changed";
+        editor.destruct();
+
+        textArea.value = "sentinel";
+        form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+
+        expect(textArea.value).toBe("sentinel");
+    });
+
+    it("forceSync writes textarea on every doc change", () => {
+        const textArea = createTextArea("orig");
+        const editor = new EasyMDE({
+            element: textArea,
+            toolbar: false,
+            statusbar: false,
+            forceSync: true,
+        });
+
+        editor.value = "live";
+
+        expect(textArea.value).toBe("live");
+    });
+
+    it("does not update textarea on doc change without forceSync", () => {
+        const textArea = createTextArea("orig");
+        const editor = new EasyMDE({ element: textArea, toolbar: false, statusbar: false });
+
+        editor.value = "changed";
+
+        expect(textArea.value).toBe("orig");
+        editor.destruct();
+    });
+
+    it("construct without a form ancestor does not throw", () => {
+        const textArea = createTextArea("orig");
+        expect(
+            () => new EasyMDE({ element: textArea, toolbar: false, statusbar: false }),
+        ).not.toThrow();
+    });
 });

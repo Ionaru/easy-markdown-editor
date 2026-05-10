@@ -1,6 +1,6 @@
 # Milestone A — Foundations
 
-**Goal:** Every non-UI building block is correct and the preview pipeline works end-to-end.  
+**Goal:** Every non-UI building block is correct and the preview pipeline works end-to-end.
 Milestone A is a prerequisite for all other milestones.
 
 ---
@@ -141,7 +141,7 @@ isPreviewActive(): boolean
 On `construct()`:
 
 1. Find the nearest `<form>` ancestor of the textarea (`element.closest('form')`).
-2. Attach a `submit` listener that calls `this.#element.value = this.value()` before the form submits.
+2. Attach a `submit` listener that calls `this.#element.value = this.value` before the form submits.
 3. Store the listener reference so `destruct()` can remove it.
 
 For `forceSync` mode:
