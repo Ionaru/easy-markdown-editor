@@ -1,7 +1,7 @@
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
-import { EditorState, type Extension } from "@codemirror/state";
-import { drawSelection, EditorView } from "@codemirror/view";
+import { EditorState, type Extension, Prec } from "@codemirror/state";
+import { drawSelection, EditorView, keymap } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
@@ -145,6 +145,17 @@ export class EasyMDE {
                 // codeLanguages: languages,
             }),
             drawSelection(),
+            Prec.low(
+                keymap.of([
+                    {
+                        key: "Enter",
+                        run: (view) => {
+                            view.dispatch(view.state.replaceSelection(view.state.lineBreak));
+                            return true;
+                        },
+                    },
+                ]),
+            ),
         ];
 
         if (this.#options.forceSync) {

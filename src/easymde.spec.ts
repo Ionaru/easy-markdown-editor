@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { EasyMDE, type IEasyMDEPlugin } from "./easymde.js";
-import { createEditor, createTextArea } from "./test-utils.js";
+import { createEditor, createTextArea, pressEnter, seedEditor } from "./test-utils.js";
 
 const makeStubPlugin = (
     editor: EasyMDE,
@@ -233,5 +233,33 @@ describe("EasyMDE", () => {
         });
 
         expect(editor.value).toBe("  \n  hello  \n  ");
+    });
+
+    describe("Enter key behavior", () => {
+        it.each([
+            { name: "two Enters after text", initial: "foo", presses: 2, expected: "foo\n\n" },
+            { name: "three Enters after text", initial: "foo", presses: 3, expected: "foo\n\n\n" },
+            { name: "three Enters in empty doc", initial: "", presses: 3, expected: "\n\n\n" },
+            {
+                name: "Enter continues list marker",
+                initial: "- a",
+                presses: 1,
+                expected: "- a\n- ",
+            },
+            {
+                name: "Enter continues blockquote marker",
+                initial: "> a",
+                presses: 1,
+                expected: "> a\n> ",
+            },
+        ])("$name", ({ initial, presses, expected }) => {
+            const editor = seedEditor(initial);
+
+            for (let index = 0; index < presses; index++) {
+                pressEnter(editor.codemirror);
+            }
+
+            expect(editor.value).toBe(expected);
+        });
     });
 });
