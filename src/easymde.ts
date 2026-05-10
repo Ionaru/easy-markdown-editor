@@ -158,12 +158,15 @@ export class EasyMDE {
         }
 
         this.#element.hidden = true;
+        const initialDoc = this.#options.trimInitialValue
+            ? this.#element.value.trim()
+            : this.#element.value;
         this.#codemirror = new EditorView({
             state: EditorState.create({
-                doc: this.#element.value,
+                doc: initialDoc,
                 extensions,
                 selection: {
-                    anchor: this.#element.value.length,
+                    anchor: initialDoc.length,
                 },
             }),
             // parent: this.element.parentElement || document.body,

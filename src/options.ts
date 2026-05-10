@@ -94,18 +94,24 @@ export interface InputOptions {
     codemirrorExtensions?: Extension;
     previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
     renderingConfig?: RenderingOptions;
+    trimInitialValue?: boolean;
 }
 
-export type Options = Omit<InputOptions, "toolbar" | "statusbar" | "blockStyles"> & {
+export type Options = Omit<
+    InputOptions,
+    "toolbar" | "statusbar" | "blockStyles" | "trimInitialValue"
+> & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
     blockStyles: Required<BlockStyleOptions>;
+    trimInitialValue: boolean;
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
     ...input,
     toolbar: input.toolbar ?? true,
     statusbar: input.statusbar ?? true,
+    trimInitialValue: input.trimInitialValue ?? true,
     blockStyles: {
         bold: input.blockStyles?.bold ?? DEFAULT_BLOCK_STYLES.bold,
         italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,

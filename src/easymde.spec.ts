@@ -215,4 +215,23 @@ describe("EasyMDE", () => {
             () => new EasyMDE({ element: textArea, toolbar: false, statusbar: false }),
         ).not.toThrow();
     });
+
+    it("trims leading/trailing whitespace from the textarea on construct by default", () => {
+        const textArea = createTextArea("  \n  hello  \n  ");
+        const editor = new EasyMDE({ element: textArea, toolbar: false, statusbar: false });
+
+        expect(editor.value).toBe("hello");
+    });
+
+    it("preserves whitespace when trimInitialValue is false", () => {
+        const textArea = createTextArea("  \n  hello  \n  ");
+        const editor = new EasyMDE({
+            element: textArea,
+            toolbar: false,
+            statusbar: false,
+            trimInitialValue: false,
+        });
+
+        expect(editor.value).toBe("  \n  hello  \n  ");
+    });
 });

@@ -19,7 +19,16 @@ describe("resolveOptions", () => {
         expect(resolved.element).toBe(element);
         expect(resolved.toolbar).toBe(true);
         expect(resolved.statusbar).toBe(true);
+        expect(resolved.trimInitialValue).toBe(true);
         expect(resolved.blockStyles).toEqual(DEFAULT_BLOCK_STYLES);
+    });
+
+    it("preserves an explicit trimInitialValue=false", () => {
+        const element = makeElement();
+
+        const resolved = resolveOptions({ element, trimInitialValue: false });
+
+        expect(resolved.trimInitialValue).toBe(false);
     });
 
     it("preserves consumer-supplied toolbar and statusbar booleans", () => {
