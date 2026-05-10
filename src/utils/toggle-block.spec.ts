@@ -354,4 +354,42 @@ describe("toggleBlock", () => {
         toggleBlock(editor, "*");
         expect(editor.state.doc.toString()).toBe("Many words are typed here");
     });
+
+    it.each([
+        { character: "*", expectedDoc: "**", expectedCursor: 1 },
+        { character: "**", expectedDoc: "****", expectedCursor: 2 },
+        { character: "`", expectedDoc: "``", expectedCursor: 1 },
+        { character: "~~", expectedDoc: "~~~~", expectedCursor: 2 },
+    ])(
+        "must place the cursor between markers in an empty document for $character",
+        ({ character, expectedDoc, expectedCursor }) => {
+            expect.assertions(3);
+
+            const editor = getEditor("", { anchor: 0 });
+            toggleBlock(editor, character);
+            expect(editor.state.doc.toString()).toBe(expectedDoc);
+            expect(editor.state.selection.main.from).toBe(expectedCursor);
+            expect(editor.state.selection.main.to).toBe(expectedCursor);
+        },
+    );
+
+    it("must place the cursor between markers when cursor follows trailing whitespace", () => {
+        expect.assertions(3);
+
+        const editor = getEditor("hello ", { anchor: 6 });
+        toggleBlock(editor, "*");
+        expect(editor.state.doc.toString()).toBe("hello **");
+        expect(editor.state.selection.main.from).toBe(7);
+        expect(editor.state.selection.main.to).toBe(7);
+    });
+
+    it("must keep the wrapped word selected when cursor is inside a word", () => {
+        expect.assertions(3);
+
+        const editor = getEditor("Word", { anchor: 2 });
+        toggleBlock(editor, "*");
+        expect(editor.state.doc.toString()).toBe("*Word*");
+        expect(editor.state.selection.main.from).toBe(0);
+        expect(editor.state.selection.main.to).toBe(6);
+    });
 });

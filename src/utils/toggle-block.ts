@@ -32,9 +32,13 @@ export const toggleBlock = (editor: EditorView, characters: string) => {
             }
             const { from, to } = expandSelection(state, characters, true);
             const text = state.sliceDoc(from, to);
+            const range =
+                from === to
+                    ? EditorSelection.cursor(from + characters.length)
+                    : EditorSelection.range(from, to + offset);
             return {
                 changes: [{ from, insert: `${characters}${text}${characters}`, to }],
-                range: EditorSelection.range(from, to + offset),
+                range,
             };
         }),
     );
