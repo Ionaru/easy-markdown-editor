@@ -12,12 +12,15 @@
             <span id="cm-state" data-testid="cm-state"></span>
         </div>
         <hr />
-        <textarea id="editor-textarea"># Hello
+        <textarea id="editor-textarea">
+# Hello
 
 Type here.
-</textarea>
+        </textarea>
         <hr />
-        <easy-markdown-editor id="wc-editor" name="comment">Web component content</easy-markdown-editor>
+        <easy-markdown-editor id="wc-editor" name="comment">
+            Web component content
+        </easy-markdown-editor>
 
         <script type="module">
             import { EasyMDE } from "/src/index.ts";
@@ -65,8 +68,12 @@ Type here.
                 });
             };
 
-            document.getElementById("btn-reset").addEventListener("click", () => window.resetEditor());
-            document.getElementById("btn-destroy").addEventListener("click", () => window.editor?.destruct());
+            document
+                .getElementById("btn-reset")
+                .addEventListener("click", () => window.resetEditor());
+            document
+                .getElementById("btn-destroy")
+                .addEventListener("click", () => window.editor?.destruct());
 
             mount();
             window.__devReady = true;

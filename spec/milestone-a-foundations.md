@@ -180,12 +180,12 @@ Update the spec (`toggle-block.spec.ts` does not cover this; add `count-words.sp
 
 ## Acceptance criteria for Milestone A
 
-- [ ] `new EasyMDE({ element })` is synchronous; no race condition.
-- [ ] `easyMDE.value` returns the current editor text.
-- [ ] `easyMDE.value = 'new text'` updates the editor.
-- [ ] `easyMDE.togglePreview()` shows a rendered HTML preview of the Markdown content.
-- [ ] `easyMDE.isPreviewActive()` returns the correct boolean.
-- [ ] Submitting a `<form>` containing the editor writes the current content to the textarea before submission.
-- [ ] `destruct()` cleans up all plugins and the form listener.
-- [ ] `library.add(fas)` is gone; only the ~12 default toolbar icons are imported.
-- [ ] `vp check` and `vp test` pass with no errors.
+- [x] `new EasyMDE({ element })` is synchronous; no race condition.
+- [x] `easyMDE.value` returns the current editor text.
+- [x] `easyMDE.value = 'new text'` updates the editor.
+- [x] `easyMDE.togglePreview()` shows a rendered HTML preview of the Markdown content.
+- [x] `easyMDE.isPreviewActive()` returns the correct boolean.
+- [x] Submitting a `<form>` containing the editor writes the current content to the textarea before submission.
+- [x] `destruct()` cleans up all plugins and the form listener.
+- [x] `library.add(fas)` is gone; only the ~12 default toolbar icons are imported.
+- [x] `vp check` and `vp test` pass with no errors.

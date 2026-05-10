@@ -4,12 +4,12 @@ Live, source-driven manual + agent-driven exploratory testing of EasyMDE. Source
 
 ## When to use this vs `vp test`
 
-| Use case | Tool |
-|----------|------|
-| Logic, regressions, contracts | `vp test` (vitest browser mode, 224 specs in `src/**/*.spec.ts`) |
-| Cursor caret position, toolbar active states, preview render, visual flows | Playwright MCP harness |
-| Reproducing a user-reported bug interactively | Playwright MCP harness |
-| Sanity check that source changes work in a real browser before running suites | Playwright MCP harness |
+| Use case                                                                      | Tool                                                             |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Logic, regressions, contracts                                                 | `vp test` (vitest browser mode, 224 specs in `src/**/*.spec.ts`) |
+| Cursor caret position, toolbar active states, preview render, visual flows    | Playwright MCP harness                                           |
+| Reproducing a user-reported bug interactively                                 | Playwright MCP harness                                           |
+| Sanity check that source changes work in a real browser before running suites | Playwright MCP harness                                           |
 
 `vp test` is authoritative — MCP harness is for human-in-the-loop and agent exploration only.
 
@@ -33,48 +33,48 @@ http://localhost:5173/tests/dev.html
 
 `tests/dev.html` mounts an `EasyMDE` against a textarea and a sibling `<easy-markdown-editor>` web component, then publishes:
 
-| Global | Purpose |
-|--------|---------|
-| `window.editor` | Active `EasyMDE` instance |
-| `window.resetEditor()` | Destroy + remount with default content |
+| Global                 | Purpose                                                                                      |
+| ---------------------- | -------------------------------------------------------------------------------------------- |
+| `window.editor`        | Active `EasyMDE` instance                                                                    |
+| `window.resetEditor()` | Destroy + remount with default content                                                       |
 | `window.waitForIdle()` | Resolves after two `requestAnimationFrame` frames — use after dispatching CodeMirror updates |
-| `window.__devReady` | `true` once initial mount completes |
+| `window.__devReady`    | `true` once initial mount completes                                                          |
 
 A live state mirror sits in `#cm-state` (also `[data-testid="cm-state"]`) with these dataset attrs synced on input/keyup/mouseup:
 
-| Attr | Value |
-|------|-------|
-| `data-value` | Full doc string |
-| `data-from` | Selection anchor offset |
-| `data-to` | Selection head offset |
-| `data-length` | Doc length |
+| Attr          | Value                   |
+| ------------- | ----------------------- |
+| `data-value`  | Full doc string         |
+| `data-from`   | Selection anchor offset |
+| `data-to`     | Selection head offset   |
+| `data-length` | Doc length              |
 
 ## Driving via Playwright MCP
 
 Launch and probe:
 
 ```js
-mcp__plugin_playwright_playwright__browser_navigate("http://localhost:5173/tests/dev.html")
+mcp__plugin_playwright_playwright__browser_navigate("http://localhost:5173/tests/dev.html");
 
 mcp__plugin_playwright_playwright__browser_evaluate(`() => ({
   ready: window.__devReady,
   value: window.editor.value,
   sel: window.editor.codemirror.state.selection.main,
-})`)
+})`);
 ```
 
 Set selection programmatically (more reliable than simulating keyboard for setup):
 
 ```js
-window.editor.codemirror.dispatch({ selection: { anchor: 2, head: 7 } })
+window.editor.codemirror.dispatch({ selection: { anchor: 2, head: 7 } });
 ```
 
 Read selection / doc:
 
 ```js
-const cm = window.editor.codemirror
-const { from, to } = cm.state.selection.main
-const doc = cm.state.doc.toString()
+const cm = window.editor.codemirror;
+const { from, to } = cm.state.selection.main;
+const doc = cm.state.doc.toString();
 ```
 
 ## Toolbar button selectors
@@ -96,7 +96,7 @@ link  image  preview  guide
 Note: when the web component is also present the page contains two `.easymde-toolbar` instances. Scope queries to the textarea's editor with:
 
 ```js
-document.querySelector('#editor-textarea + .EasyMDEContainer .easymde-toolbar button.bold')
+document.querySelector("#editor-textarea + .EasyMDEContainer .easymde-toolbar button.bold");
 ```
 
 …or use the simpler form `document.querySelectorAll('.easymde-toolbar')[0]` if order is acceptable.
@@ -110,7 +110,7 @@ mcp__plugin_playwright_playwright__browser_evaluate(`() => {
   document.querySelector('.easymde-toolbar button.bold').click()
   const { from, to } = ed.codemirror.state.selection.main
   return { value: ed.value, from, to }
-}`)
+}`);
 ```
 
 Expected: `value` contains `**Hello**`, `from`/`to` land between or around the inserted markers depending on action.
@@ -120,15 +120,15 @@ Expected: `value` contains `**Hello**`, `from`/`to` land between or around the i
 Programmatic — preferred for state setup:
 
 ```js
-window.editor.value = "new doc content"
+window.editor.value = "new doc content";
 ```
 
 Real keyboard simulation — preferred for testing input handling:
 
 ```js
-mcp__plugin_playwright_playwright__browser_click("textarea[role='textbox']") // focus
-mcp__plugin_playwright_playwright__browser_press_key("Enter")
-mcp__plugin_playwright_playwright__browser_type("hello")
+mcp__plugin_playwright_playwright__browser_click("textarea[role='textbox']"); // focus
+mcp__plugin_playwright_playwright__browser_press_key("Enter");
+mcp__plugin_playwright_playwright__browser_type("hello");
 ```
 
 After any keyboard sim, follow with `window.waitForIdle()` before reading state.
@@ -136,7 +136,7 @@ After any keyboard sim, follow with `window.waitForIdle()` before reading state.
 ## Recipe: reset between scenarios
 
 ```js
-mcp__plugin_playwright_playwright__browser_evaluate("() => window.resetEditor()")
+mcp__plugin_playwright_playwright__browser_evaluate("() => window.resetEditor()");
 ```
 
 Cheaper than navigating — keeps the page + HMR connection.
