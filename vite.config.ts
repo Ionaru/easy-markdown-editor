@@ -1,3 +1,4 @@
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vite-plus";
 
 export default defineConfig({
@@ -25,7 +26,12 @@ export default defineConfig({
         // TODO: Build for package managers
     ],
     test: {
-        environment: "jsdom",
+        browser: {
+            enabled: true,
+            provider: playwright(),
+            headless: true,
+            instances: [{ browser: "chromium" }],
+        },
     },
     lint: {
         options: {
