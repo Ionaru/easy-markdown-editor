@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>EasyMDE dev harness</title>
+    </head>
+    <body>
+        <div id="controls">
+            <button id="btn-reset" type="button">Reset</button>
+            <button id="btn-destroy" type="button">Destroy</button>
+            <span id="cm-state" data-testid="cm-state"></span>
+        </div>
+        <hr />
+        <textarea id="editor-textarea"># Hello
+
+Type here.
+</textarea>
+        <hr />
+        <easy-markdown-editor id="wc-editor" name="comment">Web component content</easy-markdown-editor>
+
+        <script type="module">
+            import { EasyMDE } from "/src/index.ts";
+
+            const textarea = document.getElementById("editor-textarea");
+            const stateEl = document.getElementById("cm-state");
+
+            function mount() {
+                const instance = new EasyMDE({
+                    element: textarea,
+                    toolbar: true,
+                    statusbar: true,
+                });
+                window.editor = instance;
+                queueMicrotask(syncState);
+                instance.codemirror.dom.addEventListener("input", syncState);
+                instance.codemirror.dom.addEventListener("keyup", syncState);
+                instance.codemirror.dom.addEventListener("mouseup", syncState);
+                return instance;
+            }
+
+            function syncState() {
+                const ed = window.editor;
+                if (!ed?.codemirror) {
+                    stateEl.textContent = "";
+                    return;
+                }
+                const sel = ed.codemirror.state.selection.main;
+                stateEl.dataset.value = ed.value;
+                stateEl.dataset.from = String(sel.from);
+                stateEl.dataset.to = String(sel.to);
+                stateEl.dataset.length = String(ed.value.length);
+                stateEl.textContent = `from=${sel.from} to=${sel.to} len=${ed.value.length}`;
+            }
+
+            window.resetEditor = function resetEditor() {
+                window.editor?.destruct();
+                textarea.value = "# Hello\n\nType here.\n";
+                mount();
+            };
+
+            window.waitForIdle = function waitForIdle() {
+                return new Promise((resolve) => {
+                    requestAnimationFrame(() => requestAnimationFrame(resolve));
+                });
+            };
+
+            document.getElementById("btn-reset").addEventListener("click", () => window.resetEditor());
+            document.getElementById("btn-destroy").addEventListener("click", () => window.editor?.destruct());
+
+            mount();
+            window.__devReady = true;
+        </script>
+    </body>
+</html>

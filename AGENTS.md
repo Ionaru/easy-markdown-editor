@@ -13,3 +13,9 @@ Docs are local at `node_modules/vite-plus/docs` or online at https://viteplus.de
 - [ ] Check if there are `vite.config.ts` tasks or `package.json` scripts necessary for validation, run via `vp run <script>`.
 
 <!--VITE PLUS END-->
+
+## Interactive testing with Playwright MCP
+
+For exploratory tests, visual checks, and reproducing reported bugs against live source (HMR, no rebuild), use the Playwright MCP harness. See [`spec/playwright-mcp-testing.md`](spec/playwright-mcp-testing.md) for setup, available globals (`window.editor`, `window.resetEditor`, `window.waitForIdle`), toolbar selectors, and ready-made recipes.
+
+Quick start: `pnpm dev:app` → navigate MCP browser to `http://localhost:5173/tests/dev.html`.

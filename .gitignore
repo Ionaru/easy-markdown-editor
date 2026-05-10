@@ -15,3 +15,6 @@ dev_test/
 
 # Test artifacts
 coverage/
+.playwright-mcp/
+
+CLAUDE.md
