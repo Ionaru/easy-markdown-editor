@@ -5,6 +5,29 @@ Depends on Milestone A (especially the plugin lifecycle and `toggleLine` utility
 
 ---
 
+## Conventions established by Milestone A
+
+**Button-action boundary.** Public toolbar action functions accept `EasyMDE` and call utilities with `editor.codemirror` (the CM6 `EditorView`). Mirrors `src/toolbar/buttons/toggle-bold.ts`. Utilities (`toggleBlock`, `toggleLine`, …) take `EditorView` and have no knowledge of `EasyMDE`.
+
+**`IToolbarButtonOptions` shape** (frozen in [milestone-a-foundations.md](milestone-a-foundations.md) — see `src/toolbar/default-toolbar.ts`):
+
+```ts
+interface IToolbarButtonOptions {
+    action?: ((editor: EasyMDE) => void) | string;
+    active?:
+        | boolean
+        | ((editor: EasyMDE, update: ViewUpdate) => boolean)
+        | ((editor: EasyMDE, update: ViewUpdate) => Promise<boolean>);
+    icon: IconDefinition;
+    readonly name: string;
+    title: string;
+}
+```
+
+Custom (non-FA) icon surfaces are deferred to [milestone-a-foundations.md](milestone-a-foundations.md) **A4-Stable**; Milestone B uses `IconDefinition` only.
+
+---
+
 ## B1 — `toggleLine` utility
 
 **Files:** `src/utils/toggle-line.ts` (new), `src/utils/toggle-line.spec.ts` (new)
@@ -25,6 +48,8 @@ Rules:
 
 `checkLine` returns `true` if all intersected lines carry the prefix.
 
+`toggleLine` and `checkLine` mirror `toggleBlock` / `checkBlock` (`src/utils/toggle-block.ts`) — same boundary discipline (utility takes `EditorView`, no `EasyMDE`). Use `src/utils/toggle-block.spec.ts` as the test template.
+
 Tests must cover: single line cursor, multi-line selection, already-applied (idempotent remove), partially-applied (apply to remainder), and prefix collision (e.g. `##` vs `#`).
 
 ---
@@ -33,20 +58,20 @@ Tests must cover: single line cursor, multi-line selection, already-applied (ide
 
 **Files:** `src/toolbar/buttons/toggle-heading.ts` (new)
 
-Actions:
+Actions (boundary per Conventions — each accepts `EasyMDE`):
 
-- `toggleHeadingSmaller(editor)` — step down one level (`#`→`##`→`###`→ none → `#`).
-- `toggleHeadingBigger(editor)` — step up one level (inverse of above).
-- `toggleHeading1..6(editor)` — set to exactly that level; remove if already at that level.
+- `toggleHeadingSmaller(editor: EasyMDE)` — step down one level (`#`→`##`→`###`→ none → `#`).
+- `toggleHeadingBigger(editor: EasyMDE)` — step up one level (inverse of above).
+- `toggleHeading1..6(editor: EasyMDE)` — set to exactly that level; remove if already at that level.
 
-`checkHeading(editor, level)` returns `true` if all selection lines are at that heading level.
+`checkHeading(view: EditorView, level: number)` returns `true` if all selection lines are at that heading level (utility, takes `EditorView`).
 
-Active state (for `active` callback on buttons):
+Active state — `active` callbacks use the `(editor: EasyMDE, update: ViewUpdate) => boolean` signature from the Conventions block:
 
 - Heading buttons glow when the cursor is on a line at that level.
 - Heading-smaller / heading-bigger: active when any heading is present on the current line.
 
-Wire into `defaultToolbar`: replace the inert `heading` button with a set of: `heading-1`, `heading-2`, `heading-3`, separator, `heading-smaller`, `heading-bigger`.
+Wire into `defaultToolbar`: replace today's inert `heading` placeholder (`src/toolbar/default-toolbar.ts:38–43`) with: `heading-1`, `heading-2`, `heading-3`, separator, `heading-smaller`, `heading-bigger`.
 
 ---
 
@@ -55,10 +80,10 @@ Wire into `defaultToolbar`: replace the inert `heading` button with a set of: `h
 **File:** `src/toolbar/buttons/toggle-quote.ts` (new)
 
 ```ts
-export const toggleQuote = (editorView: EditorView): void => toggleLine(editorView, ">");
+export const toggleQuote = (editor: EasyMDE): void => toggleLine(editor.codemirror, ">");
 ```
 
-(or accept `EasyMDE` if you expose `editor.codemirror` at the boundary — **`toggleLine`** always receives **`EditorView`**.)
+Boundary per Conventions: button action takes `EasyMDE`; `toggleLine` always receives `EditorView`.
 
 Active when all selection lines start with `> `.
 
@@ -70,14 +95,22 @@ Update `defaultToolbar` to wire the action and active state.
 
 **Files:** `src/toolbar/buttons/toggle-ul.ts`, `src/toolbar/buttons/toggle-ol.ts` (new)
 
-`toggleUnorderedList`: uses `toggleLine` with the configured `unorderedListStyle` (`*`, `-`, or `+`; default `*`). Reads `editor.options.unorderedListStyle`.
+`toggleUnorderedList(editor: EasyMDE)`: uses `toggleLine` with the configured `unorderedListStyle` (`*`, `-`, or `+`). Reads `editor.options.unorderedListStyle` (resolved default `"*"` — see Options addition below).
 
-`toggleOrderedList`: more complex — sequential numbering (`1.`, `2.`, …).
+`toggleOrderedList(editor: EasyMDE)`: more complex — sequential numbering (`1.`, `2.`, …).
 
 - When adding: number the lines starting from `1.` (or continue from the preceding list item if the selection is inside an existing list).
 - When removing: strip the `N. ` prefix from all lines.
 
 Active state for both: `checkLine` with the appropriate prefix.
+
+**Options addition** — `unorderedListStyle` is already declared in `InputOptions` (`src/options.ts`). Add a default in `resolveOptions`:
+
+```ts
+unorderedListStyle: input.unorderedListStyle ?? "*",
+```
+
+`Options.unorderedListStyle` becomes `"*" | "-" | "+"` (non-optional in the resolved type).
 
 ---
 
@@ -85,7 +118,7 @@ Active state for both: `checkLine` with the appropriate prefix.
 
 **File:** `src/toolbar/buttons/clean-block.ts` (new)
 
-Removes all block-level formatting from the selected lines:
+`cleanBlock(editor: EasyMDE)` — boundary per Conventions. Removes all block-level formatting from the selected lines:
 
 - Strip heading prefixes (`#`, `##`, …)
 - Strip blockquote prefix (`>`)
@@ -100,13 +133,15 @@ Does not touch inline formatting (bold, italic, etc.).
 
 **Files:** `src/toolbar/buttons/toggle-code.ts` (update), `src/toolbar/buttons/toggle-code-block.ts` (new)
 
-- **Inline code** (`toggle-code.ts`): remains as-is (single back-tick wrapper). Rename internal action to `toggleInlineCode` for clarity.
-- **Code block** (`toggle-code-block.ts`): wraps selection in ` ``` ` fences.
+- **Inline code** (`toggle-code.ts`): remains as-is (single back-tick wrapper). Rename internal action to `toggleInlineCode` for clarity. Signature `(editor: EasyMDE)` per Conventions.
+- **Code block** (`toggle-code-block.ts`): `toggleCodeBlock(editor: EasyMDE)` — wraps selection in ` ``` ` fences.
     - Single-line with no selection → insert a fenced block template with cursor inside.
     - Multi-line selection → wrap the whole selection in fences.
     - If the selection is already inside fences → remove them.
 
-Add both to `defaultToolbar` (replace the current single `code` button with `inline-code` and `code-block`, or follow V2's approach of showing only `code` by default and adding `code-block` to `showIcons`).
+**Default toolbar:** keep `code` (inline) in the default set. Add `code-block` as a non-default button consumers opt into via `showIcons: ["code-block"]` (V2 approach).
+
+**Cleanup (Milestone A leftover):** Milestone A wired `code` (now `inline-code`) and `strikethrough` without an `active` callback. Add `active: (editor) => checkBlock(editor.codemirror, editor.options.blockStyles.code)` (and the strikethrough equivalent) so all inline-format buttons reflect cursor state.
 
 ---
 
@@ -114,7 +149,30 @@ Add both to `defaultToolbar` (replace the current single `code` button with `inl
 
 **File:** `src/toolbar/buttons/horizontal-rule.ts` (new)
 
-Insert `\n\n---\n\n` at the cursor position (or after the current selection).
+`drawHorizontalRule(editor: EasyMDE)` — boundary per Conventions. Inserts `editor.options.insertTexts.horizontalRule` at the cursor position (or after the current selection).
+
+**Options addition** — declare `InsertTexts` in `src/options.ts` and add it to `InputOptions`/`Options`:
+
+```ts
+export interface InsertTexts {
+    horizontalRule?: string;
+}
+
+interface InputOptions {
+    // …
+    insertTexts?: InsertTexts;
+}
+```
+
+`resolveOptions` shallow-merges defaults:
+
+```ts
+insertTexts: {
+    horizontalRule: input.insertTexts?.horizontalRule ?? "\n\n---\n\n",
+},
+```
+
+Subsequent B-sections extend `InsertTexts` with more fields.
 
 ---
 
@@ -122,15 +180,25 @@ Insert `\n\n---\n\n` at the cursor position (or after the current selection).
 
 **File:** `src/toolbar/buttons/table.ts` (new)
 
-Insert a minimal Markdown table template:
+`drawTable(editor: EasyMDE)` — boundary per Conventions. Inserts `editor.options.insertTexts.table`. Position cursor at the first cell.
 
-```
-| Column 1 | Column 2 | Column 3 |
-| -------- | -------- | -------- |
-| Text     | Text     | Text     |
+**Options addition** — extend `InsertTexts`:
+
+```ts
+export interface InsertTexts {
+    horizontalRule?: string;
+    table?: string;
+}
 ```
 
-Position cursor at the first cell. Use `insertTexts.table` option if provided.
+Default in `resolveOptions`:
+
+```ts
+table: input.insertTexts?.table ??
+    "| Column 1 | Column 2 | Column 3 |\n" +
+    "| -------- | -------- | -------- |\n" +
+    "| Text     | Text     | Text     |\n",
+```
 
 ---
 
@@ -138,9 +206,26 @@ Position cursor at the first cell. Use `insertTexts.table` option if provided.
 
 **File:** `src/toolbar/buttons/draw-link.ts` (new)
 
-1. If `promptURLs` is true (or no selection), open `window.prompt` (or `promptTexts.link` as the dialog message) for the URL.
-2. Wrap the selection (or placeholder text) in `[text](url)` syntax.
-3. Use `insertTexts.link` if provided as the template.
+`drawLink(editor: EasyMDE)` — boundary per Conventions.
+
+1. If `editor.options.promptURLs` is true (or no selection), open `window.prompt` (using `editor.options.promptTexts.link` as the dialog message) for the URL.
+2. Wrap the selection (or placeholder text) in `[text](url)` syntax using `editor.options.insertTexts.link` as the `[prefix, suffix]` template.
+
+**Options addition** — extend `InsertTexts`:
+
+```ts
+export interface InsertTexts {
+    horizontalRule?: string;
+    table?: string;
+    link?: [prefix: string, suffix: string];
+}
+```
+
+Default in `resolveOptions`:
+
+```ts
+link: input.insertTexts?.link ?? ["[", "](https://)"],
+```
 
 ---
 
@@ -148,9 +233,24 @@ Position cursor at the first cell. Use `insertTexts.table` option if provided.
 
 **File:** `src/toolbar/buttons/draw-image.ts` (new)
 
-Same flow as link insertion, using `![alt](url)` syntax.  
-`promptTexts.image` for the dialog message.  
-`insertTexts.image` if provided.
+`drawImage(editor: EasyMDE)` — boundary per Conventions. Same flow as link insertion using `![alt](url)` syntax. `editor.options.promptTexts.image` for the dialog message. `editor.options.insertTexts.image` as the `[prefix, suffix]` template.
+
+**Options addition** — extend `InsertTexts`:
+
+```ts
+export interface InsertTexts {
+    horizontalRule?: string;
+    table?: string;
+    link?: [prefix: string, suffix: string];
+    image?: [prefix: string, suffix: string];
+}
+```
+
+Default in `resolveOptions`:
+
+```ts
+image: input.insertTexts?.image ?? ["![](", ")"],
+```
 
 Image upload (paste / drop / file dialog) is a separate feature tracked in Milestone E.
 
@@ -160,7 +260,7 @@ Image upload (paste / drop / file dialog) is a separate feature tracked in Miles
 
 **Files:** `src/toolbar/buttons/toggle-task.ts` (new), extend `src/utils/toggle-line.ts` or add list-specific helpers as needed
 
-GitHub-style task list items: `- [ ]` (unchecked) and `- [x]` or `- [X]` (checked).
+`toggleTaskList(editor: EasyMDE)` — boundary per Conventions. GitHub-style task list items: `- [ ]` (unchecked) and `- [x]` or `- [X]` (checked).
 
 - Toggle adds or removes the checkbox prefix on every line intersecting the selection (same line-surgery model as `toggleLine`).
 - Typing rules should align with V2 behaviour where possible; see [original-analysis.md](original-analysis.md) (line-prefix / task list gap).
@@ -176,11 +276,26 @@ Wire into `defaultToolbar` (V2 includes a task-list control in its default set).
 
 **File:** `src/toolbar/buttons/open-guide.ts` (new), `src/options.ts` (option wiring)
 
-- The default toolbar’s **guide** / **help** button opens Markdown syntax documentation in a new browser tab (or same-tab if documented otherwise — default: `target="_blank"` + `rel="noopener"`).
-- Add **`toolbarGuideUrl`** (or retain / alias V2’s field name if it already exists in `InputOptions`) — `string`, defaulting to a sensible public Markdown reference URL documented in the README.
-- If the URL is empty / disabled, hide the button or no-op per `toolbar` builder rules.
+- The default toolbar's **guide** / **help** button opens Markdown syntax documentation in a new browser tab — `target="_blank"` + `rel="noopener"`.
+- `openGuide(editor: EasyMDE)` — boundary per Conventions. Reads `editor.options.toolbarGuideUrl`.
+- Replace the hard-coded `"https://simplemde.com/markdown-guide"` string at `src/toolbar/default-toolbar.ts:97` with the new function so the URL flows from `Options`.
+- If `toolbarGuideUrl` is empty, hide the button or no-op per `toolbar` builder rules.
 
-**Acceptance:** the default toolbar control that maps to V2’s `guide` / `guide-link` id performs a deterministic open action.
+**Options addition** — add to `InputOptions`:
+
+```ts
+toolbarGuideUrl?: string;
+```
+
+`resolveOptions` default:
+
+```ts
+toolbarGuideUrl: input.toolbarGuideUrl ?? "https://www.markdownguide.org/cheat-sheet/",
+```
+
+No V2-alias — V3's `InputOptions` never carried a guide-URL field.
+
+**Acceptance:** the default toolbar control that maps to V2's `guide` / `guide-link` id performs a deterministic open action against the resolved `toolbarGuideUrl`.
 
 ---
 
@@ -229,6 +344,10 @@ Use `standardKeymap` from `@codemirror/commands` as a base (provides basic editi
 
 Wire `keymap.ts` into `construct()`.
 
+**Coexistence with the existing Enter binding:** Milestone A registered a single `Prec.low(keymap.of([{ key: "Enter", … }]))` in `src/easymde.ts:148–158`. The new EasyMDE shortcut map registers at **`Prec.high`** so it overrides defaults without colliding with the low-precedence Enter handler — both stay.
+
+**`Ctrl/Cmd+P`** invokes the existing public `editor.togglePreview()` method shipped in [milestone-a-foundations.md](milestone-a-foundations.md) **A5** — no new preview wiring needed.
+
 The `shortcuts` option override (from `InputOptions`) is deferred to post-stable; the default map ships first.
 
 ---
@@ -247,6 +366,15 @@ Introduce `buildToolbar(options: Options): IToolbarButtonOptions[][]`:
 
 Use this in `easymde.ts` instead of hard-wiring `defaultToolbar`.
 
+**Options addition** — add to `InputOptions`:
+
+```ts
+hideIcons?: ToolbarButton[];
+showIcons?: ToolbarButton[];
+```
+
+No `resolveOptions` default needed — both are optional and consumed only by `buildToolbar`.
+
 ---
 
 ## Acceptance criteria for Milestone B
@@ -261,4 +389,7 @@ Use this in `easymde.ts` instead of hard-wiring `defaultToolbar`.
 - [ ] All 14+ default keyboard shortcuts fire the correct actions.
 - [ ] `toolbar: false` hides the toolbar.
 - [ ] `toolbar: [...]` uses the custom button list.
+- [ ] `Options` resolves `insertTexts`, `toolbarGuideUrl`, and `unorderedListStyle` to documented defaults.
+- [ ] All toolbar action functions accept `EasyMDE`; utilities (`toggleLine`, `toggleBlock`, `checkLine`, `checkHeading`, …) accept `EditorView`.
+- [ ] `inline-code` and `strikethrough` buttons expose `active` callbacks.
 - [ ] `vp check` and `vp test` pass.
