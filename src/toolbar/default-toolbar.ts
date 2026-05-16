@@ -8,13 +8,13 @@ import {
     faListOl,
     faListUl,
     faQuestion,
-    faQuoteLeft,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
+import { toggleQuoteButton } from "./buttons/toggle-quote.js";
 
 /**
  * A toolbar icon composed of a base FontAwesome glyph plus a small `overlay`
@@ -45,12 +45,7 @@ export interface IToolbarButtonOptions {
 export const defaultToolbar: IToolbarButtonOptions[][] = [
     [toggleBoldButton, toggleItalicButton, cycleHeadingButton],
     [
-        {
-            // action: toggleBlockquote,
-            icon: faQuoteLeft,
-            name: "quote",
-            title: "Quote",
-        },
+        toggleQuoteButton,
         {
             // action: toggleUnorderedList,
             icon: faListUl,
