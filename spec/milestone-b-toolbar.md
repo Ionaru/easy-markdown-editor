@@ -24,7 +24,7 @@ interface IToolbarButtonOptions {
 }
 ```
 
-Custom (non-FA) icon surfaces are deferred to [milestone-a-foundations.md](milestone-a-foundations.md) **A4-Stable**; Milestone B uses `IconDefinition` only.
+`IToolbarButtonOptions.icon` accepts `ToolbarIcon = IconDefinition | LayeredIcon` (both exported from `src/toolbar/default-toolbar.ts`). A `LayeredIcon` is `{ base: IconDefinition; overlay: IconDefinition }` — a base FontAwesome glyph plus a small overlay glyph (a digit or an arrow), drawn at the icon's bottom-right corner via FontAwesome layering (see `src/toolbar/toolbar.ts`); added by **B2**. Fully custom non-FA icon surfaces (raw SVG string, consumer `HTMLElement`, resolver hook) remain deferred to [milestone-a-foundations.md](milestone-a-foundations.md) **A4-Stable**.
 
 ---
 
@@ -56,22 +56,31 @@ Tests must cover: single line cursor, multi-line selection, already-applied (ide
 
 ## B2 — Heading buttons
 
-**Files:** `src/toolbar/buttons/toggle-heading.ts` (new)
+**Files:** `src/utils/toggle-heading.ts` + `src/utils/toggle-heading.spec.ts` (new), `src/toolbar/buttons/toggle-heading.ts` (new), `src/toolbar/default-toolbar.ts` + `src/toolbar/toolbar.ts` + `src/index.ts` (the `LayeredIcon` surface — see Conventions).
 
-Actions (boundary per Conventions — each accepts `EasyMDE`):
+Heading text is stateful (a line at level N is _replaced_, not stacked), so headings get their own utility — `toggleLine` (B1) can't be reused. `src/utils/toggle-heading.ts` (takes `EditorView`):
 
-- `toggleHeadingSmaller(editor: EasyMDE)` — step down one level (`#`→`##`→`###`→ none → `#`).
-- `toggleHeadingBigger(editor: EasyMDE)` — step up one level (inverse of above).
-- `toggleHeading1..6(editor: EasyMDE)` — set to exactly that level; remove if already at that level.
+- `setHeading(view, level)` — set every line touching the selection to exactly `level` (`# `…`###### `), replacing any existing heading prefix; if every touched line is already at `level`, strip the heading from all (toggle off). Single transaction.
+- `cycleHeading(view, delta)` — `+1` smaller / `-1` bigger; each touched line moves through the cycle `none → 1 → … → 6 → none` (`-1` is the inverse), independently. Single transaction.
+- `checkHeading(view, level)` — `true` if every line touching the selection is at exactly that level.
+- `currentLineHasHeading(view)` — `true` if any line touching the selection carries a heading.
 
-`checkHeading(view: EditorView, level: number)` returns `true` if all selection lines are at that heading level (utility, takes `EditorView`).
+A line is a heading only if it matches `/^#{1,6} /` (one space required, ≤ 6 hashes) — so `#text` and `####### text` are level 0.
+
+Actions (boundary per Conventions — each accepts `EasyMDE`, in `src/toolbar/buttons/toggle-heading.ts`):
+
+- `toggleHeadingSmaller(editor: EasyMDE)` → `cycleHeading(editor.codemirror, 1)`.
+- `toggleHeadingBigger(editor: EasyMDE)` → `cycleHeading(editor.codemirror, -1)`.
+- `toggleHeading1..6(editor: EasyMDE)` → `setHeading(editor.codemirror, n)`. All six exist (for the B14 keymap and custom toolbars); only 1/2/3 + smaller/bigger get wired into `defaultToolbar`.
+
+Icons: `heading-1..6` use `{ base: faHeading, overlay: fa1..fa6 }`; `heading-smaller` uses `{ base: faHeading, overlay: faArrowDown }`, `heading-bigger` uses `faArrowUp`. `Toolbar` draws each overlay at the icon's bottom-right corner — see Conventions.
 
 Active state — `active` callbacks use the `(editor: EasyMDE, update: ViewUpdate) => boolean` signature from the Conventions block:
 
 - Heading buttons glow when the cursor is on a line at that level.
 - Heading-smaller / heading-bigger: active when any heading is present on the current line.
 
-Wire into `defaultToolbar`: replace today's inert `heading` placeholder (`src/toolbar/default-toolbar.ts:38–43`) with: `heading-1`, `heading-2`, `heading-3`, separator, `heading-smaller`, `heading-bigger`.
+Wire into `defaultToolbar`: replace today's inert `heading` placeholder with `heading-1`, `heading-2`, `heading-3` appended to the bold/italic/strikethrough group, then `heading-smaller`, `heading-bigger` as their own group (group boundaries are the toolbar's separators — there is no separator-as-item).
 
 ---
 

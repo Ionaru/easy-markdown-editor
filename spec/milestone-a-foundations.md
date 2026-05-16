@@ -64,6 +64,8 @@ export interface IEasyMDEPlugin {
 
 **Documentation:** Consumers call **`registerIcons`** for custom FA buttons; **`registerIcons`** is **not** auto-invoked by the web component (**[decisions.md](decisions.md)** §**8** MVP bullet).
 
+**Composed FA icons (shipped in Milestone B2):** `IToolbarButtonOptions.icon` is `ToolbarIcon = IconDefinition | LayeredIcon`, where `LayeredIcon = { base: IconDefinition; overlay: IconDefinition }` renders the base glyph plus a small overlay glyph drawn at the bottom-right corner via FA layering — used for the `heading-1..6` digit overlays and the `heading-smaller`/`heading-bigger` arrow overlays. This closes the composed-FA half of the icon-surface work below; the non-FA surfaces remain.
+
 **By Stable (`v3.0.0`):**
 
 - Support **custom toolbar icons without Font Awesome** as a normative part of `IToolbarButtonOptions` (exact field names ship with implementation), for example one or more of:

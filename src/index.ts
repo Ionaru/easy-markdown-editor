@@ -2,7 +2,7 @@ import { dom } from "@fortawesome/fontawesome-svg-core";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
 import { registerIcons } from "./register-icons.js";
-import { defaultToolbar } from "./toolbar/default-toolbar.js";
+import { defaultToolbar, isLayeredIcon } from "./toolbar/default-toolbar.js";
 
 export { EasyMDE } from "./easymde.js";
 export type { IEasyMDEPlugin, IEasyMDEPluginClass } from "./easymde.js";
@@ -16,7 +16,12 @@ export type { IToolbarButtonOptions } from "./toolbar/default-toolbar.js";
 const defaultToolbarIcons = new Set<IconDefinition>();
 for (const section of defaultToolbar) {
     for (const button of section) {
-        defaultToolbarIcons.add(button.icon);
+        if (isLayeredIcon(button.icon)) {
+            defaultToolbarIcons.add(button.icon.base);
+            defaultToolbarIcons.add(button.icon.overlay);
+        } else {
+            defaultToolbarIcons.add(button.icon);
+        }
     }
 }
 registerIcons(...defaultToolbarIcons);

@@ -2,10 +2,13 @@ import { StateEffect } from "@codemirror/state";
 import { ViewPlugin, ViewUpdate } from "@codemirror/view";
 
 import { EasyMDE, type IEasyMDEPlugin, type IEasyMDEPluginClass } from "../easymde.js";
-import type { IToolbarButtonOptions } from "./default-toolbar.js";
+import { isLayeredIcon, type IToolbarButtonOptions, type ToolbarIcon } from "./default-toolbar.js";
 
 export class Toolbar implements IEasyMDEPlugin {
     static readonly #activeClass = "enabled";
+
+    // FA layer transform: shrink the overlay glyph and pin it to the icon's bottom-right corner.
+    static readonly #overlayTransform = "shrink-6 down-5 right-10";
 
     readonly element: HTMLDivElement;
 
@@ -65,7 +68,6 @@ export class Toolbar implements IEasyMDEPlugin {
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
                 toolBarButtonOptions.action(this.editor),
             );
-            // buttonElement.addEventListener()
         } else if (typeof toolBarButtonOptions.action === "string") {
             buttonElement.addEventListener("click", () =>
                 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -94,11 +96,30 @@ export class Toolbar implements IEasyMDEPlugin {
         }
 
         // Set the button icon.
-        const buttonIcon = document.createElement("i");
-        buttonIcon.className = "fa-solid fa-" + toolBarButtonOptions.icon.iconName;
-
-        buttonElement.append(buttonIcon);
+        buttonElement.append(Toolbar.#createIconElement(toolBarButtonOptions.icon));
         return buttonElement;
+    }
+
+    static #createIconElement(icon: ToolbarIcon): HTMLElement {
+        if (!isLayeredIcon(icon)) {
+            const iconElement = document.createElement("i");
+            iconElement.className = `fa-solid fa-${icon.iconName}`;
+            return iconElement;
+        }
+
+        const layers = document.createElement("span");
+        layers.className = "fa-layers fa-fw";
+
+        const base = document.createElement("i");
+        base.className = `fa-solid fa-${icon.base.iconName}`;
+
+        const overlay = document.createElement("i");
+        overlay.className = `fa-solid fa-${icon.overlay.iconName}`;
+        overlay.setAttribute("data-fa-transform", Toolbar.#overlayTransform);
+
+        // DOM order = paint order: overlay drawn over base.
+        layers.append(base, overlay);
+        return layers;
     }
 }
 

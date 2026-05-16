@@ -3,7 +3,6 @@ import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 import {
     faEraser,
     faEye,
-    faHeading,
     faImage,
     faLink,
     faListOl,
@@ -14,9 +13,22 @@ import {
 
 import { EasyMDE } from "../easymde.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
-import { toggleCodeButton } from "./buttons/toggle-code.js";
+import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
-import { toggleStrikethroughButton } from "./buttons/toggle-strikethrough.js";
+
+/**
+ * A toolbar icon composed of a base FontAwesome glyph plus a small `overlay`
+ * glyph (a digit or an arrow) drawn at the icon's bottom-right corner via
+ * FontAwesome layering — see `Toolbar`.
+ */
+export interface LayeredIcon {
+    base: IconDefinition;
+    overlay: IconDefinition;
+}
+
+export type ToolbarIcon = IconDefinition | LayeredIcon;
+
+export const isLayeredIcon = (icon: ToolbarIcon): icon is LayeredIcon => "base" in icon;
 
 export interface IToolbarButtonOptions {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -25,25 +37,14 @@ export interface IToolbarButtonOptions {
         | boolean
         | ((editor: EasyMDE, update: ViewUpdate) => boolean)
         | ((editor: EasyMDE, update: ViewUpdate) => Promise<boolean>);
-    icon: IconDefinition;
+    icon: ToolbarIcon;
     readonly name: string;
     title: string;
 }
 
 export const defaultToolbar: IToolbarButtonOptions[][] = [
+    [toggleBoldButton, toggleItalicButton, cycleHeadingButton],
     [
-        toggleBoldButton,
-        toggleItalicButton,
-        toggleStrikethroughButton,
-        {
-            // action: toggleHeadingSmaller,
-            icon: faHeading,
-            name: "heading",
-            title: "Heading",
-        },
-    ],
-    [
-        toggleCodeButton,
         {
             // action: toggleBlockquote,
             icon: faQuoteLeft,
