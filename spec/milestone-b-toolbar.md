@@ -136,16 +136,21 @@ orderedListDelimiter: input.orderedListDelimiter ?? ".",
 
 ## B5 — Clean block
 
-**File:** `src/toolbar/buttons/clean-block.ts` (new)
+**Files:** `src/toolbar/buttons/clean-block.ts` (new), `src/utils/clean-block.ts` (new), `src/utils/fences.ts` (new — shared with B6)
 
-`cleanBlock(editor: EasyMDE)` — boundary per Conventions. Removes all block-level formatting from the selected lines:
+`cleanBlock(editor: EasyMDE)` — boundary per Conventions, delegates to `cleanBlock(editor: EditorView)` in `src/utils/clean-block.ts`. Strips all block-level formatting from every line intersecting the selection in a single transaction:
 
-- Strip heading prefixes (`#`, `##`, …)
-- Strip blockquote prefix (`>`)
+- Strip ATX heading prefixes — `#{1,6}` followed by a space, per CommonMark [§4.2](https://spec.commonmark.org/0.31.2/#atx-headings)
+- Strip blockquote prefix (`> `) per CommonMark [§5.1](https://spec.commonmark.org/0.31.2/#block-quotes)
 - Strip list prefixes (`*`, `-`, `+`, `N. `, **`N) `**) — both CommonMark ordered-list delimiters per [§5.2](https://spec.commonmark.org/0.31.2/#list-items)
-- Strip fenced code fences if the selection is inside a fenced block
+- Strip the GFM [§5.3](https://github.github.com/gfm/#task-list-items-extension-) task-list marker **together with** its host list marker — `- [ ] foo` becomes `foo`, not `- foo`. Destructive semantics override `toggleList`'s host-preserving checklist-off behavior because cleanBlock is not a toggle.
+- Strip the opening and closing fences of any fenced-code block any selected line falls inside, per CommonMark [§4.5](https://spec.commonmark.org/0.31.2/#fenced-code-blocks). Lines inside a fence are treated as literal content — block-prefix-shaped characters on those lines (e.g. a `>` inside a code block) are NOT stripped.
 
-Does not touch inline formatting (bold, italic, etc.).
+Does not touch inline formatting (bold, italic, strikethrough, inline code) — those are character-level, not block-level.
+
+**Shared fence utility.** `src/utils/fences.ts` exports `findFenceBlocks(state): FenceBlock[]` (one pass over the document, returns every block in order) and `blockContaining(blocks, lineNumber): FenceBlock | null` (linear lookup against a previously-computed block list). The scan toggles fence state per CommonMark §4.5: closing fence must use the same character — back-tick or tilde — and be at least as long as the opener; opening fence may be indented up to three spaces; an unterminated opener emits a block with `close: null`. Splitting the scan from the membership query keeps the per-button cost at O(L + S) for L document lines and S selected lines, instead of the O(L·S) shape a per-line containment query would have. B6 reuses both exports to detect "selection already inside a fence" for `toggleCodeBlock`.
+
+**Detection narrowness.** Heading prefix detection caps at `#{1,6}` (CommonMark requires 1–6 hashes; seven or more is not a heading). The checklist regex accepts the GFM checkbox states `[ ]`, `[x]`, and `[X]` only — other characters inside the brackets are not GFM task markers. Setext headings (`====` / `----` underlines, [§4.3](https://spec.commonmark.org/0.31.2/#setext-headings)) and indented code blocks ([§4.4](https://spec.commonmark.org/0.31.2/#indented-code-blocks)) are out of scope: neither carries a single-line prefix to strip.
 
 ---
 
