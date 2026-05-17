@@ -178,6 +178,8 @@ export const countWords = (document: Text) =>
 
 Update the spec (`toggle-block.spec.ts` does not cover this; add `count-words.spec.ts`).
 
+`\S+` is a pragmatic word boundary — CommonMark itself does not define "word", so the editor's count is an editor convention, not a spec-conformant figure.
+
 ---
 
 ## Acceptance criteria for Milestone A

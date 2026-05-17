@@ -4,7 +4,14 @@ import { EditorView } from "@codemirror/view";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { afterEach, describe, expect, it } from "vitest";
 
-import { checkList, toggleList, type ListType, type UlStyle } from "./toggle-list.js";
+import {
+    checkList,
+    toggleList,
+    type ListType,
+    type MarkerConfig,
+    type OlDelimiter,
+    type UlStyle,
+} from "./toggle-list.js";
 
 const views: EditorView[] = [];
 
@@ -30,6 +37,16 @@ afterEach(() => {
 
 const STYLE: UlStyle = "*";
 
+const configFor = (
+    target: ListType,
+    delim: OlDelimiter = ".",
+    style: UlStyle = STYLE,
+): MarkerConfig => {
+    if (target === "ul") return { target: "ul", style };
+    if (target === "ol") return { target: "ol", delim };
+    return { target: "checklist" };
+};
+
 describe("toggleList — adding to a bare line", () => {
     it.each<[ListType, string]>([
         ["ul", "* foo"],
@@ -39,7 +56,7 @@ describe("toggleList — adding to a bare line", () => {
         expect.assertions(1);
 
         const editor = getEditor("foo", { anchor: 1 });
-        toggleList(editor, target, STYLE);
+        toggleList(editor, configFor(target));
         expect(editor.state.doc.toString()).toBe(expected);
     });
 });
@@ -58,7 +75,7 @@ describe("toggleList — swap between list types", () => {
         expect.assertions(1);
 
         const editor = getEditor(initial, { anchor: initial.length });
-        toggleList(editor, target, STYLE);
+        toggleList(editor, configFor(target));
         expect(editor.state.doc.toString()).toBe(expected);
     });
 });
@@ -67,14 +84,17 @@ describe("toggleList — toggle off (same target as current)", () => {
     it.each<[string, ListType, string]>([
         ["* foo", "ul", "foo"],
         ["1. foo", "ol", "foo"],
-        ["- [ ] foo", "checklist", "foo"],
-        ["- [x] foo", "checklist", "foo"],
-        ["- [X] foo", "checklist", "foo"],
+        ["- [ ] foo", "checklist", "- foo"],
+        ["- [x] foo", "checklist", "- foo"],
+        ["- [X] foo", "checklist", "- foo"],
+        ["* [ ] foo", "checklist", "* foo"],
+        ["1. [ ] foo", "checklist", "1. foo"],
+        ["3) foo", "ol", "foo"],
     ])("strips %s when target=%s", (initial, target, expected) => {
         expect.assertions(1);
 
         const editor = getEditor(initial, { anchor: 0 });
-        toggleList(editor, target, STYLE);
+        toggleList(editor, configFor(target));
         expect(editor.state.doc.toString()).toBe(expected);
     });
 });
@@ -85,7 +105,7 @@ describe("toggleList — multi-line", () => {
 
         const document = "a\nb\nc";
         const editor = getEditor(document, { anchor: 0, head: document.length });
-        toggleList(editor, "ol", STYLE);
+        toggleList(editor, configFor("ol"));
         expect(editor.state.doc.toString()).toBe("1. a\n2. b\n3. c");
     });
 
@@ -94,7 +114,7 @@ describe("toggleList — multi-line", () => {
 
         const document = "a\nb\nc";
         const editor = getEditor(document, { anchor: 0, head: document.length });
-        toggleList(editor, "checklist", STYLE);
+        toggleList(editor, configFor("checklist"));
         expect(editor.state.doc.toString()).toBe("- [ ] a\n- [ ] b\n- [ ] c");
     });
 
@@ -103,7 +123,7 @@ describe("toggleList — multi-line", () => {
 
         const document = "* a\n1. b\nc";
         const editor = getEditor(document, { anchor: 0, head: document.length });
-        toggleList(editor, "checklist", STYLE);
+        toggleList(editor, configFor("checklist"));
         expect(editor.state.doc.toString()).toBe("- [ ] a\n- [ ] b\n- [ ] c");
     });
 
@@ -112,17 +132,17 @@ describe("toggleList — multi-line", () => {
 
         const document = "* a\n* b\n* c";
         const editor = getEditor(document, { anchor: 0, head: document.length });
-        toggleList(editor, "ol", STYLE);
+        toggleList(editor, configFor("ol"));
         expect(editor.state.doc.toString()).toBe("1. a\n2. b\n3. c");
     });
 
-    it("strips the marker from every line when all already match the target", () => {
+    it("strips the checklist marker from every line, preserving the host bullet", () => {
         expect.assertions(1);
 
         const document = "- [ ] a\n- [x] b\n- [ ] c";
         const editor = getEditor(document, { anchor: 0, head: document.length });
-        toggleList(editor, "checklist", STYLE);
-        expect(editor.state.doc.toString()).toBe("a\nb\nc");
+        toggleList(editor, configFor("checklist"));
+        expect(editor.state.doc.toString()).toBe("- a\n- b\n- c");
     });
 });
 
@@ -132,7 +152,7 @@ describe("toggleList — ol continuation numbering", () => {
 
         const document = "4. existing\na\nb";
         const editor = getEditor(document, { anchor: 13, head: document.length });
-        toggleList(editor, "ol", STYLE);
+        toggleList(editor, configFor("ol"));
         expect(editor.state.doc.toString()).toBe("4. existing\n5. a\n6. b");
     });
 });
@@ -146,7 +166,7 @@ describe("toggleList — cursor placement on blank line", () => {
         expect.assertions(2);
 
         const editor = getEditor("", { anchor: 0 });
-        toggleList(editor, target, STYLE);
+        toggleList(editor, configFor(target));
         expect(editor.state.doc.toString()).toBe(expectedDoc);
         expect(editor.state.selection.main.from).toBe(expectedCursor);
     });
@@ -157,7 +177,7 @@ describe("toggleList — cursor placement on swap", () => {
         expect.assertions(2);
 
         const editor = getEditor("1. foo", { anchor: 4 });
-        toggleList(editor, "checklist", STYLE);
+        toggleList(editor, configFor("checklist"));
         expect(editor.state.doc.toString()).toBe("- [ ] foo");
         expect(editor.state.selection.main.from).toBe(7);
     });
@@ -166,25 +186,25 @@ describe("toggleList — cursor placement on swap", () => {
         expect.assertions(2);
 
         const editor = getEditor("- [ ] foo", { anchor: 6 });
-        toggleList(editor, "checklist", STYLE);
-        expect(editor.state.doc.toString()).toBe("foo");
-        expect(editor.state.selection.main.from).toBe(0);
+        toggleList(editor, configFor("checklist"));
+        expect(editor.state.doc.toString()).toBe("- foo");
+        expect(editor.state.selection.main.from).toBe(2);
     });
 });
 
 describe("toggleList — idempotent round-trip", () => {
-    it.each<ListType>(["ul", "ol", "checklist"])(
-        "toggles off in one round-trip for %s",
-        (target) => {
-            expect.assertions(1);
+    it.each<[ListType, string]>([
+        ["ul", "a\nb"],
+        ["ol", "a\nb"],
+        ["checklist", "- a\n- b"],
+    ])("toggles off in one round-trip for %s", (target, expected) => {
+        expect.assertions(1);
 
-            const document = "a\nb";
-            const editor = getEditor(document, { anchor: 0, head: document.length });
-            toggleList(editor, target, STYLE);
-            toggleList(editor, target, STYLE);
-            expect(editor.state.doc.toString()).toBe(document);
-        },
-    );
+        const editor = getEditor("a\nb", { anchor: 0, head: 3 });
+        toggleList(editor, configFor(target));
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
 });
 
 describe("toggleList — respects unorderedListStyle option", () => {
@@ -192,7 +212,7 @@ describe("toggleList — respects unorderedListStyle option", () => {
         expect.assertions(1);
 
         const editor = getEditor("foo", { anchor: 0 });
-        toggleList(editor, "ul", style);
+        toggleList(editor, { target: "ul", style });
         expect(editor.state.doc.toString()).toBe(`${style} foo`);
     });
 });
@@ -254,5 +274,61 @@ describe("checkList", () => {
 
         expect(checkList(getEditor("123456789. foo", { anchor: 0 }), "ol")).toBe(true);
         expect(checkList(getEditor("1234567890. foo", { anchor: 0 }), "ol")).toBe(false);
+    });
+
+    it("accepts both `.` and `)` ordered-list delimiters per CommonMark §5.2", () => {
+        expect.assertions(2);
+
+        expect(checkList(getEditor("1. foo", { anchor: 0 }), "ol")).toBe(true);
+        expect(checkList(getEditor("3) foo", { anchor: 0 }), "ol")).toBe(true);
+    });
+
+    it("detects task markers hosted on any list-item kind per GFM §5.3", () => {
+        expect.assertions(5);
+
+        expect(checkList(getEditor("- [ ] task", { anchor: 0 }), "checklist")).toBe(true);
+        expect(checkList(getEditor("* [x] task", { anchor: 0 }), "checklist")).toBe(true);
+        expect(checkList(getEditor("+ [X] task", { anchor: 0 }), "checklist")).toBe(true);
+        expect(checkList(getEditor("1. [ ] task", { anchor: 0 }), "checklist")).toBe(true);
+        expect(checkList(getEditor("3) [x] task", { anchor: 0 }), "checklist")).toBe(true);
+    });
+
+    it("accepts tab inside `[ ]` per GFM §5.3 ('a whitespace character')", () => {
+        expect.assertions(1);
+
+        expect(checkList(getEditor("- [\t] task", { anchor: 0 }), "checklist")).toBe(true);
+    });
+});
+
+describe("toggleList — orderedListDelimiter option", () => {
+    it.each<OlDelimiter>([".", ")"])(
+        "emits ordered lists with the configured delimiter %s",
+        (delim) => {
+            expect.assertions(1);
+
+            const document = "a\nb\nc";
+            const editor = getEditor(document, { anchor: 0, head: document.length });
+            toggleList(editor, { target: "ol", delim });
+            expect(editor.state.doc.toString()).toBe(`1${delim} a\n2${delim} b\n3${delim} c`);
+        },
+    );
+
+    it("continues numbering across either preceding delimiter", () => {
+        expect.assertions(1);
+
+        const document = "3) existing\na\nb";
+        const editor = getEditor(document, { anchor: 13, head: document.length });
+        toggleList(editor, { target: "ol", delim: ")" });
+        expect(editor.state.doc.toString()).toBe("3) existing\n4) a\n5) b");
+    });
+
+    it("swaps `)` lines onto ul, then back to ol with `.`", () => {
+        expect.assertions(2);
+
+        const editor = getEditor("3) foo", { anchor: 0 });
+        toggleList(editor, configFor("ul"));
+        expect(editor.state.doc.toString()).toBe("* foo");
+        toggleList(editor, { target: "ol", delim: "." });
+        expect(editor.state.doc.toString()).toBe("1. foo");
     });
 });

@@ -6,7 +6,7 @@ import { checkList, toggleList } from "../../utils/toggle-list.js";
 import type { IToolbarButtonOptions } from "../default-toolbar.js";
 
 export const toggleUnorderedList = (editor: EasyMDE): void =>
-    toggleList(editor.codemirror, "ul", editor.options.unorderedListStyle);
+    toggleList(editor.codemirror, { target: "ul", style: editor.options.unorderedListStyle });
 
 export const checkUnorderedList = (editor: EasyMDE, _update: ViewUpdate): boolean =>
     checkList(editor.codemirror, "ul");

@@ -52,6 +52,8 @@ Rules:
 
 Tests must cover: single line cursor, multi-line selection, already-applied (idempotent remove), partially-applied (apply to remainder), and prefix collision (e.g. `##` vs `#`).
 
+**Spec basis.** CommonMark [§4.2 ATX headings](https://spec.commonmark.org/0.31.2/#atx-headings), [§5.1 block quotes](https://spec.commonmark.org/0.31.2/#block-quotes), and [§5.2 list items](https://spec.commonmark.org/0.31.2/#list-items) admit a wider whitespace set after the marker than `toggleLine` recognises — tab as well as space for headings/lists, and a bare `>` (no following space) for block quotes. `toggleLine` requires `prefix` + ASCII space because the toolbar always emits that form; tab and bare-`>` variants are intentionally not detected on toggle-off. Round-trip cleanliness wins over CommonMark-completeness here.
+
 ---
 
 ## B2 — Heading buttons
@@ -66,6 +68,8 @@ Heading text is stateful (a line at level N is _replaced_, not stacked), so head
 - `currentLineHasHeading(view)` — `true` if any line touching the selection carries a heading.
 
 A line is a heading only if it matches `/^#{1,6} /` (one space required, ≤ 6 hashes) — so `#text` and `####### text` are level 0.
+
+**Spec basis.** CommonMark [§4.2](https://spec.commonmark.org/0.31.2/#atx-headings) admits `#…` "followed by spaces or tabs, or by the end of line". V3 narrows to a single ASCII space for round-trip stability with what `setHeading` emits; tab-after-hash and hash-at-EOL are intentionally not detected.
 
 Actions (boundary per Conventions — each accepts `EasyMDE`, in `src/toolbar/buttons/toggle-heading.ts`):
 
@@ -98,6 +102,8 @@ Active when all selection lines start with `> `.
 
 Update `defaultToolbar` to wire the action and active state.
 
+**Spec basis.** CommonMark [§5.1](https://spec.commonmark.org/0.31.2/#block-quotes) defines a block-quote marker as "(a) the character `>` together with a following space of indentation, or (b) a single character `>` not followed by a space of indentation." V3 requires `> ` (space form) for both emission and detection; bare `>foo` is valid CommonMark but is not round-tripped by this toolbar.
+
 ---
 
 ## B4 — Unordered and ordered lists
@@ -106,20 +112,25 @@ Update `defaultToolbar` to wire the action and active state.
 
 `toggleUnorderedList(editor: EasyMDE)`: uses `toggleLine` with the configured `unorderedListStyle` (`*`, `-`, or `+`). Reads `editor.options.unorderedListStyle` (resolved default `"*"` — see Options addition below).
 
-`toggleOrderedList(editor: EasyMDE)`: more complex — sequential numbering (`1.`, `2.`, …).
+`toggleOrderedList(editor: EasyMDE)`: more complex — sequential numbering (`1.`, `2.`, …, or `1)`, `2)`, … when `orderedListDelimiter` is `)`).
 
-- When adding: number the lines starting from `1.` (or continue from the preceding list item if the selection is inside an existing list).
-- When removing: strip the `N. ` prefix from all lines.
+- When adding: number the lines starting from `1` (or continue from the preceding list item if the selection is inside an existing list).
+- When removing: strip the `N. ` / `N) ` prefix from all lines.
+- Detection regex: `^(\d{1,9})([.)]) ` — 1–9 digits per CommonMark §5.2, either delimiter.
+- "Inside an existing list" means **the immediately preceding line carries an ordered marker (either delimiter)**; blank-line-separated runs start a fresh `1` per CommonMark §5.4.
 
-Active state for both: `checkLine` with the appropriate prefix.
+Active state for both: `checkLine` (or `checkList` for the unified utility) with the appropriate prefix; the OL active check returns `true` for either delimiter.
 
-**Options addition** — `unorderedListStyle` is already declared in `InputOptions` (`src/options.ts`). Add a default in `resolveOptions`:
+**Options addition** — `unorderedListStyle` is already declared in `InputOptions` (`src/options.ts`). Add defaults in `resolveOptions`:
 
 ```ts
 unorderedListStyle: input.unorderedListStyle ?? "*",
+orderedListDelimiter: input.orderedListDelimiter ?? ".",
 ```
 
-`Options.unorderedListStyle` becomes `"*" | "-" | "+"` (non-optional in the resolved type).
+`Options.unorderedListStyle` becomes `"*" | "-" | "+"` (non-optional in the resolved type). `Options.orderedListDelimiter` becomes `"." | ")"` (non-optional in the resolved type).
+
+**Spec basis.** CommonMark [§5.2](https://spec.commonmark.org/0.31.2/#list-items) defines a bullet marker as `-`, `+`, or `*`, and an ordered marker as "a sequence of 1–9 arabic digits, followed by either a `.` character or a `)` character" — the 1–9 cap exists because larger numbers risk integer overflow in some browsers. CommonMark [§5.4](https://spec.commonmark.org/0.31.2/#lists) states that "Changing the bullet or ordered list delimiter starts a new list" — `1. foo` followed by `2) bar` is therefore two separate lists, which is why the continuation rule above looks only one line back and at the exact marker shape.
 
 ---
 
@@ -131,7 +142,7 @@ unorderedListStyle: input.unorderedListStyle ?? "*",
 
 - Strip heading prefixes (`#`, `##`, …)
 - Strip blockquote prefix (`>`)
-- Strip list prefixes (`*`, `-`, `+`, `N.`)
+- Strip list prefixes (`*`, `-`, `+`, `N. `, **`N) `**) — both CommonMark ordered-list delimiters per [§5.2](https://spec.commonmark.org/0.31.2/#list-items)
 - Strip fenced code fences if the selection is inside a fenced block
 
 Does not touch inline formatting (bold, italic, etc.).
@@ -183,6 +194,8 @@ insertTexts: {
 
 Subsequent B-sections extend `InsertTexts` with more fields.
 
+**Spec basis.** CommonMark [§4.1](https://spec.commonmark.org/0.31.2/#thematic-breaks) defines a thematic break as three or more matching `-`, `_`, or `*` characters on a line of their own. The leading `\n\n` in the default `"\n\n---\n\n"` template is **mandatory**: a bare `---` placed directly after a paragraph line is parsed as a Setext H2 underline ([§4.3](https://spec.commonmark.org/0.31.2/#setext-headings)) instead of a thematic break, which would silently promote the preceding line to a heading.
+
 ---
 
 ## B8 — Table
@@ -204,10 +217,12 @@ Default in `resolveOptions`:
 
 ```ts
 table: input.insertTexts?.table ??
-    "| Column 1 | Column 2 | Column 3 |\n" +
+    "\n\n| Column 1 | Column 2 | Column 3 |\n" +
     "| -------- | -------- | -------- |\n" +
-    "| Text     | Text     | Text     |\n",
+    "| Text     | Text     | Text     |\n\n",
 ```
+
+**Spec basis.** Tables are a GFM extension, not CommonMark. [GFM §4.10](https://github.github.com/gfm/#tables-extension-) requires a header row plus a delimiter row of `-` cells (optionally bookended with `:` for alignment), and breaks the table at the first blank line. This feature is therefore **GFM-only**: `renderingConfig.markedOptions.gfm` must be `true` (Marked's default) for the rendered preview to match the inserted source. The template is wrapped in `\n\n` for the same reason as B7 — to guarantee block context regardless of where the cursor sits.
 
 ---
 
@@ -277,7 +292,15 @@ Image upload (paste / drop / file dialog) is a separate feature tracked in Miles
 
 Wire into `defaultToolbar` (V2 includes a task-list control in its default set).
 
-**Tests:** mirror `toggle-line` coverage (single line, multi-line, idempotent toggle, mixed list/task lines).
+**Detection regex.** `^(?:[*\-+]|\d{1,9}[.)]) \[[\sxX]\] ` — matches a task marker hosted on **any** list-item kind (bullet `*`/`-`/`+` or ordered `N.`/`N)`), with any whitespace character (space or tab) inside the brackets.
+
+**Emission.** New items always emit `- [ ] ` (the canonical bullet + unchecked form). Pre-existing host markers are preserved on swap (e.g. `1. foo` → toggle checklist → `1. [ ] foo` would be valid GFM, but the current swap rewrites the whole marker to `- [ ] foo` — see open question below).
+
+**Toggle-off semantics.** Per [GFM §5.3](https://github.github.com/gfm/#task-list-items-extension-), a task list item _is_ a list item — toggling the task off should strip only the `[?] ` portion, leaving the host list marker behind. So `- [ ] foo` → `- foo`, `1. [x] foo` → `1. foo`, `* [X] foo` → `* foo`. Removing the bullet too requires a second click on the matching UL/OL button.
+
+**Tests:** mirror `toggle-line` coverage (single line, multi-line, idempotent toggle, mixed list/task lines), plus the cross-host detection cases above.
+
+**Spec basis.** [GFM §5.3](https://github.github.com/gfm/#task-list-items-extension-): "A task list item marker consists of an optional number of spaces, a left bracket (`[`), either a whitespace character or the letter `x` in either lowercase or uppercase, and then a right bracket (`]`)." GFM example 280 nests task items inside both bullet and ordered lists, which is why detection accepts any list-marker host — not only `- `.
 
 ---
 

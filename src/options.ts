@@ -82,6 +82,7 @@ export interface InputOptions {
     statusbar?: boolean;
     blockStyles?: BlockStyleOptions;
     unorderedListStyle?: "*" | "-" | "+";
+    orderedListDelimiter?: "." | ")";
     indentWithTabs?: boolean;
     tabSize?: number;
     lineWrapping?: boolean;
@@ -100,13 +101,19 @@ export interface InputOptions {
 
 export type Options = Omit<
     InputOptions,
-    "toolbar" | "statusbar" | "blockStyles" | "trimInitialValue" | "unorderedListStyle"
+    | "toolbar"
+    | "statusbar"
+    | "blockStyles"
+    | "trimInitialValue"
+    | "unorderedListStyle"
+    | "orderedListDelimiter"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
     blockStyles: Required<BlockStyleOptions>;
     trimInitialValue: boolean;
     unorderedListStyle: "*" | "-" | "+";
+    orderedListDelimiter: "." | ")";
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -115,6 +122,7 @@ export const resolveOptions = (input: InputOptions): Options => ({
     statusbar: input.statusbar ?? true,
     trimInitialValue: input.trimInitialValue ?? true,
     unorderedListStyle: input.unorderedListStyle ?? "*",
+    orderedListDelimiter: input.orderedListDelimiter ?? ".",
     blockStyles: {
         bold: input.blockStyles?.bold ?? DEFAULT_BLOCK_STYLES.bold,
         italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,
