@@ -21,20 +21,19 @@ import {
 } from "../../utils/toggle-heading.js";
 import type { IToolbarButtonOptions } from "../default-toolbar.js";
 
-const setHeadingAction = (level: number) => (editor: EasyMDE) =>
-    setHeading(editor.codemirror, level);
+const makeSetHeading = (level: number) => (editor: EasyMDE) => setHeading(editor.codemirror, level);
 
-export const toggleHeading1 = setHeadingAction(1);
-export const toggleHeading2 = setHeadingAction(2);
-export const toggleHeading3 = setHeadingAction(3);
-export const toggleHeading4 = setHeadingAction(4);
-export const toggleHeading5 = setHeadingAction(5);
-export const toggleHeading6 = setHeadingAction(6);
+export const toggleHeading1 = makeSetHeading(1);
+export const toggleHeading2 = makeSetHeading(2);
+export const toggleHeading3 = makeSetHeading(3);
+export const toggleHeading4 = makeSetHeading(4);
+export const toggleHeading5 = makeSetHeading(5);
+export const toggleHeading6 = makeSetHeading(6);
 
 export const toggleHeadingSmaller = (editor: EasyMDE) => cycleHeading(editor.codemirror, 1);
 export const toggleHeadingBigger = (editor: EasyMDE) => cycleHeading(editor.codemirror, -1);
 
-const headingCycleActive = (editor: EasyMDE, _update: ViewUpdate): boolean =>
+const checkHeadingCycle = (editor: EasyMDE, _update: ViewUpdate): boolean =>
     currentLineHasHeading(editor.codemirror);
 
 const headingButton = (
@@ -42,7 +41,7 @@ const headingButton = (
     digit: IconDefinition,
     title: string,
 ): IToolbarButtonOptions => ({
-    action: setHeadingAction(level),
+    action: makeSetHeading(level),
     active: (editor: EasyMDE, _update: ViewUpdate): boolean =>
         checkHeading(editor.codemirror, level),
     icon: { base: faHeading, overlay: digit },
@@ -59,7 +58,7 @@ export const toggleHeading6Button = headingButton(6, fa6, "Heading 6");
 
 export const headingSmallerButton: IToolbarButtonOptions = {
     action: toggleHeadingSmaller,
-    active: headingCycleActive,
+    active: checkHeadingCycle,
     icon: { base: faHeading, overlay: faArrowDown },
     name: "heading-smaller",
     title: "Smaller Heading",
@@ -67,7 +66,7 @@ export const headingSmallerButton: IToolbarButtonOptions = {
 
 export const headingBiggerButton: IToolbarButtonOptions = {
     action: toggleHeadingBigger,
-    active: headingCycleActive,
+    active: checkHeadingCycle,
     icon: { base: faHeading, overlay: faArrowUp },
     name: "heading-bigger",
     title: "Bigger Heading",
@@ -75,7 +74,7 @@ export const headingBiggerButton: IToolbarButtonOptions = {
 
 export const cycleHeadingButton: IToolbarButtonOptions = {
     action: toggleHeadingSmaller,
-    active: headingCycleActive,
+    active: checkHeadingCycle,
     icon: faHeading,
     name: "cycle-heading",
     title: "Heading",

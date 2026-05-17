@@ -9,6 +9,7 @@ type ToolbarButton =
     | "quote"
     | "unordered-list"
     | "ordered-list"
+    | "task-list"
     | "link"
     | "image"
     | "strikethrough"

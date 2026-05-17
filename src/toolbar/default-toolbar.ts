@@ -8,6 +8,7 @@ import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
 import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
+import { toggleTaskListButton } from "./buttons/toggle-task.js";
 import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
 
 /**
@@ -42,6 +43,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         toggleQuoteButton,
         toggleUnorderedListButton,
         toggleOrderedListButton,
+        toggleTaskListButton,
         {
             // action: cleanBlock,
             icon: faEraser,
