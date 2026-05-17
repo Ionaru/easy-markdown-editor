@@ -1,20 +1,14 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import {
-    faEraser,
-    faEye,
-    faImage,
-    faLink,
-    faListOl,
-    faListUl,
-    faQuestion,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEraser, faEye, faImage, faLink, faQuestion } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
+import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
+import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
 
 /**
  * A toolbar icon composed of a base FontAwesome glyph plus a small `overlay`
@@ -46,18 +40,8 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     [toggleBoldButton, toggleItalicButton, cycleHeadingButton],
     [
         toggleQuoteButton,
-        {
-            // action: toggleUnorderedList,
-            icon: faListUl,
-            name: "unordered-list",
-            title: "Generic List",
-        },
-        {
-            // action: toggleOrderedList,
-            icon: faListOl,
-            name: "ordered-list",
-            title: "Numbered List",
-        },
+        toggleUnorderedListButton,
+        toggleOrderedListButton,
         {
             // action: cleanBlock,
             icon: faEraser,

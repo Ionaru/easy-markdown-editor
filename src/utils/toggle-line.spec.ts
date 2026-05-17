@@ -73,6 +73,26 @@ describe.each(["#", ">", "-", "*", "+"])("toggleLine round-trip with %s", (prefi
     });
 });
 
+describe.each(["#", ">", "-", "*", "+"])("toggleLine cursor placement with %s", (prefix) => {
+    it("places the cursor after the prefix when toggling on a blank line", () => {
+        expect.assertions(2);
+
+        const editor = getEditor("", { anchor: 0 });
+        toggleLine(editor, prefix);
+        expect(editor.state.doc.toString()).toBe(`${prefix} `);
+        expect(editor.state.selection.main.from).toBe(prefix.length + 1);
+    });
+
+    it("places the cursor after the prefix when toggling at the start of a non-empty line", () => {
+        expect.assertions(2);
+
+        const editor = getEditor("foo", { anchor: 0 });
+        toggleLine(editor, prefix);
+        expect(editor.state.doc.toString()).toBe(`${prefix} foo`);
+        expect(editor.state.selection.main.from).toBe(prefix.length + 1);
+    });
+});
+
 describe("toggleLine prefix collision", () => {
     it("does not treat a `## h` line as carrying the `#` prefix", () => {
         expect.assertions(1);

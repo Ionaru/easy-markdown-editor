@@ -22,12 +22,13 @@ export const toggleLine = (editor: EditorView, prefix: string): void => {
     const token = `${prefix} `;
     const allPrefixed = lines.every((line) => hasPrefix(line.text, prefix));
 
-    const changes = allPrefixed
+    const changeSpec = allPrefixed
         ? lines.map((line) => ({ from: line.from, to: line.from + token.length, insert: "" }))
         : lines
               .filter((line) => !hasPrefix(line.text, prefix))
               .map((line) => ({ from: line.from, insert: token }));
 
-    editor.dispatch({ changes });
+    const changes = state.changes(changeSpec);
+    editor.dispatch({ changes, selection: state.selection.map(changes, 1) });
     editor.focus();
 };

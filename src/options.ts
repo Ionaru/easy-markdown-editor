@@ -99,12 +99,13 @@ export interface InputOptions {
 
 export type Options = Omit<
     InputOptions,
-    "toolbar" | "statusbar" | "blockStyles" | "trimInitialValue"
+    "toolbar" | "statusbar" | "blockStyles" | "trimInitialValue" | "unorderedListStyle"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
     blockStyles: Required<BlockStyleOptions>;
     trimInitialValue: boolean;
+    unorderedListStyle: "*" | "-" | "+";
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -112,6 +113,7 @@ export const resolveOptions = (input: InputOptions): Options => ({
     toolbar: input.toolbar ?? true,
     statusbar: input.statusbar ?? true,
     trimInitialValue: input.trimInitialValue ?? true,
+    unorderedListStyle: input.unorderedListStyle ?? "*",
     blockStyles: {
         bold: input.blockStyles?.bold ?? DEFAULT_BLOCK_STYLES.bold,
         italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,
