@@ -43,6 +43,10 @@ interface PromptTexts {
     link?: string;
 }
 
+interface InsertTexts {
+    horizontalRule?: string;
+}
+
 interface RenderingOptions {
     markedOptions?: MarkedOptions;
     sanitizerFunction?: (html: string) => string;
@@ -94,6 +98,7 @@ export interface InputOptions {
     forceSync?: boolean;
     promptURLs?: boolean;
     promptTexts?: PromptTexts;
+    insertTexts?: InsertTexts;
     codemirrorExtensions?: Extension;
     previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
     renderingConfig?: RenderingOptions;
@@ -108,6 +113,7 @@ export type Options = Omit<
     | "trimInitialValue"
     | "unorderedListStyle"
     | "orderedListDelimiter"
+    | "insertTexts"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
@@ -115,6 +121,7 @@ export type Options = Omit<
     trimInitialValue: boolean;
     unorderedListStyle: "*" | "-" | "+";
     orderedListDelimiter: "." | ")";
+    insertTexts: Required<InsertTexts>;
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -129,5 +136,8 @@ export const resolveOptions = (input: InputOptions): Options => ({
         italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,
         strikethrough: input.blockStyles?.strikethrough ?? DEFAULT_BLOCK_STYLES.strikethrough,
         code: input.blockStyles?.code ?? DEFAULT_BLOCK_STYLES.code,
+    },
+    insertTexts: {
+        horizontalRule: input.insertTexts?.horizontalRule ?? "\n\n---\n\n",
     },
 });
