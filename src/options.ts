@@ -45,6 +45,7 @@ interface PromptTexts {
 
 interface InsertTexts {
     horizontalRule?: string;
+    table?: string;
 }
 
 interface RenderingOptions {
@@ -139,5 +140,10 @@ export const resolveOptions = (input: InputOptions): Options => ({
     },
     insertTexts: {
         horizontalRule: input.insertTexts?.horizontalRule ?? "\n\n---\n\n",
+        table:
+            input.insertTexts?.table ??
+            "\n\n| Column 1 | Column 2 | Column 3 |\n" +
+                "| -------- | -------- | -------- |\n" +
+                "| Text     | Text     | Text     |\n\n",
     },
 });

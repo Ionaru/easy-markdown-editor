@@ -48,4 +48,12 @@ describe("insertText", () => {
         expect(editor.state.doc.toString()).toBe("foobXYZar");
         expect(editor.state.selection.main.head).toBe(7);
     });
+
+    it("places the cursor at the given offset within the inserted text", () => {
+        expect.assertions(2);
+        const editor = getEditor("foobar", { anchor: 3 });
+        insertText(editor, "XYZ", 1);
+        expect(editor.state.doc.toString()).toBe("fooXYZbar");
+        expect(editor.state.selection.main.head).toBe(4);
+    });
 });
