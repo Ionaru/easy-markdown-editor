@@ -1,4 +1,4 @@
-import { EditorState, Line } from "@codemirror/state";
+import { type ChangeSpec, EditorState, Line } from "@codemirror/state";
 
 /**
  * Collects every line that intersects the primary selection. Works for a bare
@@ -14,3 +14,10 @@ export const linesInSelection = (state: EditorState): Line[] => {
     }
     return lines;
 };
+
+/** A change that deletes `line` whole, including its trailing newline. */
+export const deleteLine = (line: Line, docLength: number): ChangeSpec => ({
+    from: line.from,
+    to: Math.min(line.to + 1, docLength),
+    insert: "",
+});

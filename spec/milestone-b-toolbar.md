@@ -1,6 +1,6 @@
 # Milestone B — Toolbar Feature Parity
 
-**Goal:** Every toolbar button in V2's default set has a working action in V3.  
+**Goal:** Every toolbar button in V2's default set has a working action in V3.
 Depends on Milestone A (especially the plugin lifecycle and `toggleLine` utility).
 
 ---
@@ -164,7 +164,7 @@ Does not touch inline formatting (bold, italic, strikethrough, inline code) — 
     - Multi-line selection → wrap the whole selection in fences.
     - If the selection is already inside fences → remove them.
 
-**Default toolbar:** keep `code` (inline) in the default set. Add `code-block` as a non-default button consumers opt into via `showIcons: ["code-block"]` (V2 approach).
+**Default toolbar:** Neither button is in the default set. Add `code` and `code-block` as a non-default button consumers opt into via `showIcons: ["code-block"]` (V2 approach).
 
 **Cleanup (Milestone A leftover):** Milestone A wired `code` (now `inline-code`) and `strikethrough` without an `active` callback. Add `active: (editor) => checkBlock(editor.codemirror, editor.options.blockStyles.code)` (and the strikethrough equivalent) so all inline-format buttons reflect cursor state.
 

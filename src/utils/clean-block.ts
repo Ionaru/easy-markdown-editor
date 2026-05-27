@@ -2,7 +2,7 @@ import { type ChangeSpec, Line } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 
 import { blockContaining, findFenceBlocks } from "./fences.js";
-import { linesInSelection } from "./lines.js";
+import { deleteLine, linesInSelection } from "./lines.js";
 
 const PREFIX_RES = [
     /^#{1,6} /,
@@ -19,12 +19,6 @@ const stripPrefix = (line: Line): ChangeSpec | null => {
     }
     return null;
 };
-
-const stripFenceLine = (line: Line, docLength: number): ChangeSpec => ({
-    from: line.from,
-    to: Math.min(line.to + 1, docLength),
-    insert: "",
-});
 
 /**
  * Strips block-level formatting from every line intersecting the selection:
@@ -62,7 +56,7 @@ export const cleanBlock = (editor: EditorView): void => {
 
     const fenceChanges: ChangeSpec[] = [];
     for (const number of fenceLineNumbers) {
-        fenceChanges.push(stripFenceLine(state.doc.line(number), state.doc.length));
+        fenceChanges.push(deleteLine(state.doc.line(number), state.doc.length));
     }
 
     const changeSpec = [...prefixChanges, ...fenceChanges];

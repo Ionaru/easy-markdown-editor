@@ -14,6 +14,7 @@ type ToolbarButton =
     | "image"
     | "strikethrough"
     | "code"
+    | "code-block"
     | "table"
     | "redo"
     | "heading"
