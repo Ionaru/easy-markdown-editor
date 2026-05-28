@@ -7,6 +7,7 @@ import { tags } from "@lezer/highlight";
 
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
 import { NotConstructedError } from "./errors/not-constructed-error.js";
+import { createEasyMdeKeymap } from "./keymap.js";
 import { resolveOptions, type InputOptions, type Options } from "./options.js";
 import { Preview } from "./preview/preview.js";
 import { StatusBar } from "./status-bar/status-bar.js";
@@ -158,6 +159,7 @@ export class EasyMDE {
                     },
                 ]),
             ),
+            createEasyMdeKeymap(this),
         ];
 
         if (this.#options.forceSync) {
