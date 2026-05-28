@@ -16,5 +16,7 @@ dev_test/
 # Test artifacts
 coverage/
 .playwright-mcp/
+__screenshots__/
+.vitest-attachments
 
 CLAUDE.md

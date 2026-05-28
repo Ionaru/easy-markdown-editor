@@ -1,9 +1,10 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faImage, faLink, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faImage, faQuestion } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { cleanBlockButton } from "./buttons/clean-block.js";
+import { drawLinkButton } from "./buttons/draw-link.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
@@ -48,12 +49,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         cleanBlockButton,
     ],
     [
-        {
-            // action: drawLink,
-            icon: faLink,
-            name: "link",
-            title: "Create Link",
-        },
+        drawLinkButton,
         {
             // action: drawImage,
             icon: faImage,

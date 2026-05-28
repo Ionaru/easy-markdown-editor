@@ -46,6 +46,7 @@ interface PromptTexts {
 interface InsertTexts {
     horizontalRule?: string;
     table?: string;
+    link?: [prefix: string, suffix: string];
 }
 
 interface RenderingOptions {
@@ -115,6 +116,8 @@ export type Options = Omit<
     | "unorderedListStyle"
     | "orderedListDelimiter"
     | "insertTexts"
+    | "promptURLs"
+    | "promptTexts"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
@@ -123,6 +126,8 @@ export type Options = Omit<
     unorderedListStyle: "*" | "-" | "+";
     orderedListDelimiter: "." | ")";
     insertTexts: Required<InsertTexts>;
+    promptURLs: boolean;
+    promptTexts: Required<PromptTexts>;
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -132,6 +137,11 @@ export const resolveOptions = (input: InputOptions): Options => ({
     trimInitialValue: input.trimInitialValue ?? true,
     unorderedListStyle: input.unorderedListStyle ?? "*",
     orderedListDelimiter: input.orderedListDelimiter ?? ".",
+    promptURLs: input.promptURLs ?? false,
+    promptTexts: {
+        image: input.promptTexts?.image ?? "URL of the image:",
+        link: input.promptTexts?.link ?? "URL for the link:",
+    },
     blockStyles: {
         bold: input.blockStyles?.bold ?? DEFAULT_BLOCK_STYLES.bold,
         italic: input.blockStyles?.italic ?? DEFAULT_BLOCK_STYLES.italic,
@@ -145,5 +155,6 @@ export const resolveOptions = (input: InputOptions): Options => ({
             "\n\n| Column 1 | Column 2 | Column 3 |\n" +
                 "| -------- | -------- | -------- |\n" +
                 "| Text     | Text     | Text     |\n\n",
+        link: input.insertTexts?.link ?? ["[", "](https://)"],
     },
 });
