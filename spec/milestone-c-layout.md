@@ -5,6 +5,18 @@ Depends on Milestone A (preview pipeline) and Milestone B (toolbar actions).
 
 ---
 
+## Conventions established by Milestones A and B
+
+**Preview plugin.** `src/preview/preview.ts` exports `Preview implements IEasyMDEPlugin` and is registered through `EasyMDE.addPlugin` during `construct()`. `togglePreview()` / `isPreviewActive()` (from [milestone-a-foundations.md A5–A6](milestone-a-foundations.md)) toggle the `preview-active` class on the container, which CSS-swaps the CM editor and the `.easymde-preview` pane (`src/styles.scss`). Side-by-side and fullscreen reuse this exact element — no new preview DOM is built.
+
+**Deferred toolbar buttons.** `src/toolbar/button-registry.ts` declares `DEFERRED_BUTTON = Symbol("deferred-button")` and maps `"side-by-side"` and `"fullscreen"` to it; `buildToolbar` silently drops `DEFERRED_BUTTON` entries from the resolved layout (see [milestone-b-toolbar.md B15](milestone-b-toolbar.md#b15--custom-toolbar-configuration)). C1 and C2 each replace one sentinel with the real `IToolbarButtonOptions`.
+
+**Dormant keymap stubs.** [milestone-b-toolbar.md B14](milestone-b-toolbar.md#b14--keyboard-shortcuts) registers F9 and F11 as `() => false` no-ops at `src/keymap.ts:71-72` so they fall through to the browser. C1 and C2 swap those to `bind(...)` calls against the new public methods, and the corresponding placeholder tests (`src/keymap.spec.ts:208` for F9, `:221` for F11) are rewritten to assert the real action fires.
+
+**Boundary discipline.** Public toolbar action functions accept `EasyMDE`; the new `toggleSideBySide`/`toggleFullscreen` methods live on `EasyMDE` itself and the button actions are one-liners that call them. No utility module needed — both modes are pure DOM/state on the editor instance.
+
+---
+
 ## C1 — Side-by-side mode
 
 **Files:** `src/easymde.ts`, `src/toolbar/buttons/toggle-side-by-side.ts` (new), `src/styles.scss`
@@ -39,7 +51,29 @@ Depends on Milestone A (preview pipeline) and Milestone B (toolbar actions).
 
 ### Toolbar button
 
-`src/toolbar/buttons/toggle-side-by-side.ts` — action: `editor.toggleSideBySide()`, active: `editor.isSideBySideActive()`. Add to default toolbar (last group, before fullscreen).
+`src/toolbar/buttons/toggle-side-by-side.ts` — action: `editor.toggleSideBySide()`, active: `editor.isSideBySideActive()`. Replace the `DEFERRED_BUTTON` sentinel under `"side-by-side"` in `src/toolbar/button-registry.ts` with `toggleSideBySideButton`. Add a new trailing group `[toggleSideBySideButton, toggleFullscreenButton]` to `src/toolbar/default-toolbar.ts` (after the existing `[openGuideButton]` group).
+
+The button file must `import type { EasyMDE }` to avoid the registry ↔ default-toolbar circular-import TDZ trap (see `src/toolbar/buttons/*` for the established pattern).
+
+### Options addition
+
+Declare on `InputOptions` and resolve in `resolveOptions`:
+
+```ts
+syncSideBySidePreviewScroll?: boolean;
+sideBySideFullscreen?: boolean;
+```
+
+```ts
+syncSideBySidePreviewScroll: input.syncSideBySidePreviewScroll ?? true,
+sideBySideFullscreen: input.sideBySideFullscreen ?? false,
+```
+
+Both become non-optional `boolean` in the resolved `Options` type. `sideBySideFullscreen: false` is a deliberate departure from V2 (which defaulted to `true` and coupled the two modes); V3 lets consumers opt back in by passing `true`.
+
+### Keymap
+
+Replace `src/keymap.ts:71` `{ key: "F9", run: () => false }` with `{ key: "F9", run: bind((e) => e.toggleSideBySide()) }` and rewrite `src/keymap.spec.ts:208` to assert the call instead of fall-through.
 
 ---
 
@@ -85,7 +119,23 @@ Depends on Milestone A (preview pipeline) and Milestone B (toolbar actions).
 
 ### Toolbar button
 
-`src/toolbar/buttons/toggle-fullscreen.ts`. **Default key bindings** for side-by-side and fullscreen are listed in [milestone-b-toolbar.md — B14](milestone-b-toolbar.md#b14--keyboard-shortcuts) (F9 / F11). Add to default toolbar.
+`src/toolbar/buttons/toggle-fullscreen.ts` — action: `editor.toggleFullscreen()`, active: `editor.isFullscreenActive()`. Replace the `DEFERRED_BUTTON` sentinel under `"fullscreen"` in `src/toolbar/button-registry.ts` with `toggleFullscreenButton`. Wired into the trailing default-toolbar group alongside side-by-side per C1.
+
+Same `import type { EasyMDE }` rule applies.
+
+### Options addition
+
+Declare on `InputOptions`:
+
+```ts
+onToggleFullScreen?: (entering: boolean) => void;
+```
+
+No `resolveOptions` default — optional callback, called only when set. Stays optional in the resolved `Options` type.
+
+### Keymap
+
+Replace `src/keymap.ts:72` `{ key: "F11", run: () => false }` with `{ key: "F11", run: bind((e) => e.toggleFullscreen()) }` and rewrite `src/keymap.spec.ts:221` to assert the call. Note: this preempts the browser-native F11; the dormant version intentionally fell through so users kept browser fullscreen — document the change in CHANGELOG.
 
 ---
 
@@ -93,9 +143,19 @@ Depends on Milestone A (preview pipeline) and Milestone B (toolbar actions).
 
 **Files:** `src/styles.scss`
 
-### CSS custom properties (already partially in place)
+### CSS custom properties
 
-Finalise the variable set:
+`src/styles.scss:6-9` already declares four tokens for toolbar chrome (`--easymde-border-color`, `--easymde-enabled-color`, `--easymde-hover-color`, `--easymde-active-color`). The lightness-twiddled hover/enabled/active set was scoped to the toolbar; C3 broadens to editor / preview / statusbar surfaces and namespaces the toolbar-only tokens explicitly to free the unprefixed names.
+
+**Rename** the existing tokens — every use site in `src/styles.scss` updates in the same pass:
+
+| Before                    | After                       |
+| ------------------------- | --------------------------- |
+| `--easymde-enabled-color` | `--easymde-toolbar-enabled` |
+| `--easymde-hover-color`   | `--easymde-toolbar-hover`   |
+| `--easymde-active-color`  | `--easymde-toolbar-active`  |
+
+`--easymde-border-color` keeps its name. Then finalise the full set:
 
 ```scss
 :root {
@@ -110,7 +170,15 @@ Finalise the variable set:
     --easymde-preview-text: #333333;
     --easymde-statusbar-text: #595959;
 }
+```
 
+The existing `.easymde-preview { background: white; }` (`src/styles.scss:109`) and the hard-coded `color: #595959` in `.easymde-statusbar` (`src/styles.scss:130`) become `var(--easymde-preview-bg)` and `var(--easymde-statusbar-text)` respectively.
+
+### Dark mode
+
+`src/styles.scss:12-19` currently contains a commented-out `@media (prefers-color-scheme: dark)` skeleton with placeholder colours. Replace it with the production block:
+
+```scss
 @media (prefers-color-scheme: dark) {
     :root {
         --easymde-border-color: #444444;
@@ -129,11 +197,17 @@ Finalise the variable set:
 
 ### `theme` option
 
-`InputOptions.theme` sets a `data-easymde-theme` attribute on the container:
+Add to `InputOptions`:
 
 ```ts
-if (options.theme) {
-    container.dataset.easymdeTheme = options.theme;
+theme?: string;
+```
+
+No `resolveOptions` default (omitted → no attribute set). In `EasyMDE.construct()`, after the container is built and before plugins mount, apply:
+
+```ts
+if (this.#options.theme) {
+    this.#container.dataset.easymdeTheme = this.#options.theme;
 }
 ```
 
@@ -146,6 +220,7 @@ For [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447), **�
 - [ ] `toggleSideBySide()` splits the container and re-renders preview on each change.
 - [ ] `isSideBySideActive()` returns the correct boolean.
 - [ ] Scroll sync works when `syncSideBySidePreviewScroll` is true.
+- [ ] `sideBySideFullscreen: true` couples side-by-side with fullscreen (V2 parity opt-in).
 - [ ] `toggleFullscreen()` covers full viewport; Escape exits.
 - [ ] `isFullscreenActive()` returns the correct boolean.
 - [ ] `onToggleFullScreen` callback fires with correct boolean.
