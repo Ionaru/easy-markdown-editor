@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createEditor } from "../../test-utils.js";
-import { drawLink } from "./draw-link.js";
+import { drawImage } from "./draw-image.js";
 
-describe("drawLink", () => {
+describe("drawImage", () => {
     afterEach(() => {
         vi.restoreAllMocks();
         document.body.innerHTML = "";
@@ -11,23 +11,23 @@ describe("drawLink", () => {
 
     it("prepends the template's https:// when the prompted URL omits a scheme", () => {
         expect.assertions(2);
-        const promptSpy = vi.spyOn(window, "prompt").mockReturnValue("example.com");
+        const promptSpy = vi.spyOn(window, "prompt").mockReturnValue("example.com/i.png");
         const editor = createEditor({ promptURLs: true });
 
-        drawLink(editor);
+        drawImage(editor);
 
-        expect(promptSpy).toHaveBeenCalledWith("URL for the link:");
-        expect(editor.value).toBe("[](https://example.com)");
+        expect(promptSpy).toHaveBeenCalledWith("URL of the image:");
+        expect(editor.value).toBe("![](https://example.com/i.png)");
     });
 
     it("keeps a scheme the user typed instead of stacking https:// on top", () => {
         expect.assertions(1);
-        vi.spyOn(window, "prompt").mockReturnValue("mailto:hi@example.com");
+        vi.spyOn(window, "prompt").mockReturnValue("data:image/png;base64,abc");
         const editor = createEditor({ promptURLs: true });
 
-        drawLink(editor);
+        drawImage(editor);
 
-        expect(editor.value).toBe("[](mailto:hi@example.com)");
+        expect(editor.value).toBe("![](data:image/png;base64,abc)");
     });
 
     it("inserts nothing when the prompt is cancelled", () => {
@@ -35,7 +35,7 @@ describe("drawLink", () => {
         vi.spyOn(window, "prompt").mockReturnValue(null);
         const editor = createEditor({ promptURLs: true });
 
-        drawLink(editor);
+        drawImage(editor);
 
         expect(editor.value).toBe("");
     });
@@ -45,11 +45,11 @@ describe("drawLink", () => {
         const promptSpy = vi.spyOn(window, "prompt");
         const editor = createEditor({ promptURLs: false });
 
-        drawLink(editor);
+        drawImage(editor);
 
         expect(promptSpy).not.toHaveBeenCalled();
-        expect(editor.value).toBe("[](https://)");
-        // Cursor parks between `[` and `]` (link-text slot), not at end of doc.
-        expect(editor.codemirror.state.selection.main.from).toBe(1);
+        expect(editor.value).toBe("![](https://)");
+        // Cursor parks between `![` and `]` (alt-text slot), not at end of doc.
+        expect(editor.codemirror.state.selection.main.from).toBe(2);
     });
 });

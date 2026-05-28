@@ -47,6 +47,7 @@ interface InsertTexts {
     horizontalRule?: string;
     table?: string;
     link?: [prefix: string, suffix: string];
+    image?: [prefix: string, suffix: string];
 }
 
 interface RenderingOptions {
@@ -156,5 +157,6 @@ export const resolveOptions = (input: InputOptions): Options => ({
                 "| -------- | -------- | -------- |\n" +
                 "| Text     | Text     | Text     |\n\n",
         link: input.insertTexts?.link ?? ["[", "](https://)"],
+        image: input.insertTexts?.image ?? ["![", "](https://)"],
     },
 });

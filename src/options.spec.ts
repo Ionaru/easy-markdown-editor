@@ -23,6 +23,26 @@ describe("resolveOptions", () => {
         expect(resolved.blockStyles).toEqual(DEFAULT_BLOCK_STYLES);
     });
 
+    it("defaults insertTexts.link and insertTexts.image to symmetric templates", () => {
+        const element = makeElement();
+
+        const resolved = resolveOptions({ element });
+
+        expect(resolved.insertTexts.link).toEqual(["[", "](https://)"]);
+        expect(resolved.insertTexts.image).toEqual(["![", "](https://)"]);
+    });
+
+    it("preserves a consumer-supplied insertTexts.image template", () => {
+        const element = makeElement();
+
+        const resolved = resolveOptions({
+            element,
+            insertTexts: { image: ["![](", ")"] },
+        });
+
+        expect(resolved.insertTexts.image).toEqual(["![](", ")"]);
+    });
+
     it("preserves an explicit trimInitialValue=false", () => {
         const element = makeElement();
 

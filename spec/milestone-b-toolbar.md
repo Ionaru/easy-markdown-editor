@@ -262,7 +262,7 @@ link: input.insertTexts?.link ?? ["[", "](https://)"],
 
 **File:** `src/toolbar/buttons/draw-image.ts` (new)
 
-`drawImage(editor: EasyMDE)` — boundary per Conventions. Same flow as link insertion using `![alt](url)` syntax. `editor.options.promptTexts.image` for the dialog message. `editor.options.insertTexts.image` as the `[prefix, suffix]` template.
+`drawImage(editor: EasyMDE)` — boundary per Conventions. Same flow as B9 link insertion, using `![alt](url)` syntax: selection becomes the alt text, the URL goes between `](` and `)`. URL injection — including scheme deduplication for bare hosts and pass-through for schemeless schemes like `data:` — reuses `resolveLinkSuffix` from `src/utils/resolve-link-suffix.ts`. `editor.options.promptTexts.image` for the dialog message. `editor.options.insertTexts.image` as the `[prefix, suffix]` template. As with `drawLink`, the prompt fires only when `editor.options.promptURLs` is `true` — never on bare empty selection.
 
 **Options addition** — extend `InsertTexts`:
 
@@ -278,10 +278,12 @@ export interface InsertTexts {
 Default in `resolveOptions`:
 
 ```ts
-image: input.insertTexts?.image ?? ["![](", ")"],
+image: input.insertTexts?.image ?? ["![", "](https://)"],
 ```
 
 Image upload (paste / drop / file dialog) is a separate feature tracked in Milestone E.
+
+**Spec basis.** CommonMark [§6.4 images](https://spec.commonmark.org/0.31.2/#images) defines image syntax as `![alt](url)` — structurally an inline link ([§6.3](https://spec.commonmark.org/0.31.2/#inline-link)) with a leading `!`, so the toolbar template mirrors B9 by design. CommonMark also admits a title (`![alt](url "title")`), angle-bracket URL form (`![alt](<url with spaces>)`), and reference-style (`![alt][ref]`) — all out of scope for the toolbar, which emits only the simple inline form. Consumers can hand-type the richer variants. The `https://` default scheme matches B9's link template so `resolveLinkSuffix` deduplication behaves identically for both buttons.
 
 ---
 

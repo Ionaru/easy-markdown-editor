@@ -1,9 +1,10 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faImage, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faQuestion } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { cleanBlockButton } from "./buttons/clean-block.js";
+import { drawImageButton } from "./buttons/draw-image.js";
 import { drawLinkButton } from "./buttons/draw-link.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
@@ -48,15 +49,7 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         toggleTaskListButton,
         cleanBlockButton,
     ],
-    [
-        drawLinkButton,
-        {
-            // action: drawImage,
-            icon: faImage,
-            name: "image",
-            title: "Insert Image",
-        },
-    ],
+    [drawLinkButton, drawImageButton],
     [
         {
             action: (editor: EasyMDE) => editor.togglePreview(),
