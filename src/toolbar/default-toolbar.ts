@@ -1,6 +1,5 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { cleanBlockButton } from "./buttons/clean-block.js";
@@ -11,6 +10,7 @@ import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
 import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
+import { togglePreviewButton } from "./buttons/toggle-preview.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
 import { toggleTaskListButton } from "./buttons/toggle-task.js";
 import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
@@ -51,14 +51,6 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
         cleanBlockButton,
     ],
     [drawLinkButton, drawImageButton],
-    [
-        {
-            action: (editor: EasyMDE) => editor.togglePreview(),
-            active: (editor: EasyMDE) => editor.isPreviewActive(),
-            icon: faEye,
-            name: "preview",
-            title: "Toggle Preview",
-        },
-    ],
+    [togglePreviewButton],
     [openGuideButton],
 ];
