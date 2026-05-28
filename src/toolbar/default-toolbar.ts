@@ -6,6 +6,7 @@ import { cleanBlockButton } from "./buttons/clean-block.js";
 import { drawImageButton } from "./buttons/draw-image.js";
 import { drawLinkButton } from "./buttons/draw-link.js";
 import { openGuideButton } from "./buttons/open-guide.js";
+import { redoButton } from "./buttons/redo.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
@@ -14,6 +15,7 @@ import { togglePreviewButton } from "./buttons/toggle-preview.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
 import { toggleTaskListButton } from "./buttons/toggle-task.js";
 import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
+import { undoButton } from "./buttons/undo.js";
 
 /**
  * A toolbar icon composed of a base FontAwesome glyph plus a small `overlay`
@@ -52,5 +54,6 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     ],
     [drawLinkButton, drawImageButton],
     [togglePreviewButton],
+    [undoButton, redoButton],
     [openGuideButton],
 ];

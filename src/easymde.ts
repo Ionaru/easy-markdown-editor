@@ -1,3 +1,4 @@
+import { history } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, type Extension, Prec } from "@codemirror/state";
@@ -145,6 +146,7 @@ export class EasyMDE {
                 // codeLanguages: languages,
             }),
             drawSelection(),
+            history(),
             Prec.low(
                 keymap.of([
                     {
