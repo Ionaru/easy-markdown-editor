@@ -51,6 +51,28 @@ describe("resolveOptions", () => {
         expect(resolved.trimInitialValue).toBe(false);
     });
 
+    it("defaults syncSideBySidePreviewScroll to true and sideBySideFullscreen to false", () => {
+        const element = makeElement();
+
+        const resolved = resolveOptions({ element });
+
+        expect(resolved.syncSideBySidePreviewScroll).toBe(true);
+        expect(resolved.sideBySideFullscreen).toBe(false);
+    });
+
+    it("preserves explicit side-by-side option overrides", () => {
+        const element = makeElement();
+
+        const resolved = resolveOptions({
+            element,
+            syncSideBySidePreviewScroll: false,
+            sideBySideFullscreen: true,
+        });
+
+        expect(resolved.syncSideBySidePreviewScroll).toBe(false);
+        expect(resolved.sideBySideFullscreen).toBe(true);
+    });
+
     it("preserves consumer-supplied toolbar and statusbar booleans", () => {
         const element = makeElement();
 

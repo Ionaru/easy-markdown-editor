@@ -126,6 +126,103 @@ describe("EasyMDE", () => {
         await vi.waitFor(() => expect(button?.classList.contains("enabled")).toBe(false));
     });
 
+    it("toggleSideBySide toggles container class and renders current value", () => {
+        const editor = new EasyMDE({ element: createTextArea("# Hello") });
+
+        expect(editor.isSideBySideActive()).toBe(false);
+        expect(editor.container.classList.contains("easymde-side-by-side")).toBe(false);
+
+        editor.toggleSideBySide();
+
+        expect(editor.isSideBySideActive()).toBe(true);
+        expect(editor.container.classList.contains("easymde-side-by-side")).toBe(true);
+        const preview = editor.container.querySelector(".easymde-preview");
+        expect(preview?.innerHTML).toContain("<h1>Hello</h1>");
+
+        editor.toggleSideBySide();
+
+        expect(editor.isSideBySideActive()).toBe(false);
+        expect(editor.container.classList.contains("easymde-side-by-side")).toBe(false);
+    });
+
+    it("activating side-by-side clears preview-only mode", () => {
+        const editor = new EasyMDE({ element: createTextArea("hi") });
+
+        editor.togglePreview();
+        expect(editor.isPreviewActive()).toBe(true);
+
+        editor.toggleSideBySide();
+
+        expect(editor.isSideBySideActive()).toBe(true);
+        expect(editor.isPreviewActive()).toBe(false);
+    });
+
+    it("activating preview-only clears side-by-side mode", () => {
+        const editor = new EasyMDE({ element: createTextArea("hi") });
+
+        editor.toggleSideBySide();
+        expect(editor.isSideBySideActive()).toBe(true);
+
+        editor.togglePreview();
+
+        expect(editor.isPreviewActive()).toBe(true);
+        expect(editor.isSideBySideActive()).toBe(false);
+    });
+
+    it("doc changes re-render the preview while side-by-side is active (debounced)", () => {
+        vi.useFakeTimers();
+        try {
+            const editor = new EasyMDE({ element: createTextArea("first") });
+            const preview = editor.container.querySelector<HTMLDivElement>(".easymde-preview");
+            editor.toggleSideBySide();
+            expect(preview?.innerHTML).toContain("first");
+
+            editor.value = "second";
+            expect(preview?.innerHTML).toContain("first");
+
+            vi.advanceTimersByTime(300);
+            expect(preview?.innerHTML).toContain("second");
+
+            editor.destruct();
+        } finally {
+            vi.useRealTimers();
+        }
+    });
+
+    it("attaches scroll listeners only when syncSideBySidePreviewScroll is true", () => {
+        const textArea = createTextArea();
+        const editor = new EasyMDE({ element: textArea, syncSideBySidePreviewScroll: false });
+        const scrollDom = editor.codemirror.scrollDOM;
+        const addSpy = vi.spyOn(scrollDom, "addEventListener");
+
+        editor.toggleSideBySide();
+
+        expect(addSpy).not.toHaveBeenCalledWith("scroll", expect.anything());
+    });
+
+    it("attaches scroll listeners when syncSideBySidePreviewScroll defaults to true", () => {
+        const textArea = createTextArea();
+        const editor = new EasyMDE({ element: textArea });
+        const scrollDom = editor.codemirror.scrollDOM;
+        const addSpy = vi.spyOn(scrollDom, "addEventListener");
+
+        editor.toggleSideBySide();
+
+        expect(addSpy).toHaveBeenCalledWith("scroll", expect.any(Function), { passive: true });
+    });
+
+    it("destruct removes scroll listeners installed by side-by-side", () => {
+        const textArea = createTextArea();
+        const editor = new EasyMDE({ element: textArea });
+        const scrollDom = editor.codemirror.scrollDOM;
+        const removeSpy = vi.spyOn(scrollDom, "removeEventListener");
+
+        editor.toggleSideBySide();
+        editor.destruct();
+
+        expect(removeSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
+    });
+
     it("addPlugin mounts the plugin into the container", () => {
         const editor = createEditor();
         const stub = makeStubPlugin(editor, undefined, document.createElement("aside"));

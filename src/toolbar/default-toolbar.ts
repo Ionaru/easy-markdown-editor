@@ -13,6 +13,7 @@ import { toggleItalicButton } from "./buttons/toggle-italic.js";
 import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
 import { togglePreviewButton } from "./buttons/toggle-preview.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
+import { toggleSideBySideButton } from "./buttons/toggle-side-by-side.js";
 import { toggleTaskListButton } from "./buttons/toggle-task.js";
 import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
 import { undoButton } from "./buttons/undo.js";
@@ -56,4 +57,5 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     [togglePreviewButton],
     [undoButton, redoButton],
     [openGuideButton],
+    [toggleSideBySideButton],
 ];

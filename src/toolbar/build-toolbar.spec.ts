@@ -68,7 +68,7 @@ describe("buildToolbar", () => {
     });
 
     it("silently filters DEFERRED_BUTTON entries and drops emptied groups", () => {
-        const result = buildToolbar(opts({ toolbar: ["bold", "side-by-side", "|", "fullscreen"] }));
+        const result = buildToolbar(opts({ toolbar: ["bold", "fullscreen", "|", "fullscreen"] }));
         expect(result).toEqual([[toggleBoldButton]]);
     });
 

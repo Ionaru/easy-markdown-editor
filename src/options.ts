@@ -92,6 +92,8 @@ export interface InputOptions {
     renderingConfig?: RenderingOptions;
     toolbarGuideUrl?: string;
     trimInitialValue?: boolean;
+    syncSideBySidePreviewScroll?: boolean;
+    sideBySideFullscreen?: boolean;
 }
 
 export type Options = Omit<
@@ -106,6 +108,8 @@ export type Options = Omit<
     | "promptURLs"
     | "promptTexts"
     | "toolbarGuideUrl"
+    | "syncSideBySidePreviewScroll"
+    | "sideBySideFullscreen"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
@@ -117,6 +121,8 @@ export type Options = Omit<
     promptURLs: boolean;
     promptTexts: Required<PromptTexts>;
     toolbarGuideUrl: string;
+    syncSideBySidePreviewScroll: boolean;
+    sideBySideFullscreen: boolean;
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -128,6 +134,8 @@ export const resolveOptions = (input: InputOptions): Options => ({
     orderedListDelimiter: input.orderedListDelimiter ?? ".",
     toolbarGuideUrl: input.toolbarGuideUrl ?? "https://www.markdownguide.org/cheat-sheet/",
     promptURLs: input.promptURLs ?? false,
+    syncSideBySidePreviewScroll: input.syncSideBySidePreviewScroll ?? true,
+    sideBySideFullscreen: input.sideBySideFullscreen ?? false,
     promptTexts: {
         image: input.promptTexts?.image ?? "URL of the image:",
         link: input.promptTexts?.link ?? "URL for the link:",

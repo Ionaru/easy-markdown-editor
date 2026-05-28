@@ -24,6 +24,7 @@ import { toggleItalicButton } from "./buttons/toggle-italic.js";
 import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
 import { togglePreviewButton } from "./buttons/toggle-preview.js";
 import { toggleQuoteButton } from "./buttons/toggle-quote.js";
+import { toggleSideBySideButton } from "./buttons/toggle-side-by-side.js";
 import { toggleStrikethroughButton } from "./buttons/toggle-strikethrough.js";
 import { toggleTaskListButton } from "./buttons/toggle-task.js";
 import { toggleUnorderedListButton } from "./buttons/toggle-ul.js";
@@ -72,7 +73,7 @@ export const buttonRegistry: Readonly<Record<ToolbarButton, RegistryEntry>> = {
     redo: redoButton,
     preview: togglePreviewButton,
     guide: openGuideButton,
-    "side-by-side": DEFERRED_BUTTON,
+    "side-by-side": toggleSideBySideButton,
     fullscreen: DEFERRED_BUTTON,
 };
 

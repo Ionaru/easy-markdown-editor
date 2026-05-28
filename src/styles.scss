@@ -122,6 +122,24 @@ $light-border-color: #d1d1d1;
             display: block;
         }
     }
+
+    &.easymde-side-by-side {
+        grid-template-columns: 1fr 1fr;
+
+        .easymde-toolbar,
+        .easymde-statusbar {
+            grid-column: 1 / -1;
+        }
+
+        .cm-editor {
+            grid-column: 1;
+        }
+
+        .easymde-preview {
+            grid-column: 2;
+            display: block;
+        }
+    }
 }
 
 .easymde-statusbar {

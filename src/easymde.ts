@@ -13,6 +13,7 @@ import { Preview } from "./preview/preview.js";
 import { StatusBar } from "./status-bar/status-bar.js";
 import { buildToolbar } from "./toolbar/build-toolbar.js";
 import { Toolbar } from "./toolbar/toolbar.js";
+import { debounce, type Debounced } from "./utils/debounce.js";
 
 import "./styles.scss";
 
@@ -25,6 +26,9 @@ export class EasyMDE {
     readonly #plugins: IEasyMDEPlugin[] = [];
 
     #preview?: Preview;
+
+    #sideBySideCleanup?: () => void;
+    #sideBySideDebouncedRender?: Debounced<[]>;
 
     #form?: HTMLFormElement;
     #handleFormSubmit?: () => void;
@@ -172,6 +176,19 @@ export class EasyMDE {
             );
         }
 
+        this.#sideBySideDebouncedRender = debounce(() => {
+            if (this.isSideBySideActive()) {
+                this.#preview?.render(this.value);
+            }
+        }, 300);
+        extensions.push(
+            EditorView.updateListener.of((update) => {
+                if (!update.docChanged) return;
+                if (!this.isSideBySideActive()) return;
+                this.#sideBySideDebouncedRender?.();
+            }),
+        );
+
         this.#element.hidden = true;
         const initialDoc = this.#options.trimInitialValue
             ? this.#element.value.trim()
@@ -223,7 +240,13 @@ export class EasyMDE {
         const next = !this.isPreviewActive();
         if (next && this.#preview) {
             // Lock preview to editor's current height so toggling does not resize the container.
+            // Measure BEFORE clearing side-by-side, otherwise the editor pane collapses to full
+            // width first and offsetHeight reflects the post-reflow height, not what the user saw.
             this.#preview.element.style.minHeight = `${this.codemirror.dom.offsetHeight}px`;
+        }
+        if (next && this.isSideBySideActive()) {
+            // Mutex: preview-only mode and side-by-side cannot coexist.
+            this.toggleSideBySide();
         }
         this.container.classList.toggle("preview-active", next);
         if (next) {
@@ -239,10 +262,61 @@ export class EasyMDE {
         return this.#container?.classList.contains("preview-active") ?? false;
     }
 
+    toggleSideBySide(): void {
+        const next = !this.isSideBySideActive();
+        if (next) {
+            if (this.isPreviewActive()) {
+                this.togglePreview();
+            }
+            this.container.classList.add("easymde-side-by-side");
+            this.#preview?.render(this.value);
+            if (this.#options.syncSideBySidePreviewScroll && this.#preview) {
+                this.#sideBySideCleanup = this.#installScrollSync(this.#preview.element);
+            }
+        } else {
+            this.#sideBySideCleanup?.();
+            this.#sideBySideCleanup = undefined;
+            this.container.classList.remove("easymde-side-by-side");
+        }
+        this.codemirror.dispatch({});
+    }
+
+    isSideBySideActive(): boolean {
+        return this.#container?.classList.contains("easymde-side-by-side") ?? false;
+    }
+
+    #installScrollSync(previewElement: HTMLElement): () => void {
+        const editorScroll = this.codemirror.scrollDOM;
+        let suppress = false;
+        const sync = (source: HTMLElement, target: HTMLElement) => (): void => {
+            if (suppress) return;
+            const sourceMax = source.scrollHeight - source.clientHeight;
+            const targetMax = target.scrollHeight - target.clientHeight;
+            if (sourceMax <= 0 || targetMax <= 0) return;
+            suppress = true;
+            target.scrollTop = targetMax * (source.scrollTop / sourceMax);
+            requestAnimationFrame(() => {
+                suppress = false;
+            });
+        };
+        const onEditorScroll = sync(editorScroll, previewElement);
+        const onPreviewScroll = sync(previewElement, editorScroll);
+        editorScroll.addEventListener("scroll", onEditorScroll, { passive: true });
+        previewElement.addEventListener("scroll", onPreviewScroll, { passive: true });
+        return (): void => {
+            editorScroll.removeEventListener("scroll", onEditorScroll);
+            previewElement.removeEventListener("scroll", onPreviewScroll);
+        };
+    }
+
     destruct(): void {
         if (this.#codemirror) {
             this.#element.value = this.value;
         }
+        this.#sideBySideCleanup?.();
+        this.#sideBySideCleanup = undefined;
+        this.#sideBySideDebouncedRender?.cancel();
+        this.#sideBySideDebouncedRender = undefined;
         if (this.#form && this.#handleFormSubmit) {
             this.#form.removeEventListener("submit", this.#handleFormSubmit);
             this.#form = undefined;

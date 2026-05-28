@@ -205,9 +205,10 @@ describe("easymde keymap", () => {
         expect(editor.value).toBe("hello");
     });
 
-    it("F9 falls through unhandled until Milestone C wires toggleSideBySide", () => {
-        expect.assertions(1);
+    it("F9 toggles side-by-side mode", () => {
+        expect.assertions(3);
         const editor = createEditor();
+        const spy = vi.spyOn(editor, "toggleSideBySide");
 
         const handled = runScopeHandlers(
             editor.codemirror,
@@ -215,7 +216,9 @@ describe("easymde keymap", () => {
             "editor",
         );
 
-        expect(handled).toBe(false);
+        expect(handled).toBe(true);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(editor.isSideBySideActive()).toBe(true);
     });
 
     it("F11 falls through unhandled until Milestone C wires toggleFullscreen", () => {
