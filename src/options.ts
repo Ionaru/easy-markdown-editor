@@ -105,6 +105,7 @@ export interface InputOptions {
     codemirrorExtensions?: Extension;
     previewRender?: (markdownPlaintext: string, previewElement: HTMLElement) => string;
     renderingConfig?: RenderingOptions;
+    toolbarGuideUrl?: string;
     trimInitialValue?: boolean;
 }
 
@@ -119,6 +120,7 @@ export type Options = Omit<
     | "insertTexts"
     | "promptURLs"
     | "promptTexts"
+    | "toolbarGuideUrl"
 > & {
     toolbar: ToolbarConfig;
     statusbar: boolean;
@@ -129,6 +131,7 @@ export type Options = Omit<
     insertTexts: Required<InsertTexts>;
     promptURLs: boolean;
     promptTexts: Required<PromptTexts>;
+    toolbarGuideUrl: string;
 };
 
 export const resolveOptions = (input: InputOptions): Options => ({
@@ -138,6 +141,7 @@ export const resolveOptions = (input: InputOptions): Options => ({
     trimInitialValue: input.trimInitialValue ?? true,
     unorderedListStyle: input.unorderedListStyle ?? "*",
     orderedListDelimiter: input.orderedListDelimiter ?? ".",
+    toolbarGuideUrl: input.toolbarGuideUrl ?? "https://www.markdownguide.org/cheat-sheet/",
     promptURLs: input.promptURLs ?? false,
     promptTexts: {
         image: input.promptTexts?.image ?? "URL of the image:",

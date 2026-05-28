@@ -1,11 +1,12 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faEye, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
 
 import { EasyMDE } from "../easymde.js";
 import { cleanBlockButton } from "./buttons/clean-block.js";
 import { drawImageButton } from "./buttons/draw-image.js";
 import { drawLinkButton } from "./buttons/draw-link.js";
+import { openGuideButton } from "./buttons/open-guide.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
@@ -59,12 +60,5 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
             title: "Toggle Preview",
         },
     ],
-    [
-        {
-            action: "https://simplemde.com/markdown-guide",
-            icon: faQuestion,
-            name: "guide",
-            title: "Markdown Guide",
-        },
-    ],
+    [openGuideButton],
 ];
