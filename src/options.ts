@@ -1,9 +1,9 @@
 import type { Extension } from "@codemirror/state";
 import type { MarkedOptions } from "marked";
 
-import type { EasyMDE } from "./easymde.js";
+import type { IToolbarButtonOptions } from "./toolbar/default-toolbar.js";
 
-type ToolbarButton =
+export type ToolbarButton =
     | "bold"
     | "italic"
     | "quote"
@@ -17,13 +17,16 @@ type ToolbarButton =
     | "code-block"
     | "table"
     | "redo"
-    | "heading"
+    | "cycle-heading"
     | "undo"
     | "heading-bigger"
     | "heading-smaller"
     | "heading-1"
     | "heading-2"
     | "heading-3"
+    | "heading-4"
+    | "heading-5"
+    | "heading-6"
     | "clean-block"
     | "horizontal-rule"
     | "preview"
@@ -55,27 +58,7 @@ interface RenderingOptions {
     sanitizerFunction?: (html: string) => string;
 }
 
-interface ToolbarDropdownIcon {
-    name: string;
-    children: [ToolbarIcon | ToolbarButton, ...(ToolbarIcon | ToolbarButton)[]];
-    className: string;
-    title: string;
-    noDisable?: boolean;
-    noMobile?: boolean;
-}
-
-interface ToolbarIcon {
-    name: string;
-    action: string | ((editor: EasyMDE) => void);
-    className: string;
-    title: string;
-    noDisable?: boolean;
-    noMobile?: boolean;
-    icon?: string;
-    attributes?: Record<string, string>;
-}
-
-type ToolbarConfig = boolean | readonly ("|" | ToolbarButton | ToolbarIcon | ToolbarDropdownIcon)[];
+export type ToolbarConfig = boolean | readonly ("|" | ToolbarButton | IToolbarButtonOptions)[];
 
 export const DEFAULT_BLOCK_STYLES: Required<BlockStyleOptions> = {
     bold: "**",
@@ -87,6 +70,8 @@ export const DEFAULT_BLOCK_STYLES: Required<BlockStyleOptions> = {
 export interface InputOptions {
     element: HTMLTextAreaElement;
     toolbar?: ToolbarConfig;
+    hideIcons?: readonly ToolbarButton[];
+    showIcons?: readonly ToolbarButton[];
     statusbar?: boolean;
     blockStyles?: BlockStyleOptions;
     unorderedListStyle?: "*" | "-" | "+";

@@ -1,7 +1,7 @@
 import { ViewUpdate } from "@codemirror/view";
 import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
 
-import { EasyMDE } from "../easymde.js";
+import type { EasyMDE } from "../easymde.js";
 import { cleanBlockButton } from "./buttons/clean-block.js";
 import { drawImageButton } from "./buttons/draw-image.js";
 import { drawLinkButton } from "./buttons/draw-link.js";

@@ -12,7 +12,7 @@ import {
     faHeading,
 } from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../../easymde.js";
+import type { EasyMDE } from "../../easymde.js";
 import {
     checkHeading,
     currentLineHasHeading,

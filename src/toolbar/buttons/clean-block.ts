@@ -1,6 +1,6 @@
 import { faEraser } from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../../easymde.js";
+import type { EasyMDE } from "../../easymde.js";
 import { cleanBlock as cleanBlockUtil } from "../../utils/clean-block.js";
 import type { IToolbarButtonOptions } from "../default-toolbar.js";
 

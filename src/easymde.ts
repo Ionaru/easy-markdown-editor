@@ -11,7 +11,7 @@ import { createEasyMdeKeymap } from "./keymap.js";
 import { resolveOptions, type InputOptions, type Options } from "./options.js";
 import { Preview } from "./preview/preview.js";
 import { StatusBar } from "./status-bar/status-bar.js";
-import { defaultToolbar } from "./toolbar/default-toolbar.js";
+import { buildToolbar } from "./toolbar/build-toolbar.js";
 import { Toolbar } from "./toolbar/toolbar.js";
 
 import "./styles.scss";
@@ -191,8 +191,9 @@ export class EasyMDE {
         this.#element.insertAdjacentElement("afterend", easyMDEContainer);
         this.#container = easyMDEContainer;
 
-        if (this.options.toolbar !== false) {
-            this.addPlugin(new Toolbar(this, defaultToolbar));
+        const toolbarLayout = buildToolbar(this.options);
+        if (toolbarLayout.length > 0) {
+            this.addPlugin(new Toolbar(this, toolbarLayout));
         }
 
         easyMDEContainer.append(this.codemirror.dom);
@@ -228,11 +229,10 @@ export class EasyMDE {
         if (next) {
             this.#preview?.render(this.value);
         }
-        if (this.options.toolbar !== false) {
-            // Empty transaction wakes toolbar buttons whose `active` callback
-            // is registered as a CodeMirror ViewPlugin update listener.
-            this.codemirror.dispatch({});
-        }
+        // Empty transaction wakes toolbar buttons whose `active` callback is
+        // registered as a CodeMirror ViewPlugin update listener. No-op when
+        // no toolbar plugin is installed, so the dispatch needs no guard.
+        this.codemirror.dispatch({});
     }
 
     isPreviewActive(): boolean {

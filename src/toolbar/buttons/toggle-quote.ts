@@ -1,7 +1,7 @@
 import { ViewUpdate } from "@codemirror/view";
 import { faQuoteLeft } from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../../easymde.js";
+import type { EasyMDE } from "../../easymde.js";
 import { checkLine, toggleLine } from "../../utils/toggle-line.js";
 import type { IToolbarButtonOptions } from "../default-toolbar.js";
 

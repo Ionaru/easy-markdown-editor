@@ -1,6 +1,6 @@
 import { faTable } from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../../easymde.js";
+import type { EasyMDE } from "../../easymde.js";
 import { insertText } from "../../utils/insert-text.js";
 import type { IToolbarButtonOptions } from "../default-toolbar.js";
 

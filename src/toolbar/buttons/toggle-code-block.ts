@@ -1,7 +1,7 @@
 import { ViewUpdate } from "@codemirror/view";
 import { faFileCode } from "@fortawesome/free-solid-svg-icons";
 
-import { EasyMDE } from "../../easymde.js";
+import type { EasyMDE } from "../../easymde.js";
 import {
     checkCodeBlock as checkCodeBlockUtil,
     toggleCodeBlock as toggleCodeBlockUtil,
