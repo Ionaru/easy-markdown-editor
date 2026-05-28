@@ -13,18 +13,22 @@ Depends on Milestone A (especially the plugin lifecycle and `toggleLine` utility
 
 ```ts
 interface IToolbarButtonOptions {
-    action?: ((editor: EasyMDE) => void) | string;
+    // Typed `any` for v3 beta — Milestone A left action loose so consumer-passed
+    // raw button objects (B15 `toolbar: [...]`) can carry the legacy string-id form
+    // alongside the canonical `(editor: EasyMDE) => void` shape. Tightening to
+    // `((editor: EasyMDE) => void) | string` is a post-stable concern.
+    action?: any;
     active?:
         | boolean
         | ((editor: EasyMDE, update: ViewUpdate) => boolean)
         | ((editor: EasyMDE, update: ViewUpdate) => Promise<boolean>);
-    icon: IconDefinition;
+    icon: ToolbarIcon;
     readonly name: string;
     title: string;
 }
 ```
 
-`IToolbarButtonOptions.icon` accepts `ToolbarIcon = IconDefinition | LayeredIcon` (both exported from `src/toolbar/default-toolbar.ts`). A `LayeredIcon` is `{ base: IconDefinition; overlay: IconDefinition }` — a base FontAwesome glyph plus a small overlay glyph (a digit or an arrow), drawn at the icon's bottom-right corner via FontAwesome layering (see `src/toolbar/toolbar.ts`); added by **B2**. Fully custom non-FA icon surfaces (raw SVG string, consumer `HTMLElement`, resolver hook) remain deferred to [milestone-a-foundations.md](milestone-a-foundations.md) **A4-Stable**.
+`ToolbarIcon = IconDefinition | LayeredIcon` (both exported from `src/toolbar/default-toolbar.ts`). A `LayeredIcon` is `{ base: IconDefinition; overlay: IconDefinition }` — a base FontAwesome glyph plus a small overlay glyph (a digit or an arrow), drawn at the icon's bottom-right corner via FontAwesome layering (see `src/toolbar/toolbar.ts`); added by **B2**. Fully custom non-FA icon surfaces (raw SVG string, consumer `HTMLElement`, resolver hook) remain deferred to [milestone-a-foundations.md](milestone-a-foundations.md) **A4-Stable**.
 
 ---
 
@@ -77,14 +81,14 @@ Actions (boundary per Conventions — each accepts `EasyMDE`, in `src/toolbar/bu
 - `toggleHeadingBigger(editor: EasyMDE)` → `cycleHeading(editor.codemirror, -1)`.
 - `toggleHeading1..6(editor: EasyMDE)` → `setHeading(editor.codemirror, n)`. All six exist (for the B14 keymap and custom toolbars); only 1/2/3 + smaller/bigger get wired into `defaultToolbar`.
 
-Icons: `heading-1..6` use `{ base: faHeading, overlay: fa1..fa6 }`; `heading-smaller` uses `{ base: faHeading, overlay: faArrowDown }`, `heading-bigger` uses `faArrowUp`. `Toolbar` draws each overlay at the icon's bottom-right corner — see Conventions.
+Icons: `heading-1..6` use `{ base: faHeading, overlay: fa1..fa6 }`; `heading-smaller` uses `{ base: faHeading, overlay: faArrowDown }`, `heading-bigger` uses `faArrowUp`. The composite `cycle-heading` button (default toolbar) uses the bare `faHeading` glyph with no overlay. `Toolbar` draws each overlay at the icon's bottom-right corner — see Conventions.
 
 Active state — `active` callbacks use the `(editor: EasyMDE, update: ViewUpdate) => boolean` signature from the Conventions block:
 
 - Heading buttons glow when the cursor is on a line at that level.
-- Heading-smaller / heading-bigger: active when any heading is present on the current line.
+- Heading-smaller / heading-bigger / cycle-heading: active when any heading is present on the current line.
 
-Wire into `defaultToolbar`: replace today's inert `heading` placeholder with `heading-1`, `heading-2`, `heading-3` appended to the bold/italic/strikethrough group, then `heading-smaller`, `heading-bigger` as their own group (group boundaries are the toolbar's separators — there is no separator-as-item).
+Wire into `defaultToolbar`: replace today's inert `heading` placeholder with a single composite `cycle-heading` button appended to the bold/italic group. The button's primary action is `cycleHeading(+1)` — successive clicks step through `none → 1 → … → 6 → none`. The full `heading-1..6` / `heading-smaller` / `heading-bigger` set remains available to custom toolbars via the B15 button registry (and to the B14 keymap), but is not split across the default toolbar — keeps the default bar narrow.
 
 ---
 
@@ -418,17 +422,17 @@ No `resolveOptions` default needed — both are optional and consumed only by `b
 
 ## Acceptance criteria for Milestone B
 
-- [ ] All V2 default toolbar buttons have working actions.
-- [ ] `toggleLine` is tested for all selection shapes and prefix types.
-- [ ] Task list toggle matches V2 semantics for `- [ ]` / `- [x]` lines.
-- [ ] Guide / help opens the configured URL from the default toolbar.
-- [ ] Heading cycling (smaller/bigger) works correctly through H1–H6 and wraps.
-- [ ] Unordered and ordered lists apply/remove correctly on multi-line selections.
-- [ ] Undo / redo work in both the toolbar and via Ctrl+Z / Ctrl+Y.
-- [ ] All 14+ default keyboard shortcuts fire the correct actions.
-- [ ] `toolbar: false` hides the toolbar.
-- [ ] `toolbar: [...]` uses the custom button list.
-- [ ] `Options` resolves `insertTexts`, `toolbarGuideUrl`, and `unorderedListStyle` to documented defaults.
-- [ ] All toolbar action functions accept `EasyMDE`; utilities (`toggleLine`, `toggleBlock`, `checkLine`, `checkHeading`, …) accept `EditorView`.
-- [ ] `inline-code` and `strikethrough` buttons expose `active` callbacks.
-- [ ] `vp check` and `vp test` pass.
+- [x] All V2 default toolbar buttons have working actions.
+- [x] `toggleLine` is tested for all selection shapes and prefix types.
+- [x] Task list toggle matches V2 semantics for `- [ ]` / `- [x]` lines.
+- [x] Guide / help opens the configured URL from the default toolbar.
+- [x] Heading cycling (smaller/bigger) works correctly through H1–H6 and wraps.
+- [x] Unordered and ordered lists apply/remove correctly on multi-line selections.
+- [x] Undo / redo work in both the toolbar and via Ctrl+Z / Ctrl+Y.
+- [x] All 14+ default keyboard shortcuts fire the correct actions.
+- [x] `toolbar: false` hides the toolbar.
+- [x] `toolbar: [...]` uses the custom button list.
+- [x] `Options` resolves `insertTexts`, `toolbarGuideUrl`, and `unorderedListStyle` to documented defaults.
+- [x] All toolbar action functions accept `EasyMDE`; utilities (`toggleLine`, `toggleBlock`, `checkLine`, `checkHeading`, …) accept `EditorView`.
+- [x] `inline-code` and `strikethrough` buttons expose `active` callbacks.
+- [x] `vp check` and `vp test` pass.
