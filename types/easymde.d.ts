@@ -237,6 +237,9 @@ declare namespace EasyMDE {
 
         overlayMode?: OverlayModeOptions;
 
+        enableFrontmatter?: boolean;
+        previewIgnoreFrontmatter?: boolean;
+
         direction?: 'ltr' | 'rtl';
     }
 }

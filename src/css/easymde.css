@@ -401,3 +401,24 @@ span[data-img-src]::after {
     width: var(--width);
     background-repeat: no-repeat;
 }
+
+/* Frontmatter line styling (opt-in via enableFrontmatter option) */
+.cm-frontmatter {
+    color: #777;
+    font-style: italic;
+}
+
+/* Suppress GFM heading/hr styling inside frontmatter lines */
+.cm-frontmatter .cm-header {
+    font-size: inherit;
+    font-weight: normal;
+    color: inherit;
+}
+.cm-frontmatter .cm-hr {
+    color: inherit;
+    font-weight: normal;
+}
+.cm-frontmatter .cm-formatting {
+    color: inherit;
+    font-weight: normal;
+}
