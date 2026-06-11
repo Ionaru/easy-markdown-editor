@@ -421,6 +421,7 @@ function toggleFullScreen(editor) {
  * @param {EasyMDE} editor
  */
 function toggleBold(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleBlock(editor, 'bold', editor.options.blockStyles.bold);
 }
 
@@ -430,6 +431,7 @@ function toggleBold(editor) {
  * @param {EasyMDE} editor
  */
 function toggleItalic(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleBlock(editor, 'italic', editor.options.blockStyles.italic);
 }
 
@@ -439,6 +441,7 @@ function toggleItalic(editor) {
  * @param {EasyMDE} editor
  */
 function toggleStrikethrough(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleBlock(editor, 'strikethrough', '~~');
 }
 
@@ -447,6 +450,7 @@ function toggleStrikethrough(editor) {
  * @param {EasyMDE} editor
  */
 function toggleCodeBlock(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var fenceCharsToInsert = editor.options.blockStyles.code;
 
     function fencing_line(line) {
@@ -733,6 +737,7 @@ function toggleCodeBlock(editor) {
  * Action for toggling blockquote.
  */
 function toggleBlockquote(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleLine(editor.codemirror, 'quote');
 }
 
@@ -740,6 +745,7 @@ function toggleBlockquote(editor) {
  * Action for toggling heading size: normal -> h1 -> h2 -> h3 -> h4 -> h5 -> h6 -> normal
  */
 function toggleHeadingSmaller(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, 'smaller');
 }
 
@@ -747,6 +753,7 @@ function toggleHeadingSmaller(editor) {
  * Action for toggling heading size: normal -> h6 -> h5 -> h4 -> h3 -> h2 -> h1 -> normal
  */
 function toggleHeadingBigger(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, 'bigger');
 }
 
@@ -754,6 +761,7 @@ function toggleHeadingBigger(editor) {
  * Action for toggling heading size 1
  */
 function toggleHeading1(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 1);
 }
 
@@ -761,6 +769,7 @@ function toggleHeading1(editor) {
  * Action for toggling heading size 2
  */
 function toggleHeading2(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 2);
 }
 
@@ -768,6 +777,7 @@ function toggleHeading2(editor) {
  * Action for toggling heading size 3
  */
 function toggleHeading3(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 3);
 }
 
@@ -775,6 +785,7 @@ function toggleHeading3(editor) {
  * Action for toggling heading size 4
  */
 function toggleHeading4(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 4);
 }
 
@@ -782,6 +793,7 @@ function toggleHeading4(editor) {
  * Action for toggling heading size 5
  */
 function toggleHeading5(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 5);
 }
 
@@ -789,6 +801,7 @@ function toggleHeading5(editor) {
  * Action for toggling heading size 6
  */
 function toggleHeading6(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleHeading(editor.codemirror, undefined, 6);
 }
 
@@ -797,6 +810,7 @@ function toggleHeading6(editor) {
  * Action for toggling ul.
  */
 function toggleUnorderedList(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var cm = editor.codemirror;
 
     var listStyle = '*'; // Default
@@ -812,10 +826,12 @@ function toggleUnorderedList(editor) {
  * Action for toggling ol.
  */
 function toggleOrderedList(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleLine(editor.codemirror, 'ordered-list');
 }
 
 function toggleCheckList(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _toggleLine(editor.codemirror, 'check-list');
 }
 
@@ -823,6 +839,7 @@ function toggleCheckList(editor) {
  * Action for clean block (remove headline, list, blockquote code, markers)
  */
 function cleanBlock(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     _cleanBlock(editor.codemirror);
 }
 
@@ -831,6 +848,7 @@ function cleanBlock(editor) {
  * @param {EasyMDE} editor
  */
 function drawLink(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
@@ -848,6 +866,7 @@ function drawLink(editor) {
  * @param {EasyMDE} editor
  */
 function drawImage(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var options = editor.options;
     var url = 'https://';
     if (options.promptURLs) {
@@ -910,6 +929,7 @@ function afterImageUploaded(editor, url) {
  * @param {EasyMDE} editor
  */
 function drawTable(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var cm = editor.codemirror;
     var stat = getState(cm);
     var options = editor.options;
@@ -921,6 +941,7 @@ function drawTable(editor) {
  * @param {EasyMDE} editor
  */
 function drawHorizontalRule(editor) {
+    if (editor.codemirror && isLineInFrontmatter(editor.codemirror, editor.codemirror.getCursor('start').line)) return;
     var cm = editor.codemirror;
     var stat = getState(cm);
     var options = editor.options;
@@ -1479,6 +1500,110 @@ function wordCount(data) {
     return count;
 }
 
+/**
+ * Detect the end of a YAML frontmatter block.
+ * Returns the line index (0-based) after the closing delimiter,
+ * or -1 if no frontmatter block is found.
+ * @param {string} text - The full document text.
+ * @return {number} The index of the first line after the frontmatter block, or -1.
+ */
+function findFrontmatterEnd(text) {
+    if (!text) return -1;
+    var lines = text.split('\n');
+    if (lines.length === 0) return -1;
+
+    var first = lines[0].trim();
+    if (first !== '---' && first !== '+++') return -1;
+
+    var delimiter = first;
+    for (var i = 1; i < lines.length; i++) {
+        if (lines[i].trim() === delimiter) {
+            return i + 1;
+        }
+    }
+    return -1;
+}
+
+/**
+ * Escape HTML special characters to prevent XSS.
+ * @param {string} s - The string to escape.
+ * @return {string} The escaped string.
+ */
+function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+/**
+ * Render a frontmatter block as an HTML table.
+ * @param {string} text - The full document text.
+ * @return {string} HTML table string, or empty string if no frontmatter.
+ */
+function renderFrontmatterTable(text) {
+    var endLine = findFrontmatterEnd(text);
+    if (endLine <= 0) return '';
+
+    var lines = text.split('\n');
+    var fmLines = lines.slice(1, endLine - 1);
+
+    var rows = '';
+    var i = 0;
+    while (i < fmLines.length) {
+        var line = fmLines[i];
+
+        // Comment: first non-whitespace char is #
+        if (/^\s*#/.test(line)) { i++; continue; }
+
+        // Multi-line value indicator: | or > as first char of value
+        var mlMatch = line.match(/^\s*([^#\s][^:]*?)\s*:\s*([|>])\s*$/);
+        if (mlMatch) {
+            var mlKey = mlMatch[1];
+            var indent = line.match(/^(\s*)/)[1].length;
+            var spacer = '';
+            for (var s = 0; s < indent * 2; s++) { spacer += '&nbsp;'; }
+            var valueLines = [];
+            i++;
+            while (i < fmLines.length) {
+                var next = fmLines[i];
+                if (next.trim() === lines[0].trim()) break;
+                if (next.trim() === '') break;
+                valueLines.push(escapeHtml(next));
+                i++;
+            }
+            var mlValue = valueLines.join('<br>');
+            rows += '<tr><td>' + spacer + escapeHtml(mlKey.trim()) + '</td><td>' + mlValue + '</td></tr>';
+            continue;
+        }
+
+        // Standard key: value line
+        var m = line.match(/^\s*([^#\s][^:]*?)\s*:\s*(.*)$/);
+        if (m) {
+            var key = m[1];
+            var value = m[2];
+            var keyIndent = line.match(/^(\s*)/)[1].length;
+            var keySpacer = '';
+            for (var ks = 0; ks < keyIndent * 2; ks++) { keySpacer += '&nbsp;'; }
+            rows += '<tr><td>' + keySpacer + escapeHtml(key.trim()) + '</td><td>' + escapeHtml(value) + '</td></tr>';
+        }
+        i++;
+    }
+
+    if (rows === '') return '';
+    return '<table>' + rows + '</table>';
+}
+
+/**
+ * Check if a given line is inside the frontmatter block.
+ * @param {CodeMirror} cm - The CodeMirror instance.
+ * @param {number} line - The 0-indexed line number.
+ * @return {boolean} True if the line is within the frontmatter block.
+ */
+function isLineInFrontmatter(cm, line) {
+    var text = cm.getValue();
+    var endLine = findFrontmatterEnd(text);
+    if (endLine <= 0) return false;
+    return line < endLine;
+}
+
 var iconClassMap = {
     'bold': 'fa fa-bold',
     'italic': 'fa fa-italic',
@@ -1890,6 +2015,10 @@ function EasyMDE(options) {
         alert(errorMessage);
     };
 
+    // Frontmatter processing options
+    options.enableFrontmatter = options.enableFrontmatter || false;
+    options.previewIgnoreFrontmatter = options.previewIgnoreFrontmatter || false;
+
     // Import-image default configuration
     options.uploadImage = options.uploadImage || false;
     options.imageMaxSize = options.imageMaxSize || 2097152; // 1024 * 1024 * 2
@@ -2076,8 +2205,26 @@ EasyMDE.prototype.markdown = function (text) {
         // Set options
         marked.use(markedOptions);
 
+        // Process frontmatter: optionally render as table and/or strip from markdown
+        var frontmatterHtml = '';
+        if (this.options.enableFrontmatter) {
+            var fmEnd = findFrontmatterEnd(text);
+            if (fmEnd > 0) {
+                if (!this.options.previewIgnoreFrontmatter) {
+                    frontmatterHtml = renderFrontmatterTable(text);
+                }
+                var bodyLines = text.split('\n').slice(fmEnd);
+                text = bodyLines.join('\n');
+            }
+        }
+
         // Convert the markdown to HTML
         var htmlText = marked.parse(text);
+
+        // Prepend frontmatter table HTML
+        if (frontmatterHtml) {
+            htmlText = frontmatterHtml + htmlText;
+        }
 
         // Sanitize HTML
         if (this.options.renderingConfig && typeof this.options.renderingConfig.sanitizerFunction === 'function') {
@@ -2091,6 +2238,30 @@ EasyMDE.prototype.markdown = function (text) {
         htmlText = removeListStyleWhenCheckbox(htmlText);
 
         return htmlText;
+    }
+};
+
+/**
+ * Update CodeMirror line classes for frontmatter lines.
+ * Adds 'cm-frontmatter' class to lines within the frontmatter block.
+ */
+EasyMDE.prototype.updateFrontmatterLineClasses = function () {
+    var cm = this.codemirror;
+    if (!cm) return;
+
+    var lineCount = cm.lineCount();
+    for (var i = 0; i < lineCount; i++) {
+        cm.removeLineClass(i, 'wrap', 'cm-frontmatter');
+    }
+
+    if (!this.options.enableFrontmatter) return;
+
+    var text = cm.getValue();
+    var endLine = findFrontmatterEnd(text);
+    if (endLine <= 0) return;
+
+    for (var j = 0; j < endLine; j++) {
+        cm.addLineClass(j, 'wrap', 'cm-frontmatter');
     }
 };
 
@@ -2320,6 +2491,10 @@ EasyMDE.prototype.render = function (el) {
         handleImages();
     });
 
+    this.codemirror.on('change', function () {
+        self.updateFrontmatterLineClasses();
+    });
+
     this.gui.sideBySide = this.createSideBySide();
     this._rendered = this.element;
 
@@ -2332,6 +2507,9 @@ EasyMDE.prototype.render = function (el) {
     setTimeout(function () {
         temp_cm.refresh();
     }.bind(temp_cm), 0);
+
+    // Apply frontmatter line classes after initial render
+    this.updateFrontmatterLineClasses();
 };
 
 EasyMDE.prototype.cleanup = function () {
@@ -2759,6 +2937,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
     status = status || this.options.status;
     var options = this.options;
     var cm = this.codemirror;
+    var self = this;
 
     // Make sure the status variable is valid
     if (!status || status.length === 0) {
@@ -2789,17 +2968,41 @@ EasyMDE.prototype.createStatusbar = function (status) {
 
             if (name === 'words') {
                 defaultValue = function (el) {
-                    el.innerHTML = wordCount(cm.getValue());
+                    var text = cm.getValue();
+                    if (self.options.enableFrontmatter) {
+                        var fmEnd = findFrontmatterEnd(text);
+                        if (fmEnd > 0) {
+                            text = text.split('\n').slice(fmEnd).join('\n');
+                        }
+                    }
+                    el.innerHTML = wordCount(text);
                 };
                 onUpdate = function (el) {
-                    el.innerHTML = wordCount(cm.getValue());
+                    var text = cm.getValue();
+                    if (self.options.enableFrontmatter) {
+                        var fmEnd = findFrontmatterEnd(text);
+                        if (fmEnd > 0) {
+                            text = text.split('\n').slice(fmEnd).join('\n');
+                        }
+                    }
+                    el.innerHTML = wordCount(text);
                 };
             } else if (name === 'lines') {
                 defaultValue = function (el) {
-                    el.innerHTML = cm.lineCount();
+                    var count = cm.lineCount();
+                    if (self.options.enableFrontmatter) {
+                        var fmEnd = findFrontmatterEnd(cm.getValue());
+                        if (fmEnd > 0) count -= fmEnd;
+                    }
+                    el.innerHTML = count;
                 };
                 onUpdate = function (el) {
-                    el.innerHTML = cm.lineCount();
+                    var count = cm.lineCount();
+                    if (self.options.enableFrontmatter) {
+                        var fmEnd = findFrontmatterEnd(cm.getValue());
+                        if (fmEnd > 0) count -= fmEnd;
+                    }
+                    el.innerHTML = count;
                 };
             } else if (name === 'cursor') {
                 defaultValue = function (el) {
