@@ -20,3 +20,4 @@ __screenshots__/
 .vitest-attachments
 
 CLAUDE.md
+.claude/
