@@ -8,6 +8,7 @@ import { drawLinkButton } from "./buttons/draw-link.js";
 import { openGuideButton } from "./buttons/open-guide.js";
 import { redoButton } from "./buttons/redo.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
+import { toggleFullscreenButton } from "./buttons/toggle-fullscreen.js";
 import { cycleHeadingButton } from "./buttons/toggle-heading.js";
 import { toggleItalicButton } from "./buttons/toggle-italic.js";
 import { toggleOrderedListButton } from "./buttons/toggle-ol.js";
@@ -57,5 +58,5 @@ export const defaultToolbar: IToolbarButtonOptions[][] = [
     [togglePreviewButton],
     [undoButton, redoButton],
     [openGuideButton],
-    [toggleSideBySideButton],
+    [toggleSideBySideButton, toggleFullscreenButton],
 ];

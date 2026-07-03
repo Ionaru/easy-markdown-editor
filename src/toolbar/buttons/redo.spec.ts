@@ -1,5 +1,5 @@
 import { undo } from "@codemirror/commands";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import { createEditor } from "../../test-utils.js";
 import { redoButton } from "./redo.js";

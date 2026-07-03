@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 
 import { EasyMDE, type IEasyMDEPlugin } from "./easymde.js";
 import { createEditor, createTextArea, pressEnter, seedEditor } from "./test-utils.js";
@@ -21,6 +21,7 @@ const makeStubPlugin = (
 describe("EasyMDE", () => {
     afterEach(() => {
         document.body.innerHTML = "";
+        document.body.style.overflow = "";
     });
 
     it("creates a ready editor instance", () => {
@@ -221,6 +222,88 @@ describe("EasyMDE", () => {
         editor.destruct();
 
         expect(removeSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
+    });
+
+    it("toggleFullscreen toggles container class and isFullscreenActive", () => {
+        const editor = new EasyMDE({ element: createTextArea() });
+
+        expect(editor.isFullscreenActive()).toBe(false);
+        expect(editor.container.classList.contains("easymde-fullscreen")).toBe(false);
+
+        editor.toggleFullscreen();
+
+        expect(editor.isFullscreenActive()).toBe(true);
+        expect(editor.container.classList.contains("easymde-fullscreen")).toBe(true);
+
+        editor.toggleFullscreen();
+
+        expect(editor.isFullscreenActive()).toBe(false);
+        expect(editor.container.classList.contains("easymde-fullscreen")).toBe(false);
+
+        editor.destruct();
+    });
+
+    it("locks body scroll on enter and restores the previous value on exit", () => {
+        document.body.style.overflow = "scroll";
+        const editor = new EasyMDE({ element: createTextArea() });
+
+        editor.toggleFullscreen();
+        expect(document.body.style.overflow).toBe("hidden");
+
+        editor.toggleFullscreen();
+        expect(document.body.style.overflow).toBe("scroll");
+
+        editor.destruct();
+    });
+
+    it("Escape exits fullscreen", () => {
+        const editor = new EasyMDE({ element: createTextArea() });
+
+        editor.toggleFullscreen();
+        expect(editor.isFullscreenActive()).toBe(true);
+
+        document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+
+        expect(editor.isFullscreenActive()).toBe(false);
+
+        editor.destruct();
+    });
+
+    it("fires onToggleFullScreen with the entering boolean", () => {
+        const onToggleFullScreen = vi.fn();
+        const editor = new EasyMDE({ element: createTextArea(), onToggleFullScreen });
+
+        editor.toggleFullscreen();
+        editor.toggleFullscreen();
+
+        expect(onToggleFullScreen).toHaveBeenNthCalledWith(1, true);
+        expect(onToggleFullScreen).toHaveBeenNthCalledWith(2, false);
+
+        editor.destruct();
+    });
+
+    it("destruct while fullscreen restores body scroll and removes the Escape listener", () => {
+        document.body.style.overflow = "auto";
+        const removeSpy = vi.spyOn(document, "removeEventListener");
+        const editor = new EasyMDE({ element: createTextArea() });
+
+        editor.toggleFullscreen();
+        editor.destruct();
+
+        expect(document.body.style.overflow).toBe("auto");
+        expect(removeSpy).toHaveBeenCalledWith("keydown", expect.any(Function));
+    });
+
+    it("couples side-by-side with fullscreen when sideBySideFullscreen is true", () => {
+        const editor = new EasyMDE({ element: createTextArea(), sideBySideFullscreen: true });
+
+        editor.toggleSideBySide();
+        expect(editor.isSideBySideActive()).toBe(true);
+        expect(editor.isFullscreenActive()).toBe(true);
+
+        editor.toggleSideBySide();
+        expect(editor.isSideBySideActive()).toBe(false);
+        expect(editor.isFullscreenActive()).toBe(false);
     });
 
     it("addPlugin mounts the plugin into the container", () => {

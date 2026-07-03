@@ -140,6 +140,40 @@ $light-border-color: #d1d1d1;
             display: block;
         }
     }
+
+    // Fullscreen is a pure viewport overlay; the base grid (auto / 1fr / auto rows)
+    // already stretches the editor, and composes with side-by-side's columns.
+    &.easymde-fullscreen {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        border-radius: 0;
+        // Opaque so the fixed overlay occludes the page behind it (C3 tokenizes this).
+        background: white;
+
+        // Full-bleed chrome: square off the corners and swap the rounded edge borders
+        // for single separators so the toolbar and statusbar sit flush at the viewport.
+        .easymde-toolbar {
+            background: #f9f9f9;
+            border: none;
+            border-bottom: 1px solid var(--easymde-border-color);
+            border-radius: 0;
+        }
+
+        .cm-editor {
+            border: none;
+            border-radius: 0;
+            // Clamp to the viewport row and scroll internally instead of overflowing the
+            // fixed overlay (min-height: 0 stops the 1fr track growing to fit content).
+            min-height: 0;
+            height: 100%;
+        }
+
+        .easymde-statusbar {
+            background: #f9f9f9;
+            border-top: 1px solid var(--easymde-border-color);
+        }
+    }
 }
 
 .easymde-statusbar {

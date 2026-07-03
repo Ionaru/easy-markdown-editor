@@ -30,6 +30,8 @@ export class EasyMDE {
     #sideBySideCleanup?: () => void;
     #sideBySideDebouncedRender?: Debounced<[]>;
 
+    #fullscreenCleanup?: () => void;
+
     #form?: HTMLFormElement;
     #handleFormSubmit?: () => void;
 
@@ -278,11 +280,45 @@ export class EasyMDE {
             this.#sideBySideCleanup = undefined;
             this.container.classList.remove("easymde-side-by-side");
         }
+        // Optional V2-parity coupling: keep fullscreen in lockstep with side-by-side.
+        if (this.#options.sideBySideFullscreen && next !== this.isFullscreenActive()) {
+            this.toggleFullscreen();
+        }
         this.codemirror.dispatch({});
     }
 
     isSideBySideActive(): boolean {
         return this.#container?.classList.contains("easymde-side-by-side") ?? false;
+    }
+
+    toggleFullscreen(): void {
+        const next = !this.isFullscreenActive();
+        if (next) {
+            this.container.classList.add("easymde-fullscreen");
+            const previousOverflow = document.body.style.overflow;
+            document.body.style.overflow = "hidden";
+            const onKeyDown = (event: KeyboardEvent): void => {
+                if (event.key === "Escape") {
+                    this.toggleFullscreen();
+                }
+            };
+            document.addEventListener("keydown", onKeyDown);
+            this.#fullscreenCleanup = (): void => {
+                document.removeEventListener("keydown", onKeyDown);
+                document.body.style.overflow = previousOverflow;
+            };
+            this.#options.onToggleFullScreen?.(true);
+        } else {
+            this.#fullscreenCleanup?.();
+            this.#fullscreenCleanup = undefined;
+            this.container.classList.remove("easymde-fullscreen");
+            this.#options.onToggleFullScreen?.(false);
+        }
+        this.codemirror.dispatch({});
+    }
+
+    isFullscreenActive(): boolean {
+        return this.#container?.classList.contains("easymde-fullscreen") ?? false;
     }
 
     #installScrollSync(previewElement: HTMLElement): () => void {
@@ -317,6 +353,8 @@ export class EasyMDE {
         this.#sideBySideCleanup = undefined;
         this.#sideBySideDebouncedRender?.cancel();
         this.#sideBySideDebouncedRender = undefined;
+        this.#fullscreenCleanup?.();
+        this.#fullscreenCleanup = undefined;
         if (this.#form && this.#handleFormSubmit) {
             this.#form.removeEventListener("submit", this.#handleFormSubmit);
             this.#form = undefined;

@@ -2,7 +2,7 @@ import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { checkBlock, toggleBlock } from "./toggle-block.js";
 

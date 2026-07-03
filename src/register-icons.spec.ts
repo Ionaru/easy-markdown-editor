@@ -1,6 +1,6 @@
 import { findIconDefinition, library } from "@fortawesome/fontawesome-svg-core";
 import { faAddressBook, faAddressCard, faAnchor } from "@fortawesome/free-solid-svg-icons";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vite-plus/test";
 
 import { registerIcons } from "./register-icons.js";
 

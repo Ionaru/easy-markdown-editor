@@ -1,6 +1,6 @@
 import { Text } from "@codemirror/state";
 // eslint-disable-next-line @typescript-eslint/no-shadow
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { countWords } from "./count-words.js";
 

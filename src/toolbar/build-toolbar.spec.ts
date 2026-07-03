@@ -1,5 +1,5 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import { resolveOptions, type InputOptions, type ToolbarButton } from "../options.js";
 import { buildToolbar } from "./build-toolbar.js";
@@ -67,9 +67,9 @@ describe("buildToolbar", () => {
         expect(result).toEqual([[toggleBoldButton]]);
     });
 
-    it("silently filters DEFERRED_BUTTON entries and drops emptied groups", () => {
-        const result = buildToolbar(opts({ toolbar: ["bold", "fullscreen", "|", "fullscreen"] }));
-        expect(result).toEqual([[toggleBoldButton]]);
+    it("drops groups emptied by adjacent separators", () => {
+        const result = buildToolbar(opts({ toolbar: ["bold", "|", "|", "italic"] }));
+        expect(result).toEqual([[toggleBoldButton], [toggleItalicButton]]);
     });
 
     it("throws with the offending name when the explicit array references an unknown button", () => {

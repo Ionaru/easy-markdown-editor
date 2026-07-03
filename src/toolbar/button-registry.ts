@@ -9,6 +9,7 @@ import { tableButton } from "./buttons/table.js";
 import { toggleBoldButton } from "./buttons/toggle-bold.js";
 import { toggleCodeBlockButton } from "./buttons/toggle-code-block.js";
 import { toggleCodeButton } from "./buttons/toggle-code.js";
+import { toggleFullscreenButton } from "./buttons/toggle-fullscreen.js";
 import {
     cycleHeadingButton,
     headingBiggerButton,
@@ -74,7 +75,7 @@ export const buttonRegistry: Readonly<Record<ToolbarButton, RegistryEntry>> = {
     preview: togglePreviewButton,
     guide: openGuideButton,
     "side-by-side": toggleSideBySideButton,
-    fullscreen: DEFERRED_BUTTON,
+    fullscreen: toggleFullscreenButton,
 };
 
 /**

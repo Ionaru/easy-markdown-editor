@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import { createEditor } from "../test-utils.js";
 import { StatusBar } from "./status-bar.js";

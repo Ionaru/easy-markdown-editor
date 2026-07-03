@@ -94,6 +94,7 @@ export interface InputOptions {
     trimInitialValue?: boolean;
     syncSideBySidePreviewScroll?: boolean;
     sideBySideFullscreen?: boolean;
+    onToggleFullScreen?: (entering: boolean) => void;
 }
 
 export type Options = Omit<

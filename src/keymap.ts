@@ -32,10 +32,6 @@ import { toggleUnorderedList } from "./toolbar/buttons/toggle-ul.js";
  *
  * `Mod-` resolves to `Cmd` on macOS and `Ctrl` on Windows / Linux, so each
  * binding covers both platforms in a single entry.
- *
- * F11 (`toggleFullscreen`) remains a dormant stub until Milestone C2 ships the
- * public method; when it exists the entry gets swapped from `() => false` to
- * the real action call.
  */
 export const createEasyMdeKeymap = (editor: EasyMDE): Extension => {
     const bind = (action: (e: EasyMDE) => void) => (): boolean => {
@@ -67,9 +63,8 @@ export const createEasyMdeKeymap = (editor: EasyMDE): Extension => {
                 { key: "Mod-Alt-5", run: bind(toggleHeading5) },
                 { key: "Mod-Alt-6", run: bind(toggleHeading6) },
                 { key: "F9", run: bind((e) => e.toggleSideBySide()) },
-                // F11 — dormant until Milestone C2 ships toggleFullscreen.
-                // Returning false lets the key fall through (e.g. browser-native F11 fullscreen).
-                { key: "F11", run: () => false },
+                // F11 preempts the browser-native fullscreen shortcut to toggle the editor instead.
+                { key: "F11", run: bind((e) => e.toggleFullscreen()) },
             ]),
         ),
         keymap.of(standardKeymap),

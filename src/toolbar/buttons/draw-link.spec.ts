@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 
 import { createEditor } from "../../test-utils.js";
 import { drawLink } from "./draw-link.js";

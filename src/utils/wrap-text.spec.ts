@@ -1,7 +1,7 @@
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { EditorState } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import { wrapText } from "./wrap-text.js";
 

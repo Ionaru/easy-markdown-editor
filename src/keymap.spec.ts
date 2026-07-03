@@ -1,5 +1,5 @@
 import { runScopeHandlers } from "@codemirror/view";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vite-plus/test";
 
 import type { EasyMDE } from "./easymde.js";
 import { createEditor, seedEditor } from "./test-utils.js";
@@ -40,6 +40,7 @@ describe("easymde keymap", () => {
     afterEach(() => {
         vi.restoreAllMocks();
         document.body.innerHTML = "";
+        document.body.style.overflow = "";
     });
 
     it("Mod-b wraps the selection in **bold**", () => {
@@ -221,9 +222,10 @@ describe("easymde keymap", () => {
         expect(editor.isSideBySideActive()).toBe(true);
     });
 
-    it("F11 falls through unhandled until Milestone C wires toggleFullscreen", () => {
-        expect.assertions(1);
+    it("F11 toggles fullscreen mode", () => {
+        expect.assertions(3);
         const editor = createEditor();
+        const spy = vi.spyOn(editor, "toggleFullscreen");
 
         const handled = runScopeHandlers(
             editor.codemirror,
@@ -231,7 +233,9 @@ describe("easymde keymap", () => {
             "editor",
         );
 
-        expect(handled).toBe(false);
+        expect(handled).toBe(true);
+        expect(spy).toHaveBeenCalledTimes(1);
+        expect(editor.isFullscreenActive()).toBe(true);
     });
 
     it("Enter still inserts a newline (handled by standardKeymap's insertNewlineAndIndent)", () => {

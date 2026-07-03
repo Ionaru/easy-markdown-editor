@@ -1,5 +1,5 @@
 import { Marked } from "marked";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vite-plus/test";
 
 import type { Options } from "../options.js";
 import { renderMarkdownToHtmlForPreview } from "./render-markdown-to-html-for-preview.js";

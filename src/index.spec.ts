@@ -1,6 +1,6 @@
 import { findIconDefinition } from "@fortawesome/fontawesome-svg-core";
 import { faAddressBook, faBold } from "@fortawesome/free-solid-svg-icons";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from "vite-plus/test";
 
 import "./index.js";
 
