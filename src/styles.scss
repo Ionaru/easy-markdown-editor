@@ -29,6 +29,9 @@
     --easymde-preview-link: #0645ad;
     --easymde-code-bg: rgba(0, 0, 0, 0.05);
     --easymde-selection-bg: #d7d4f0;
+    // Keyboard focus indicator. ~6:1 against the white editor and #f9f9f9 toolbar,
+    // well above the 3:1 non-text-contrast floor (WCAG 1.4.11).
+    --easymde-focus-ring: #1a5fb4;
 
     // Let native scrollbars / form controls follow the active scheme.
     color-scheme: light dark;
@@ -62,6 +65,8 @@
         --easymde-preview-link: #8ab4f8;
         --easymde-code-bg: rgba(255, 255, 255, 0.08);
         --easymde-selection-bg: #264f78;
+        // ~7:1 against the #1e1e1e editor and #252526 toolbar.
+        --easymde-focus-ring: #8ab4f8;
     }
 }
 
@@ -106,6 +111,13 @@
         &:active {
             background-color: var(--easymde-toolbar-active);
         }
+
+        // Visible ring for keyboard focus (arrow-key toolbar navigation); mouse
+        // clicks do not trigger :focus-visible, so the ring stays out of the way.
+        &:focus-visible {
+            outline: 2px solid var(--easymde-focus-ring);
+            outline-offset: 2px;
+        }
     }
 
     span.separator {
@@ -142,8 +154,11 @@
         z-index: 0;
         word-wrap: break-word;
 
+        // Replace CodeMirror's default dotted outline with a themed inset ring so a
+        // focused editor is clearly indicated (offset pulls it inside the 1px border).
         &.cm-focused {
-            outline: none;
+            outline: 2px solid var(--easymde-focus-ring);
+            outline-offset: -2px;
         }
 
         .cm-scroller {

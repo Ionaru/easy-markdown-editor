@@ -68,4 +68,22 @@ describe("Preview", () => {
 
         expect(preview.element.innerHTML).toContain("<br>");
     });
+
+    it("exposes the preview as a labelled region for assistive tech", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        expect(preview.element.getAttribute("role")).toBe("region");
+        expect(preview.element.getAttribute("aria-label")).toBe("Preview");
+    });
+
+    it("carries tabindex=-1 so it is focusable by script but skipped by Tab", () => {
+        const editor = createEditor();
+        const preview = new Preview(editor);
+
+        // A plain div returns null here; "-1" proves the attribute was set explicitly.
+        // The actual focus move is exercised through togglePreview() in easymde.spec.ts,
+        // where the pane is made visible first (it is display:none until preview-active).
+        expect(preview.element.getAttribute("tabindex")).toBe("-1");
+    });
 });

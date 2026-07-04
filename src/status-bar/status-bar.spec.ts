@@ -39,4 +39,12 @@ describe("StatusBar", () => {
         expect(text).toContain("Characters:");
         expect(text).toContain("Pos:");
     });
+
+    it("exposes a polite status live region for assistive tech", () => {
+        const editor = createEditor();
+        const statusBar = new StatusBar(editor);
+
+        expect(statusBar.element.getAttribute("role")).toBe("status");
+        expect(statusBar.element.getAttribute("aria-live")).toBe("polite");
+    });
 });

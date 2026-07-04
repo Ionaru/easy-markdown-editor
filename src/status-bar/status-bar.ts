@@ -19,6 +19,10 @@ export class StatusBar implements IEasyMDEPlugin {
     constructor(private editor: EasyMDE) {
         this.element = document.createElement("div");
         this.element.className = "easymde-statusbar";
+        // Announce counter updates to assistive tech. `polite` waits for a pause,
+        // so the per-keystroke render() below never interrupts active typing.
+        this.element.setAttribute("role", "status");
+        this.element.setAttribute("aria-live", "polite");
 
         // Initial values
         this.#characterCount = this.editor.codemirror.state.doc.length;

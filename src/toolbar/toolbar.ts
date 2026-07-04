@@ -18,6 +18,8 @@ export class Toolbar implements IEasyMDEPlugin {
     ) {
         this.element = document.createElement("div");
         this.element.className = "easymde-toolbar";
+        this.element.setAttribute("role", "toolbar");
+        this.element.addEventListener("keydown", this.#handleKeydown);
 
         for (const toolBarButtonSection of toolbarLayout) {
             const toolBarSection: (HTMLButtonElement | HTMLSpanElement)[] = [];
@@ -36,7 +38,62 @@ export class Toolbar implements IEasyMDEPlugin {
             }
         }
 
+        // Roving tabindex (WAI-ARIA toolbar pattern): only the first button is reachable
+        // via Tab; #handleKeydown moves focus among the rest with the arrow/Home/End keys.
+        const firstButton = this.element.querySelector<HTMLButtonElement>("button");
+        if (firstButton) {
+            firstButton.tabIndex = 0;
+        }
+
         this.editor.codemirror.dispatch();
+    }
+
+    // Arrow keys move focus among buttons (wrapping at the ends); Home/End jump to the
+    // first/last. Separators are <span>s, so the `button` query naturally skips them.
+    #handleKeydown = (event: KeyboardEvent): void => {
+        const buttons = [...this.element.querySelectorAll<HTMLButtonElement>("button")];
+        if (buttons.length === 0) {
+            return;
+        }
+
+        const active = document.activeElement;
+        const currentIndex = active instanceof HTMLButtonElement ? buttons.indexOf(active) : -1;
+        if (currentIndex === -1) {
+            return;
+        }
+
+        let nextIndex: number;
+        switch (event.key) {
+            case "ArrowRight":
+                nextIndex = (currentIndex + 1) % buttons.length;
+                break;
+            case "ArrowLeft":
+                nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                break;
+            case "Home":
+                nextIndex = 0;
+                break;
+            case "End":
+                nextIndex = buttons.length - 1;
+                break;
+            default:
+                return;
+        }
+
+        event.preventDefault();
+        this.#focusButton(buttons, nextIndex);
+    };
+
+    #focusButton(buttons: HTMLButtonElement[], index: number): void {
+        const target = buttons[index];
+        if (!target) {
+            return;
+        }
+        for (const button of buttons) {
+            button.tabIndex = -1;
+        }
+        target.tabIndex = 0;
+        target.focus();
     }
 
     mount(): void {
@@ -50,6 +107,8 @@ export class Toolbar implements IEasyMDEPlugin {
     #createToolBarSeparator() {
         const separatorElement = document.createElement("span");
         separatorElement.className = "separator";
+        separatorElement.setAttribute("role", "separator");
+        separatorElement.setAttribute("aria-orientation", "vertical");
         separatorElement.innerHTML = "|";
         return separatorElement;
     }
@@ -61,8 +120,10 @@ export class Toolbar implements IEasyMDEPlugin {
         buttonElement.tabIndex = -1;
         buttonElement.classList.add(toolBarButtonOptions.name);
 
-        // Set the button tooltip.
+        // Set the button tooltip and its accessible name. The button is icon-only, so
+        // aria-label (mirroring the title) is what assistive tech announces.
         buttonElement.title = toolBarButtonOptions.title;
+        buttonElement.setAttribute("aria-label", toolBarButtonOptions.title);
 
         // Set the button onclick action.
         if (typeof toolBarButtonOptions.action === "function") {
@@ -110,8 +171,11 @@ export class Toolbar implements IEasyMDEPlugin {
             });
         }
 
-        // Set the button icon.
-        buttonElement.append(Toolbar.#createIconElement(toolBarButtonOptions.icon));
+        // Set the button icon. It is decorative — the accessible name comes from
+        // aria-label — so hide it from assistive tech.
+        const iconElement = Toolbar.#createIconElement(toolBarButtonOptions.icon);
+        iconElement.setAttribute("aria-hidden", "true");
+        buttonElement.append(iconElement);
         return buttonElement;
     }
 

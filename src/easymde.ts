@@ -326,6 +326,12 @@ export class EasyMDE {
         this.container.classList.toggle("preview-active", next);
         if (next) {
             this.#preview?.render(this.value);
+            // Editor is now display:none; park focus on the (now visible) preview region
+            // so keyboard/screen-reader users are not stranded on the hidden editor.
+            this.#preview?.element.focus();
+        } else {
+            // Preview dismissed and the editor is visible again: hand focus back.
+            this.codemirror.focus();
         }
         // Empty transaction wakes toolbar buttons whose `active` callback is
         // registered as a CodeMirror ViewPlugin update listener. No-op when

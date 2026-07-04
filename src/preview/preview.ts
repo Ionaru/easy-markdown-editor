@@ -12,6 +12,12 @@ export class Preview implements IEasyMDEPlugin {
         this.#editor = editor;
         this.element = document.createElement("div");
         this.element.classList.add("easymde-preview");
+        // Expose the rendered output as a labelled landmark region, and make it
+        // programmatically focusable (tabIndex -1) so togglePreview() can move
+        // focus here without adding it to the sequential tab order.
+        this.element.setAttribute("role", "region");
+        this.element.setAttribute("aria-label", "Preview");
+        this.element.tabIndex = -1;
 
         this.#marked = new Marked();
         const markedOptions = editor.options.renderingConfig?.markedOptions;

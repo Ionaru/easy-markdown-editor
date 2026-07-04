@@ -164,6 +164,29 @@ describe("EasyMDE", () => {
         expect(editor.container.classList.contains("preview-active")).toBe(false);
     });
 
+    it("moves focus to the preview pane when preview opens", () => {
+        const editor = new EasyMDE({ element: createTextArea("# Hello") });
+        const preview = editor.container.querySelector<HTMLElement>(".easymde-preview");
+
+        editor.togglePreview();
+
+        expect(editor.isPreviewActive()).toBe(true);
+        expect(document.activeElement).toBe(preview);
+    });
+
+    it("returns focus to the editor when preview is dismissed", () => {
+        const editor = new EasyMDE({ element: createTextArea("# Hello") });
+        const preview = editor.container.querySelector<HTMLElement>(".easymde-preview");
+
+        editor.togglePreview(); // open preview
+        expect(document.activeElement).toBe(preview); // focus parked on the pane
+
+        editor.togglePreview(); // dismiss preview
+
+        expect(editor.isPreviewActive()).toBe(false);
+        expect(editor.codemirror.dom.contains(document.activeElement)).toBe(true);
+    });
+
     it("togglePreview drives the toolbar preview button active class", async () => {
         const editor = new EasyMDE({ element: createTextArea() });
         const button = editor.container.querySelector<HTMLButtonElement>("button.preview");
