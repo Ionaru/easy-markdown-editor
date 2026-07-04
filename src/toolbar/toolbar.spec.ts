@@ -51,4 +51,33 @@ describe("Toolbar", () => {
         toolbar.mount();
         expect(toolbar.element.children.length).toBe(initialCount);
     });
+
+    it('sets type="button" on every toolbar button so a click cannot submit a form', () => {
+        const editor = createEditor();
+        const toolbar = new Toolbar(editor, defaultToolbar);
+
+        const buttons = toolbar.element.querySelectorAll("button");
+        expect(buttons.length).toBeGreaterThan(0);
+        for (const button of buttons) {
+            expect(button.type).toBe("button");
+        }
+    });
+
+    it("exposes aria-pressed reflecting state on toggle buttons", () => {
+        const editor = createEditor();
+        const toolbar = new Toolbar(editor, defaultToolbar);
+
+        const bold = toolbar.element.querySelector<HTMLButtonElement>("button.bold");
+        expect(bold?.getAttribute("aria-pressed")).toBe("false");
+        expect(bold?.classList.contains("enabled")).toBe(false);
+    });
+
+    it("omits aria-pressed on plain action buttons", () => {
+        const editor = createEditor();
+        const toolbar = new Toolbar(editor, defaultToolbar);
+
+        const undo = toolbar.element.querySelector<HTMLButtonElement>("button.undo");
+        expect(undo).not.toBeNull();
+        expect(undo?.hasAttribute("aria-pressed")).toBe(false);
+    });
 });

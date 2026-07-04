@@ -131,6 +131,7 @@ describe("resolveOptions", () => {
             codemirrorExtensions,
             previewRender,
             renderingConfig,
+            theme: "midnight",
         });
 
         expect(resolved.unorderedListStyle).toBe("-");
@@ -147,6 +148,7 @@ describe("resolveOptions", () => {
         expect(resolved.codemirrorExtensions).toBe(codemirrorExtensions);
         expect(resolved.previewRender).toBe(previewRender);
         expect(resolved.renderingConfig).toBe(renderingConfig);
+        expect(resolved.theme).toBe("midnight");
     });
 
     it("leaves unspecified optional fields undefined", () => {
@@ -160,5 +162,6 @@ describe("resolveOptions", () => {
         expect(resolved.codemirrorExtensions).toBeUndefined();
         expect(resolved.previewRender).toBeUndefined();
         expect(resolved.renderingConfig).toBeUndefined();
+        expect(resolved.theme).toBeUndefined();
     });
 });

@@ -71,12 +71,13 @@ describe("<easy-markdown-editor>", () => {
         expect(host.querySelector(".easymde-statusbar")).toBeNull();
     });
 
-    it("forwards the theme attribute to dataset.theme", () => {
+    it("forwards the theme attribute to the container's data-easymde-theme", () => {
         const host = document.createElement(TAG) as EasyMarkdownEditor;
         host.setAttribute("theme", "dark");
         document.body.append(host);
 
-        expect(host.dataset.theme).toBe("dark");
+        const container = host.querySelector<HTMLElement>(".easymde-container");
+        expect(container?.dataset.easymdeTheme).toBe("dark");
     });
 
     it("exposes a value JS property that reads and writes the editor", () => {
@@ -109,16 +110,19 @@ describe("<easy-markdown-editor>", () => {
         expect(host.value).toBe("New text");
     });
 
-    it("swaps dataset.theme when the theme attribute mutates after connect", () => {
+    it("swaps the container's data-easymde-theme when the theme attribute mutates after connect", () => {
         const host = document.createElement(TAG) as EasyMarkdownEditor;
         host.setAttribute("theme", "light");
         document.body.append(host);
 
+        const container = host.querySelector<HTMLElement>(".easymde-container");
+        expect(container?.dataset.easymdeTheme).toBe("light");
+
         host.setAttribute("theme", "dark");
-        expect(host.dataset.theme).toBe("dark");
+        expect(container?.dataset.easymdeTheme).toBe("dark");
 
         host.removeAttribute("theme");
-        expect(host.dataset.theme).toBeUndefined();
+        expect(container?.dataset.easymdeTheme).toBeUndefined();
     });
 
     it("ignores placeholder mutations after connect", () => {

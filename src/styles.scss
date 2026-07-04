@@ -1,33 +1,85 @@
-@use "sass:color";
+// Theme tokens live on the container (not :root) so a consumer's `data-easymde-theme`
+// overrides are self-contained: the automatic dark block below is scoped to containers
+// WITHOUT a theme attribute, so a named custom theme starts from these light defaults plus
+// the consumer's own values and never inherits the built-in dark palette under a dark OS.
+.easymde-container {
+    --easymde-border-color: #d1d1d1;
+    --easymde-bg: #ffffff;
+    --easymde-text: #333333;
+    --easymde-toolbar-bg: #f9f9f9;
+    --easymde-toolbar-hover: #e8e8e8;
+    --easymde-toolbar-active: #d8d8d8;
+    --easymde-toolbar-enabled: #e0e0e0;
+    --easymde-toolbar-enabled-border: #7a7a7a;
+    --easymde-toolbar-text: #333333;
+    --easymde-preview-bg: #ffffff;
+    --easymde-preview-text: #333333;
+    --easymde-statusbar-text: #525252;
+    --easymde-placeholder: #525252;
+    --easymde-syntax-url: #221199;
+    --easymde-syntax-mark: #404740;
+    --easymde-syntax-keyword: #8800aa;
+    --easymde-syntax-string: #aa1111;
+    --easymde-syntax-literal: #0a5c31;
+    --easymde-syntax-escape: #8f3900;
+    --easymde-syntax-variable: #0645ad;
+    --easymde-syntax-type: #0a5445;
+    --easymde-syntax-comment: #575757;
+    --easymde-syntax-invalid: #a00000;
+    --easymde-preview-link: #0645ad;
+    --easymde-code-bg: rgba(0, 0, 0, 0.05);
+    --easymde-selection-bg: #d7d4f0;
 
-$light-border-color: #d1d1d1;
-
-:root {
-    --easymde-border-color: #{$light-border-color};
-    --easymde-enabled-color: #{color.adjust($light-border-color, $lightness: 5%)};
-    --easymde-hover-color: #{$light-border-color};
-    --easymde-active-color: #{color.adjust($light-border-color, $lightness: -5%)};
+    // Let native scrollbars / form controls follow the active scheme.
+    color-scheme: light dark;
 }
 
-// @media (prefers-color-scheme: dark) {
-//     :root {
-//         --easymde-border-color: blue;
-//         --easymde-hover-color: red;
-//         // --easymde-active-color: lighten(var(--easymde-hover-color), 10%);
-//         // --easymde-click-color: darken(var(--easymde-hover-color), 10%);
-//     }
-// }
+@media (prefers-color-scheme: dark) {
+    .easymde-container:not([data-easymde-theme]) {
+        --easymde-border-color: #5a5a5a;
+        --easymde-bg: #1e1e1e;
+        --easymde-text: #d4d4d4;
+        --easymde-toolbar-bg: #252526;
+        --easymde-toolbar-hover: #2d2d2d;
+        --easymde-toolbar-active: #3a3a3a;
+        --easymde-toolbar-enabled: #37373d;
+        --easymde-toolbar-enabled-border: #888888;
+        --easymde-toolbar-text: #d4d4d4;
+        --easymde-preview-bg: #1e1e1e;
+        --easymde-preview-text: #d4d4d4;
+        --easymde-statusbar-text: #b5b5b5;
+        --easymde-placeholder: #b5b5b5;
+        --easymde-syntax-url: #8ab4f8;
+        --easymde-syntax-mark: #adadad;
+        --easymde-syntax-keyword: #d69be0;
+        --easymde-syntax-string: #f19a94;
+        --easymde-syntax-literal: #83cfa0;
+        --easymde-syntax-escape: #ffa470;
+        --easymde-syntax-variable: #8ab4f8;
+        --easymde-syntax-type: #5ac8b0;
+        --easymde-syntax-comment: #b0b0b0;
+        --easymde-syntax-invalid: #ff8a8a;
+        --easymde-preview-link: #8ab4f8;
+        --easymde-code-bg: rgba(255, 255, 255, 0.08);
+        --easymde-selection-bg: #264f78;
+    }
+}
 
 .easymde-toolbar {
     position: relative;
     user-select: none;
     padding: 9px 10px;
-    border: 1px solid $light-border-color;
+    background: var(--easymde-toolbar-bg);
+    color: var(--easymde-toolbar-text);
+    border: 1px solid var(--easymde-border-color);
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
     button {
         background: transparent;
+        // Buttons don't inherit `color` from the toolbar (UA default), so set it
+        // explicitly — FontAwesome glyphs are `fill: currentColor`.
+        color: var(--easymde-toolbar-text);
         display: inline-block;
         text-align: center;
         text-decoration: none !important;
@@ -39,16 +91,20 @@ $light-border-color: #d1d1d1;
         cursor: pointer;
         width: 30px;
 
+        // Non-colour affordance (a >=3:1 border) in addition to the background tint, so the
+        // "on" state is perceivable (WCAG 1.4.11 / 1.4.1); the border box is already reserved
+        // by `border: 1px solid transparent` above, so toggling adds no layout shift.
         &.enabled {
-            background-color: var(--easymde-enabled-color);
+            background-color: var(--easymde-toolbar-enabled);
+            border-color: var(--easymde-toolbar-enabled-border);
         }
 
         &:hover {
-            background-color: var(--easymde-hover-color);
+            background-color: var(--easymde-toolbar-hover);
         }
 
         &:active {
-            background-color: var(--easymde-active-color);
+            background-color: var(--easymde-toolbar-active);
         }
     }
 
@@ -66,6 +122,7 @@ $light-border-color: #d1d1d1;
 .easymde-container {
     display: grid;
     grid-template-rows: auto 1fr auto;
+    background: var(--easymde-bg);
 
     .easymde-toolbar {
         grid-row: 1;
@@ -75,6 +132,8 @@ $light-border-color: #d1d1d1;
     .cm-editor {
         grid-row: 2;
         box-sizing: border-box;
+        background: var(--easymde-bg);
+        color: var(--easymde-text);
         border: 1px solid var(--easymde-border-color);
         border-bottom-left-radius: 4px;
         border-bottom-right-radius: 4px;
@@ -94,6 +153,10 @@ $light-border-color: #d1d1d1;
         .cm-content {
             min-height: 300px;
         }
+
+        .cm-placeholder {
+            color: var(--easymde-placeholder);
+        }
     }
 
     .easymde-preview {
@@ -106,7 +169,60 @@ $light-border-color: #d1d1d1;
         padding: 10px;
         min-height: 300px;
         word-wrap: break-word;
-        background: white;
+        background: var(--easymde-preview-bg);
+        color: var(--easymde-preview-text);
+
+        a {
+            color: var(--easymde-preview-link);
+
+            &:visited {
+                color: var(--easymde-preview-link);
+            }
+        }
+
+        code {
+            background: var(--easymde-code-bg);
+            padding: 0.1em 0.3em;
+            border-radius: 3px;
+        }
+
+        pre {
+            background: var(--easymde-code-bg);
+            padding: 10px;
+            border-radius: 4px;
+            overflow: auto;
+
+            code {
+                padding: 0;
+                background: none;
+            }
+        }
+
+        blockquote {
+            margin: 0.5em 0;
+            padding: 0 0 0 12px;
+            border-left: 3px solid var(--easymde-border-color);
+            color: var(--easymde-statusbar-text);
+        }
+
+        table {
+            border-collapse: collapse;
+
+            th,
+            td {
+                border: 1px solid var(--easymde-border-color);
+                padding: 4px 8px;
+            }
+
+            th {
+                background: var(--easymde-toolbar-bg);
+            }
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--easymde-border-color);
+        }
     }
 
     .easymde-statusbar {
@@ -148,13 +264,13 @@ $light-border-color: #d1d1d1;
         inset: 0;
         z-index: 9999;
         border-radius: 0;
-        // Opaque so the fixed overlay occludes the page behind it (C3 tokenizes this).
-        background: white;
+        // Opaque so the fixed overlay occludes the page behind it.
+        background: var(--easymde-bg);
 
         // Full-bleed chrome: square off the corners and swap the rounded edge borders
         // for single separators so the toolbar and statusbar sit flush at the viewport.
         .easymde-toolbar {
-            background: #f9f9f9;
+            background: var(--easymde-toolbar-bg);
             border: none;
             border-bottom: 1px solid var(--easymde-border-color);
             border-radius: 0;
@@ -170,7 +286,7 @@ $light-border-color: #d1d1d1;
         }
 
         .easymde-statusbar {
-            background: #f9f9f9;
+            background: var(--easymde-toolbar-bg);
             border-top: 1px solid var(--easymde-border-color);
         }
     }
@@ -179,8 +295,18 @@ $light-border-color: #d1d1d1;
 .easymde-statusbar {
     padding: 8px 10px;
     font-size: 12px;
-    color: #595959;
+    color: var(--easymde-statusbar-text);
     display: flex;
     justify-content: flex-end;
     gap: 0.75rem;
+}
+
+// Windows High Contrast / forced-colors: the system palette replaces author backgrounds and
+// borders, so the toggle "on" state (a background tint + border) would read the same as an
+// inactive button. Re-signal it with a system-colour outline, which forced-colors preserves.
+@media (forced-colors: active) {
+    .easymde-toolbar button.enabled {
+        outline: 2px solid Highlight;
+        outline-offset: -2px;
+    }
 }

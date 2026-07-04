@@ -2,7 +2,7 @@ import { history } from "@codemirror/commands";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { HighlightStyle, defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { EditorState, type Extension, Prec } from "@codemirror/state";
-import { drawSelection, EditorView, keymap } from "@codemirror/view";
+import { drawSelection, EditorView, keymap, placeholder } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 
 import { AlreadyConstructedError } from "./errors/already-constructed-error.js";
@@ -140,12 +140,78 @@ export class EasyMDE {
                 tag: tags.monospace,
                 fontFamily: "monospace",
                 textDecoration: "none",
-                background: "rgba(0, 0, 0, 0.05)",
+                background: "var(--easymde-code-bg)",
+            },
+            // Theme-aware colours for every group CodeMirror's defaultHighlightStyle tints.
+            // This style is registered before defaultHighlightStyle, so it wins for these
+            // tags; the CSS variables flip in dark mode to keep WCAG AAA (>=7:1) contrast in
+            // both schemes (the light values mirror the original hues, dark values are
+            // lightened to pass on the dark editor background). defaultHighlightStyle is kept
+            // for its non-colour styling (emphasis/strong/strikethrough/heading decoration).
+            {
+                tag: [tags.atom, tags.bool, tags.url, tags.contentSeparator, tags.labelName],
+                color: "var(--easymde-syntax-url)",
+            },
+            {
+                tag: tags.meta,
+                color: "var(--easymde-syntax-mark)",
+            },
+            {
+                tag: tags.keyword,
+                color: "var(--easymde-syntax-keyword)",
+            },
+            {
+                tag: [tags.string, tags.deleted],
+                color: "var(--easymde-syntax-string)",
+            },
+            {
+                tag: [tags.literal, tags.inserted],
+                color: "var(--easymde-syntax-literal)",
+            },
+            {
+                tag: [tags.regexp, tags.escape, tags.special(tags.string)],
+                color: "var(--easymde-syntax-escape)",
+            },
+            {
+                tag: [
+                    tags.definition(tags.variableName),
+                    tags.definition(tags.propertyName),
+                    tags.local(tags.variableName),
+                    tags.special(tags.variableName),
+                    tags.macroName,
+                ],
+                color: "var(--easymde-syntax-variable)",
+            },
+            {
+                tag: [tags.typeName, tags.namespace, tags.className],
+                color: "var(--easymde-syntax-type)",
+            },
+            {
+                tag: tags.comment,
+                color: "var(--easymde-syntax-comment)",
+            },
+            {
+                tag: tags.invalid,
+                color: "var(--easymde-syntax-invalid)",
             },
         ]);
 
         const extensions: Extension[] = [
             EditorView.lineWrapping,
+            // Theme-aware caret and selection. CodeMirror's base theme hardcodes a black
+            // caret and a light selection background, both of which disappear in dark mode;
+            // routing them through CSS variables keeps them visible in either scheme.
+            EditorView.theme({
+                ".cm-cursor, .cm-dropCursor": {
+                    borderLeftColor: "var(--easymde-text)",
+                },
+                // `!important` beats CodeMirror's base-theme selection rule regardless of its
+                // internal DOM structure, so this stays robust across @codemirror/view versions
+                // rather than depending on matching its high-specificity selector.
+                ".cm-selectionBackground, .cm-content ::selection": {
+                    backgroundColor: "var(--easymde-selection-bg) !important",
+                },
+            }),
             syntaxHighlighting(highlightStyle),
             syntaxHighlighting(defaultHighlightStyle),
             markdown({
@@ -178,6 +244,10 @@ export class EasyMDE {
             );
         }
 
+        if (this.#options.placeholder) {
+            extensions.push(placeholder(this.#options.placeholder));
+        }
+
         this.#sideBySideDebouncedRender = debounce(() => {
             if (this.isSideBySideActive()) {
                 this.#preview?.render(this.value);
@@ -207,6 +277,9 @@ export class EasyMDE {
         });
 
         const easyMDEContainer = this.#createContainer();
+        if (this.#options.theme) {
+            easyMDEContainer.dataset.easymdeTheme = this.#options.theme;
+        }
         this.#element.insertAdjacentElement("afterend", easyMDEContainer);
         this.#container = easyMDEContainer;
 

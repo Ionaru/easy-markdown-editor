@@ -48,11 +48,10 @@ export class EasyMarkdownEditor extends HTMLElement {
         if (this.getAttribute("toolbar") === "false") options.toolbar = false;
         if (this.getAttribute("statusbar") === "false") options.statusbar = false;
         if (this.getAttribute("trim") === "false") options.trimInitialValue = false;
+        const theme = this.getAttribute("theme");
+        if (theme !== null) options.theme = theme;
 
         this.#editor = new EasyMDE(options);
-
-        const theme = this.getAttribute("theme");
-        if (theme !== null) this.dataset.theme = theme;
     }
 
     disconnectedCallback(): void {
@@ -69,8 +68,8 @@ export class EasyMarkdownEditor extends HTMLElement {
         if (name === "value" && newValue !== null && this.#editor.value !== newValue) {
             this.#editor.value = newValue;
         } else if (name === "theme") {
-            if (newValue === null) delete this.dataset.theme;
-            else this.dataset.theme = newValue;
+            if (newValue === null) delete this.#editor.container.dataset.easymdeTheme;
+            else this.#editor.container.dataset.easymdeTheme = newValue;
         } else if (name === "name" && this.#textarea) {
             this.#textarea.name = newValue ?? "";
         }

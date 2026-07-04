@@ -77,6 +77,26 @@ describe("EasyMDE", () => {
         expect(editor.container.lastElementChild).toBe(statusbar);
     });
 
+    it("applies the theme option as a data-easymde-theme attribute on the container", () => {
+        const editor = createEditor({ theme: "custom" });
+
+        expect(editor.container.dataset.easymdeTheme).toBe("custom");
+    });
+
+    it("omits data-easymde-theme when no theme option is set", () => {
+        const editor = createEditor();
+
+        expect(editor.container.hasAttribute("data-easymde-theme")).toBe(false);
+    });
+
+    it("renders the placeholder text when the placeholder option is set", () => {
+        const editor = createEditor({ placeholder: "Write something…" });
+
+        const placeholderEl = editor.container.querySelector(".cm-placeholder");
+        expect(placeholderEl).not.toBeNull();
+        expect(placeholderEl?.textContent).toBe("Write something…");
+    });
+
     it("unmounts plugins on destroy", () => {
         const editor = new EasyMDE({ element: createTextArea() });
 

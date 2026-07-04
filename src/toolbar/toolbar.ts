@@ -56,6 +56,8 @@ export class Toolbar implements IEasyMDEPlugin {
 
     #createToolBarButton(toolBarButtonOptions: IToolbarButtonOptions): HTMLButtonElement {
         const buttonElement: HTMLButtonElement = document.createElement("button");
+        // Explicit type so a toolbar click never submits an enclosing <form> (default is "submit").
+        buttonElement.type = "button";
         buttonElement.tabIndex = -1;
         buttonElement.classList.add(toolBarButtonOptions.name);
 
@@ -75,9 +77,22 @@ export class Toolbar implements IEasyMDEPlugin {
             );
         }
 
+        // Toggle buttons (those with an `active` state) expose that state to assistive tech
+        // via aria-pressed, kept in sync with the visual `.enabled` class. Action buttons
+        // (no `active`) get neither.
+        const isToggle = typeof toolBarButtonOptions.active !== "undefined";
+        const setActive = (state: boolean): void => {
+            buttonElement.classList.toggle(Toolbar.#activeClass, state);
+            if (isToggle) {
+                buttonElement.setAttribute("aria-pressed", String(state));
+            }
+        };
+
         if (typeof toolBarButtonOptions.active === "boolean") {
-            buttonElement.classList.toggle(Toolbar.#activeClass, toolBarButtonOptions.active);
+            setActive(toolBarButtonOptions.active);
         } else if (typeof toolBarButtonOptions.active === "function") {
+            // Expose an initial pressed state before the first editor update runs.
+            setActive(false);
             this.editor.codemirror.dispatch({
                 effects: StateEffect.appendConfig.of(
                     ViewPlugin.define(() => ({
@@ -87,7 +102,7 @@ export class Toolbar implements IEasyMDEPlugin {
                                     this.editor,
                                     update,
                                 );
-                                buttonElement.classList.toggle(Toolbar.#activeClass, result);
+                                setActive(result);
                             }
                         },
                     })),

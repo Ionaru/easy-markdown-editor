@@ -95,6 +95,7 @@ export interface InputOptions {
     syncSideBySidePreviewScroll?: boolean;
     sideBySideFullscreen?: boolean;
     onToggleFullScreen?: (entering: boolean) => void;
+    theme?: string;
 }
 
 export type Options = Omit<
