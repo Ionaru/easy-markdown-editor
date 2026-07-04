@@ -18,6 +18,37 @@ const makeStubPlugin = (
     },
 });
 
+const longDoc = (lines = 300): string => {
+    let doc = "# scroll sync\n\n";
+    for (let line = 1; line <= lines; line++) {
+        doc += `Line ${line}: the quick brown fox jumps over the lazy dog.\n\n`;
+    }
+    return doc;
+};
+
+const getPreview = (editor: EasyMDE): HTMLElement => {
+    const element = editor.container.querySelector<HTMLElement>(".easymde-preview");
+    if (!element) {
+        throw new Error("expected a .easymde-preview element");
+    }
+    return element;
+};
+
+const nextFrame = (): Promise<void> =>
+    new Promise((resolve) => {
+        requestAnimationFrame(() => {
+            resolve();
+        });
+    });
+
+// CodeMirror measures asynchronously; wait until `isReady` holds (or the frame budget runs
+// out, in which case the caller's assertions report the real failure).
+const settle = async (isReady: () => boolean = () => false, maxFrames = 30): Promise<void> => {
+    for (let frame = 0; frame < maxFrames && !isReady(); frame++) {
+        await nextFrame();
+    }
+};
+
 describe("EasyMDE", () => {
     afterEach(() => {
         document.body.innerHTML = "";
@@ -242,6 +273,104 @@ describe("EasyMDE", () => {
         editor.destruct();
 
         expect(removeSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
+    });
+
+    it("side-by-side panes grow with content when the container height is unbounded", async () => {
+        const editor = createEditor();
+        editor.value = longDoc();
+        editor.toggleSideBySide();
+        const scroller = editor.codemirror.scrollDOM;
+        await settle(() => false, 10);
+        const preview = getPreview(editor);
+
+        // No external height limit: both panes grow to fit their content and the page
+        // scrolls, so neither pane has any internal scroll range.
+        expect(scroller.scrollHeight - scroller.clientHeight).toBe(0);
+        expect(preview.scrollHeight - preview.clientHeight).toBe(0);
+
+        editor.destruct();
+    });
+
+    it("scrolling the editor proportionally scrolls the preview when the height is bounded", async () => {
+        const editor = createEditor();
+        editor.value = longDoc();
+        editor.toggleSideBySide();
+        editor.container.style.height = "300px";
+        const scroller = editor.codemirror.scrollDOM;
+        await settle(() => scroller.scrollHeight - scroller.clientHeight > 0);
+        const preview = getPreview(editor);
+
+        const editorMax = scroller.scrollHeight - scroller.clientHeight;
+        const previewMax = preview.scrollHeight - preview.clientHeight;
+        expect(editorMax).toBeGreaterThan(0);
+        expect(previewMax).toBeGreaterThan(0);
+
+        scroller.scrollTop = editorMax * 0.5;
+        scroller.dispatchEvent(new Event("scroll"));
+
+        expect(preview.scrollTop / previewMax).toBeCloseTo(0.5, 1);
+
+        editor.destruct();
+    });
+
+    it("scrolling the preview proportionally scrolls the editor when the height is bounded", async () => {
+        const editor = createEditor();
+        editor.value = longDoc();
+        editor.toggleSideBySide();
+        editor.container.style.height = "300px";
+        const scroller = editor.codemirror.scrollDOM;
+        await settle(() => scroller.scrollHeight - scroller.clientHeight > 0);
+        const preview = getPreview(editor);
+
+        const editorMax = scroller.scrollHeight - scroller.clientHeight;
+        const previewMax = preview.scrollHeight - preview.clientHeight;
+        expect(editorMax).toBeGreaterThan(0);
+        expect(previewMax).toBeGreaterThan(0);
+
+        preview.scrollTop = previewMax * 0.25;
+        preview.dispatchEvent(new Event("scroll"));
+
+        expect(scroller.scrollTop / editorMax).toBeCloseTo(0.25, 1);
+
+        editor.destruct();
+    });
+
+    it("does not sync scroll when syncSideBySidePreviewScroll is false", async () => {
+        const editor = createEditor({ syncSideBySidePreviewScroll: false });
+        editor.value = longDoc();
+        editor.toggleSideBySide();
+        editor.container.style.height = "300px";
+        const scroller = editor.codemirror.scrollDOM;
+        await settle(() => scroller.scrollHeight - scroller.clientHeight > 0);
+        const preview = getPreview(editor);
+
+        const editorMax = scroller.scrollHeight - scroller.clientHeight;
+        expect(editorMax).toBeGreaterThan(0);
+
+        scroller.scrollTop = editorMax * 0.5;
+        scroller.dispatchEvent(new Event("scroll"));
+
+        expect(preview.scrollTop).toBe(0);
+
+        editor.destruct();
+    });
+
+    it("bounded side-by-side shrinks both panes to fit instead of overflowing the container", async () => {
+        const editor = createEditor();
+        editor.value = longDoc();
+        editor.toggleSideBySide();
+        // A content area below the panes' 300px min-height floor: both panes must shrink to
+        // the bounded row and scroll internally, not spill out of the fixed-height box.
+        editor.container.style.height = "200px";
+        await settle(() => false, 12);
+        const preview = getPreview(editor);
+
+        expect(preview.clientHeight).toBeLessThan(250);
+        expect(editor.container.scrollHeight).toBeLessThanOrEqual(
+            editor.container.clientHeight + 1,
+        );
+
+        editor.destruct();
     });
 
     it("toggleFullscreen toggles container class and isFullscreenActive", () => {

@@ -249,11 +249,23 @@
 
         .cm-editor {
             grid-column: 1;
+            // Let the editor pane shrink below its content when the container height is
+            // bounded (fullscreen, a fixed height, or a limited parent) so .cm-scroller
+            // scrolls internally. Unbounded, the 1fr row still grows to fit the content.
+            min-height: 0;
         }
 
         .easymde-preview {
             grid-column: 2;
             display: block;
+            // Match the editor: become a scroll container when the height is bounded so
+            // scroll-sync can drive it; grows with its content when the height is not.
+            overflow-y: auto;
+            // Drop the base 300px floor here too: editor and preview share one 1fr row, so
+            // a floor on either pane pins the whole row and would push the panes out of a
+            // container shorter than 300px. Unbounded, .cm-content's own min-height keeps
+            // the editor (and thus the shared row) tall enough.
+            min-height: 0;
         }
     }
 

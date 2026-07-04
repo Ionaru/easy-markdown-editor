@@ -217,14 +217,14 @@ For [issue #447](https://github.com/Ionaru/easy-markdown-editor/issues/447), **â
 
 ### Acceptance criteria for Milestone C
 
-- [ ] `toggleSideBySide()` splits the container and re-renders preview on each change.
-- [ ] `isSideBySideActive()` returns the correct boolean.
-- [ ] Scroll sync works when `syncSideBySidePreviewScroll` is true.
-- [ ] `sideBySideFullscreen: true` couples side-by-side with fullscreen (V2 parity opt-in).
-- [ ] `toggleFullscreen()` covers full viewport; Escape exits.
-- [ ] `isFullscreenActive()` returns the correct boolean.
-- [ ] `onToggleFullScreen` callback fires with correct boolean.
-- [ ] F9 / F11 keyboard shortcuts work.
-- [ ] Dark mode applies automatically via `prefers-color-scheme: dark`.
-- [ ] `theme` option sets `data-easymde-theme` for consumer CSS targeting.
-- [ ] `vp check` and `vp test` pass.
+- [x] `toggleSideBySide()` splits the container and re-renders preview on each change.
+- [x] `isSideBySideActive()` returns the correct boolean.
+- [x] Scroll sync works when `syncSideBySidePreviewScroll` is true.
+- [x] `sideBySideFullscreen: true` couples side-by-side with fullscreen (V2 parity opt-in).
+- [x] `toggleFullscreen()` covers full viewport; Escape exits.
+- [x] `isFullscreenActive()` returns the correct boolean.
+- [x] `onToggleFullScreen` callback fires with correct boolean.
+- [x] F9 / F11 keyboard shortcuts work.
+- [x] Dark mode applies automatically via `prefers-color-scheme: dark`.
+- [x] `theme` option sets `data-easymde-theme` for consumer CSS targeting.
+- [x] `vp check` and `vp test` pass.
