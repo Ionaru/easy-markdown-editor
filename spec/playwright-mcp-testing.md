@@ -4,12 +4,12 @@ Live, source-driven manual + agent-driven exploratory testing of EasyMDE. Source
 
 ## When to use this vs `vp test`
 
-| Use case                                                                      | Tool                                                             |
-| ----------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Logic, regressions, contracts                                                 | `vp test` (vitest browser mode, 224 specs in `src/**/*.spec.ts`) |
-| Cursor caret position, toolbar active states, preview render, visual flows    | Playwright MCP harness                                           |
-| Reproducing a user-reported bug interactively                                 | Playwright MCP harness                                           |
-| Sanity check that source changes work in a real browser before running suites | Playwright MCP harness                                           |
+| Use case                                                                      | Tool                                                          |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Logic, regressions, contracts                                                 | `vp test` (vitest browser mode, the `src/**/*.spec.ts` suite) |
+| Cursor caret position, toolbar active states, preview render, visual flows    | Playwright MCP harness                                        |
+| Reproducing a user-reported bug interactively                                 | Playwright MCP harness                                        |
+| Sanity check that source changes work in a real browser before running suites | Playwright MCP harness                                        |
 
 `vp test` is authoritative — MCP harness is for human-in-the-loop and agent exploration only.
 
@@ -42,12 +42,12 @@ http://localhost:5173/tests/dev.html
 
 A live state mirror sits in `#cm-state` (also `[data-testid="cm-state"]`) with these dataset attrs synced on input/keyup/mouseup:
 
-| Attr          | Value                   |
-| ------------- | ----------------------- |
-| `data-value`  | Full doc string         |
-| `data-from`   | Selection anchor offset |
-| `data-to`     | Selection head offset   |
-| `data-length` | Doc length              |
+| Attr          | Value                                                   |
+| ------------- | ------------------------------------------------------- |
+| `data-value`  | Full doc string                                         |
+| `data-from`   | Selection start offset (`sel.from`, min of anchor/head) |
+| `data-to`     | Selection end offset (`sel.to`, max of anchor/head)     |
+| `data-length` | Doc length                                              |
 
 ## Driving via Playwright MCP
 
@@ -88,15 +88,15 @@ All default toolbar buttons live under `.easymde-toolbar` and carry a stable cla
 Available classes:
 
 ```
-bold  italic  strikethrough  heading  code  quote
-unordered-list  ordered-list  clean-block
-link  image  preview  guide
+bold  italic  cycle-heading  quote
+unordered-list  ordered-list  task-list  clean-block
+link  image  preview  undo  redo  guide  side-by-side  fullscreen
 ```
 
 Note: when the web component is also present the page contains two `.easymde-toolbar` instances. Scope queries to the textarea's editor with:
 
 ```js
-document.querySelector("#editor-textarea + .EasyMDEContainer .easymde-toolbar button.bold");
+document.querySelector("#editor-textarea + .easymde-container .easymde-toolbar button.bold");
 ```
 
 …or use the simpler form `document.querySelectorAll('.easymde-toolbar')[0]` if order is acceptable.
@@ -126,7 +126,7 @@ window.editor.value = "new doc content";
 Real keyboard simulation — preferred for testing input handling:
 
 ```js
-mcp__plugin_playwright_playwright__browser_click("textarea[role='textbox']"); // focus
+mcp__plugin_playwright_playwright__browser_click(".cm-content"); // focus
 mcp__plugin_playwright_playwright__browser_press_key("Enter");
 mcp__plugin_playwright_playwright__browser_type("hello");
 ```
@@ -150,13 +150,14 @@ Run `npx playwright install chrome` (needs sudo for system deps on Linux).
 The dev script uses `--strictPort` so `vp dev` exits immediately. Find and kill the holder: `ss -tlnp | grep 5173`.
 
 **Edits to `src/` don't appear in the browser.**
-Confirm the page is open at `:5173`, not `:5500` (Live Server) or `tests/index.html` (which loads `dist/`). `tests/dev.html` is the harness; `tests/index.html` is a manual `dist/` playground.
+Confirm the page is open at `:5173`, not `:5500` (Live Server). Both harness pages load live from `/src/index.ts`: `tests/dev.html` is the agent test harness (single editor + `#cm-state` mirror + reset/destroy controls); `tests/index.html` is the demo showcase (default / custom-toolbar / preview-only presets).
 
 **`window.editor.value()` throws "is not a function".**
 `value` is a getter, not a method — use `window.editor.value`.
 
 ## Files
 
-- `tests/dev.html` — harness page
+- `tests/dev.html` — agent test harness page (state mirror, reset/destroy)
+- `tests/index.html` — demo showcase page (default / custom-toolbar / preview-only presets)
 - `package.json` — `dev:app` script
-- `src/index.ts` — entry imported live by the harness
+- `src/index.ts` — entry imported live by both pages

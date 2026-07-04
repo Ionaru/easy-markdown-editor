@@ -2,54 +2,142 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Document</title>
-        <link rel="stylesheet" href="../dist/style.css" />
-
+        <title>EasyMDE demos</title>
         <style>
+            :root {
+                color-scheme: light dark;
+            }
+
             body {
-                /* background-color: grey; */
+                max-width: 48rem;
+                margin: 0 auto;
+                padding: 2rem 1rem 4rem;
+                font-family: system-ui, sans-serif;
+                line-height: 1.5;
+            }
+
+            header h1 {
+                margin-bottom: 0.25rem;
+            }
+
+            header p {
+                margin-top: 0;
+                opacity: 0.8;
+            }
+
+            .demo {
+                margin-top: 2.5rem;
+            }
+
+            .demo h2 {
+                margin-bottom: 0.25rem;
+            }
+
+            .demo p {
+                margin-top: 0;
+                opacity: 0.8;
             }
         </style>
     </head>
 
     <body>
-        <button onclick="x.destruct()">DESTROY</button>
-        <hr />
-        <div id="custom-toolbar-container"></div>
-        <br />
-        <textarea id="my-text-area">
-**Moooooo**
-ooo
-`code`
-*sdhjk*
-# head?
-~~hjhj~~
-***Bold & Brash***
-last
+        <header>
+            <h1>EasyMDE demos</h1>
+            <p>
+                Live source build served by <code>vp dev</code>. Edit <code>src/</code> and it
+                hot-reloads.
+            </p>
+        </header>
 
-`const x = "moooo";`
+        <section class="demo">
+            <h2>Default config</h2>
+            <p><code>new EasyMDE({ element })</code>: full default toolbar and status bar.</p>
+            <textarea id="demo-default">
+# Default editor
+
+The full default **toolbar**, status bar, and keyboard shortcuts.
+
+- Try **Ctrl/Cmd+B** for bold
+- Or click the toolbar buttons above
+</textarea
+            >
+        </section>
+
+        <section class="demo">
+            <h2>Custom toolbar array</h2>
+            <p>
+                A curated subset of buttons via <code>toolbar: [...]</code>, using
+                <code>"|"</code> separators.
+            </p>
+            <textarea id="demo-custom">
+# Custom toolbar
+
+Only the buttons this config asks for are shown.
+</textarea
+            >
+        </section>
+
+        <section class="demo">
+            <h2>Preview-only mode</h2>
+            <p>
+                Mounts, then calls <code>togglePreview()</code> so rendered Markdown shows on load.
+                Click the preview button to edit.
+            </p>
+            <textarea id="demo-preview">
+# Preview-only mode
+
+This instance opens straight into the **rendered** view.
+
+> Markdown is rendered through the shared preview pipeline.
 
 ```js
-const x = "moooo";
+const answer = 42;
 ```
-
-This is a longer sentence!
 </textarea
-        >
-        <script type="module">
-            import { EasyMDE } from "../dist/index.mjs";
-            window.x = new EasyMDE({
-                element: document.getElementById("my-text-area"),
-                toolbar: true,
-                statusbar: true,
-            });
-        </script>
+            >
+        </section>
 
-        <easy-markdown-editor name="comment">dfgdfghdfg</easy-markdown-editor>
-        <script>
-            document.querySelector("easy-markdown-editor").setAttribute("name", "Everyone");
+        <script type="module">
+            import { EasyMDE } from "/src/index.ts";
+
+            const demos = {};
+
+            // 1. Default config: full default toolbar + status bar.
+            demos.default = new EasyMDE({
+                element: document.getElementById("demo-default"),
+            });
+
+            // 2. Custom toolbar array: curated subset with separators.
+            demos.custom = new EasyMDE({
+                element: document.getElementById("demo-custom"),
+                toolbar: [
+                    "bold",
+                    "italic",
+                    "strikethrough",
+                    "|",
+                    "quote",
+                    "code",
+                    "|",
+                    "unordered-list",
+                    "ordered-list",
+                    "|",
+                    "link",
+                    "image",
+                    "|",
+                    "preview",
+                    "guide",
+                ],
+            });
+
+            // 3. Preview-only mode: mount, then toggle straight into rendered preview.
+            demos.preview = new EasyMDE({
+                element: document.getElementById("demo-preview"),
+            });
+            demos.preview.togglePreview();
+
+            // Handy for manual poking and Playwright MCP probes.
+            window.demos = demos;
         </script>
     </body>
 </html>
