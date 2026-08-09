@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### BREAKING CHANGES
 
-- Complete rewrite of the editor. API has changed significantly, please see the [migration guide](TBD).
+- Complete rewrite of the editor. API has changed significantly, please see the [migration guide](MIGRATION.md).
 
 ## [2.18.0] - 2022-09-20
 
