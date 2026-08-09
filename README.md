@@ -5,8 +5,10 @@ Markdown editor built on CodeMirror 6. Ships as a class API and as the `<easy-ma
 ## Quick start
 
 ```bash
-npm install easymde
+npm install easymde@beta
 ```
+
+> **V3 is in beta.** It is published under the `beta` dist-tag, so plain `npm install easymde` still gives you the 2.x line. Coming from V2? Read the [migration guide](MIGRATION.md) first: V3 is a rewrite and the API changed substantially.
 
 ```ts
 import { EasyMDE } from "easymde";

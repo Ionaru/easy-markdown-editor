@@ -7,9 +7,71 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+## [3.0.0-beta.1] - 2026-08-09
+
 ### BREAKING CHANGES
 
 - Complete rewrite of the editor. API has changed significantly, please see the [migration guide](MIGRATION.md).
+- The editor core moved from CodeMirror 5 to CodeMirror 6. `editor.codemirror` is now an `EditorView`.
+- The package is ESM-only and exports `EasyMDE` as a named export. The CommonJS entry, the UMD bundle, the global `EasyMDE` and the CDN build are gone.
+- Styles are imported from `easymde/style.css` instead of `easymde.min.css`.
+- `element` is now required and must be an `HTMLTextAreaElement`. V2's fallback to the first `<textarea>` on the page is gone.
+- `editor.value()` became the `editor.value` property, and `editor.toTextArea()` became `editor.destruct()`.
+- The text-editing action methods (`toggleBold` and friends), `getState()`, `markdown()`, `updateStatusBar()` and the `EasyMDE.*` statics are no longer public.
+- Image upload, autosave and spell checking were dropped, along with all of their options.
+- `status` became `statusbar` and accepts only a boolean. Custom status items were dropped.
+- Toolbar buttons were renamed: `heading` to `cycle-heading`, `check-list` to `task-list`, and `code` to `code-block`.
+- Keybinding overrides (the `shortcuts` option) are not supported yet.
+
+### Added
+
+- `<easy-markdown-editor>` web component for markup-first integration and forms.
+- Plugin API: the `IEasyMDEPlugin` interface and `addPlugin`. The toolbar, preview and status bar are themselves plugins.
+- Theming through CSS custom properties, with an automatic `prefers-color-scheme` dark mode.
+- Accessibility: an ARIA toolbar with roving-tabindex keyboard navigation, `aria-pressed` on toggle buttons, and preview focus management.
+- `orderedListDelimiter`, `trimInitialValue` and `toolbarGuideUrl` options.
+- `heading-4`, `heading-5` and `heading-6` toolbar buttons, plus a separate `code` button for inline code.
+- `registerIcons` to supply Font Awesome glyphs for custom toolbar buttons.
+
+### Changed
+
+- The preview is sanitized by default with DOMPurify, including the output of a custom `previewRender`.
+- Font Awesome is bundled instead of being downloaded from a CDN at runtime. The `autoDownloadFontAwesome` option is gone.
+- `blockStyles.code` is now the inline code marker rather than the code fence, and `blockStyles` gained a `strikethrough` marker.
+- Every editor gets its own `marked` instance, so `renderingConfig.markedOptions` no longer mutates the global one.
+- Single line breaks follow marked's default instead of being forced to `<br>`.
+- F11 now toggles the editor's fullscreen mode instead of falling through to the browser's native fullscreen.
+- The editor always focuses on construct and always wraps lines. The `autofocus` and `lineWrapping` options are gone.
+
+## [2.21.0] - 2026-05-03
+
+### Added
+
+- Check-list toolbar button and the ability to switch between unordered, ordered, and check-list types (Thanks to [@steve3ussr], [#631]).
+
+### Fixed
+
+- Extra space added before list content when switching between unordered and ordered lists (Thanks to [@steve3ussr], [#631]).
+
+## [2.20.0] - 2025-03-04
+
+### Added
+
+- Support for `marked` extensions (Thanks to [@codingjoe], [#611], [#514]).
+
+## [2.19.0] - 2025-02-18
+
+### Added
+
+- `updateStatusBar` type to typescript definitions (Thanks to [@borodean], [#519]).
+- `"upload-image"` option to the `ToolbarButton` typescript definitions (Thanks to [@borodean], [#520]).
+- `imageInputName` option to set a custom "name" attribute for the image input (Thanks to [@robinvandernoord], [#573]).
+
+### Fixed
+
+- Relative image paths using the stylesheet as the source instead of the document (Thanks to [@p1gp1g], [#591]).
+- Excessive memory usage with the `previewImagesInEditor` option (Thanks to [@p1gp1g], [#592]).
+- Parentheses in the alt text of images causing the image not to load then using `previewImagesInEditor` (Thanks to [@mayraamaral], [#608]).
 
 ## [2.18.0] - 2022-09-20
 
@@ -341,6 +403,8 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked issues -->
 
+[#611]: https://github.com/Ionaru/easy-markdown-editor/issues/611
+[#514]: https://github.com/Ionaru/easy-markdown-editor/issues/514
 [#493]: https://github.com/Ionaru/easy-markdown-editor/issues/493
 [#478]: https://github.com/Ionaru/easy-markdown-editor/issues/478
 [#399]: https://github.com/Ionaru/easy-markdown-editor/issues/399
@@ -363,6 +427,13 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked PRs -->
 
+[#631]: https://github.com/Ionaru/easy-markdown-editor/pull/631
+[#608]: https://github.com/Ionaru/easy-markdown-editor/pull/608
+[#592]: https://github.com/Ionaru/easy-markdown-editor/pull/592
+[#591]: https://github.com/Ionaru/easy-markdown-editor/pull/591
+[#573]: https://github.com/Ionaru/easy-markdown-editor/pull/573
+[#520]: https://github.com/Ionaru/easy-markdown-editor/pull/520
+[#519]: https://github.com/Ionaru/easy-markdown-editor/pull/519
 [#492]: https://github.com/Ionaru/easy-markdown-editor/pull/492
 [#488]: https://github.com/Ionaru/easy-markdown-editor/pull/488
 [#486]: https://github.com/Ionaru/easy-markdown-editor/pull/486
@@ -503,10 +574,20 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 [@hlf20010508]: https://github.com/hlf20010508
 [@ZsgsDesign]: https://github.com/ZsgsDesign
 [@sghoweri]: https://github.com/sghoweri
+[@borodean]: https://github.com/borodean
+[@codingjoe]: https://github.com/codingjoe
+[@mayraamaral]: https://github.com/mayraamaral
+[@p1gp1g]: https://github.com/p1gp1g
+[@robinvandernoord]: https://github.com/robinvandernoord
+[@steve3ussr]: https://github.com/steve3ussr
 
 <!-- Linked versions -->
 
-[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/2.18.0...HEAD
+[Unreleased]: https://github.com/Ionaru/easy-markdown-editor/compare/3.0.0-beta.1...HEAD
+[3.0.0-beta.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.21.0...3.0.0-beta.1
+[2.21.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.20.0...2.21.0
+[2.20.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.19.0...2.20.0
+[2.19.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.18.0...2.19.0
 [2.18.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.17.0...2.18.0
 [2.17.0]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.1...2.17.0
 [2.16.1]: https://github.com/Ionaru/easy-markdown-editor/compare/2.16.0...2.16.1

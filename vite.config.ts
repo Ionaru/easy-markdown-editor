@@ -25,6 +25,20 @@ export default defineConfig({
         },
         // TODO: Build for package managers
     ],
+    run: {
+        tasks: {
+            // Release-time changelog maintenance, invoked by bumpp's `execute` hook.
+            changelog: {
+                command: "node scripts/update-changelog.ts && vp fmt CHANGELOG.md --write",
+                cache: false,
+            },
+            // Read-only validation, safe to run on every CI job.
+            "changelog:check": {
+                command: "node scripts/update-changelog.ts --check",
+                cache: false,
+            },
+        },
+    },
     test: {
         browser: {
             enabled: true,

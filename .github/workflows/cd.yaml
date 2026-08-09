@@ -1,0 +1,134 @@
+name: CI / CD
+
+# Two things about this file are load-bearing for publishing:
+#
+# 1. The filename. npm allows a package exactly one trusted publisher, and
+#    easymde's is bound to `.github/workflows/cd.yaml` in this repository.
+#    Renaming this file breaks publishing until it is reconfigured.
+# 2. `npm publish` runs here rather than in a reusable workflow. npm validates
+#    the trusted publisher against the calling workflow instead of the one that
+#    actually contains the publish command, a documented limitation with no
+#    supported fix (npm/documentation#1755). That is why the checks below are
+#    split into parallel jobs in this file instead of being extracted with
+#    `workflow_call`; the repeated setup lives in `.github/actions/setup`, a
+#    composite action, which runs inside the calling job and so leaves the OIDC
+#    claims untouched.
+
+on:
+  push:
+    branches: [master, v3]
+    tags: ["*"]
+  pull_request:
+    branches: [master, v3]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  # Gates the rest: there is no point testing a tree that ships a vulnerable
+  # dependency. Reads the lockfile directly, so it skips the dependency install
+  # and keeps the gate off the critical path.
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+        with:
+          install: "false"
+
+      - run: vp pm audit -- --prod
+
+  check:
+    needs: audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      # Format, lint and type check.
+      - run: vp check
+
+      # Reference links in the changelog must all resolve.
+      - run: vp run changelog:check
+
+  test:
+    needs: audit
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Report every browser's result, not just the first to fail.
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup
+        with:
+          browser: ${{ matrix.browser }}
+
+      - run: vp test --project ${{ matrix.browser }}
+
+  build:
+    needs: audit
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      # Ensure the dist artifact builds cleanly (build script -> vp pack).
+      - run: vp run build
+
+  publish:
+    needs: [check, test, build]
+    # Everything above runs for branches and pull requests too; only a release
+    # tag or a manual dispatch gets as far as publishing. The event name is
+    # matched explicitly rather than relying on `github.ref_type`, which is not
+    # meaningfully defined for a `pull_request` ref.
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write # Required for npm trusted publishing (OIDC).
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/setup
+
+      # `dist/` is gitignored, so build before packing. Building in the job that
+      # publishes is also what the provenance attestation ends up describing.
+      # pnpm strips the `catalog:` protocol out of the manifest while packing.
+      - run: vp run build
+      - run: vp pm pack --out easymde.tgz
+
+      # Trusted publishing needs npm >= 11.5.1; it also generates the
+      # provenance attestation on its own, without `--provenance`.
+      - run: npm install --global npm@latest
+
+      - id: release
+        name: Resolve the dist-tag from the version
+        run: |
+          VERSION="$(node -p 'require("./package.json").version')"
+
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "${VERSION}" ]; then
+              echo "Tag ${GITHUB_REF_NAME} does not match package version ${VERSION}" >&2
+              exit 1
+          fi
+
+          # 3.0.0-beta.1 -> beta, 3.0.0-rc.1 -> rc, 3.0.0 -> latest.
+          case "${VERSION}" in
+              *-*) PRERELEASE="${VERSION#*-}"; DIST_TAG="${PRERELEASE%%.*}" ;;
+              *) DIST_TAG="latest" ;;
+          esac
+
+          echo "Publishing ${VERSION} to the ${DIST_TAG} dist-tag"
+          echo "dist_tag=${DIST_TAG}" >> "${GITHUB_OUTPUT}"
+
+      - run: npm publish easymde.tgz --tag "${{ steps.release.outputs.dist_tag }}"

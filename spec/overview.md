@@ -52,7 +52,7 @@ V3 is a ground-up rewrite motivated by legacy CodeMirror 2 debt, difficult maint
 | Sanitizer hook / DOMPurify wiring                                                                                                   |              |      ✅      |          |
 | E2E / integration tests                                                                                                             |              |      ✅      |          |
 | Demo & docs                                                                                                                         |              |      ✅      |          |
-| npm beta publish                                                                                                                    |              |      ✅      |          |
+| npm beta publish                                                                                                                    |      ✅      |              |          |
 | Autosave plugin                                                                                                                     |              |              |    ✅    |
 | Image upload (paste / drop / dialog)                                                                                                |              |              |    ✅    |
 | Custom shortcut overrides                                                                                                           |              |              |    ✅    |

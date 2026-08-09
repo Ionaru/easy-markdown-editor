@@ -1,0 +1,31 @@
+name: Setup
+description: Install the Vite+ toolchain, the project's dependencies, and optionally a Playwright browser.
+
+inputs:
+  install:
+    description: Install dependencies. Disable for jobs that only need the lockfile.
+    required: false
+    default: "true"
+  browser:
+    description: Playwright browser to install for browser-mode tests. Empty installs none.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+
+  steps:
+    - uses: voidzero-dev/setup-vp@v1
+      with:
+        node-version: "24"
+        cache: true
+
+    - if: inputs.install == 'true'
+      run: vp install
+      shell: bash
+
+    # Browser-mode tests run in real browsers via the Playwright provider, so the
+    # browser binary and its system dependencies must be present.
+    - if: inputs.browser != ''
+      run: npx playwright install --with-deps ${{ inputs.browser }}
+      shell: bash

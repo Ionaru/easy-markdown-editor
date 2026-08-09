@@ -1,7 +1,22 @@
 {
     "name": "easymde",
-    "version": "3.0.0",
-    "description": "A starter for creating a TypeScript package.",
+    "version": "3.0.0-beta.1",
+    "description": "A simple, beautiful, and embeddable JavaScript Markdown editor, built on CodeMirror 6. Ships as an ESM class API and an <easy-markdown-editor> web component.",
+    "keywords": [
+        "codemirror",
+        "codemirror6",
+        "easymde",
+        "editor",
+        "esm",
+        "markdown",
+        "markdown-editor",
+        "typescript",
+        "web-component"
+    ],
+    "homepage": "https://github.com/Ionaru/easy-markdown-editor#readme",
+    "bugs": {
+        "url": "https://github.com/Ionaru/easy-markdown-editor/issues"
+    },
     "license": "MIT",
     "author": "Jeroen Akkerman",
     "repository": {
@@ -9,10 +24,12 @@
         "url": "git+https://github.com/Ionaru/easy-markdown-editor.git"
     },
     "files": [
-        "dist"
+        "dist",
+        "CHANGELOG.md",
+        "MIGRATION.md"
     ],
     "type": "module",
-    "types": "./dist/index.d.cts",
+    "types": "./dist/index.d.mts",
     "exports": {
         ".": "./dist/index.mjs",
         "./package.json": "./package.json",
@@ -28,6 +45,7 @@
         "fix": "vp check --fix",
         "test": "vp test",
         "check": "vp check",
+        "release": "bumpp",
         "prepublishOnly": "vp run build"
     },
     "dependencies": {
@@ -48,6 +66,7 @@
         "@tsdown/css": "^0.22.14",
         "@types/node": "^26.2.0",
         "@vitest/browser-playwright": "catalog:",
+        "bumpp": "^12.2.0",
         "playwright": "^1.62.1",
         "sass-embedded": "^1.100.0",
         "typescript": "^7.0.2",
@@ -60,26 +79,26 @@
         "@codemirror/autocomplete": "6.20.3",
         "@codemirror/commands": "6.10.4",
         "@codemirror/lang-css": "6.3.1",
-        "@codemirror/lang-html": "6.4.11",
+        "@codemirror/lang-html": "6.4.12",
         "@codemirror/lang-javascript": "6.2.5",
-        "@codemirror/lang-markdown": "6.5.0",
+        "@codemirror/lang-markdown": "6.5.2",
         "@codemirror/language": "6.12.4",
-        "@codemirror/state": "6.7.0",
-        "@codemirror/view": "6.43.4",
-        "@fortawesome/fontawesome-common-types": "7.3.0",
-        "@fortawesome/fontawesome-svg-core": "7.3.0",
-        "@fortawesome/free-solid-svg-icons": "7.3.0",
+        "@codemirror/state": "6.7.1",
+        "@codemirror/view": "6.43.8",
+        "@fortawesome/fontawesome-common-types": "7.3.1",
+        "@fortawesome/fontawesome-svg-core": "7.3.1",
+        "@fortawesome/free-solid-svg-icons": "7.3.1",
         "@lezer/common": "1.5.2",
-        "@lezer/css": "1.3.4",
+        "@lezer/css": "1.3.6",
         "@lezer/highlight": "1.2.3",
         "@lezer/html": "1.3.13",
         "@lezer/javascript": "1.5.4",
         "@lezer/lr": "1.4.10",
-        "@lezer/markdown": "1.6.4",
+        "@lezer/markdown": "1.7.2",
         "@marijn/find-cluster-break": "1.0.3",
-        "dompurify": "3.4.11",
+        "dompurify": "3.4.13",
         "escape-string-regexp": "5.0.0",
-        "marked": "18.0.5",
+        "marked": "18.0.9",
         "style-mod": "4.1.3",
         "w3c-keyname": "2.2.8"
     }
