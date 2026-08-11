@@ -45,13 +45,17 @@ To create more pull requests, please follow the steps below:
 
 ## Releasing
 
-Releases are cut locally and published by CI. Changelog entries are always written by hand; only the mechanical parts are automated.
+A release goes out through a pull request, so the version bump gets the same review as any other change. Changelog entries are always written by hand; only the mechanical parts are automated.
 
 1. Write the entries for the release under `## [Unreleased]` in [CHANGELOG.md](./CHANGELOG.md). Reference issues, pull requests and contributors with the shorthand link syntax the file already uses: `(Thanks to [@someone], [#123])`. You do not need to add the matching `[#123]: …` definitions, they are generated for you.
-2. Commit that, so the working tree is clean, then run `pnpm release`. This bumps the version, promotes `## [Unreleased]` to the new version, refreshes the compare links, generates the missing reference definitions (asking GitHub whether each number is an issue or a pull request), and creates the release commit and tag. The release commit is made with `git commit --all`, so anything else left modified would be swept into it.
-3. Review the commit, then push the branch and the tag: `git push && git push --tags`.
-4. Pushing the tag triggers the `publish` job in [`cd.yaml`](./.github/workflows/cd.yaml), the repository's single CI/CD workflow. Every push and pull request runs its audit, check, test and build jobs; only a tag push or a manual run reaches `publish`, which builds, packs and publishes to npm using trusted publishing. The dist-tag follows the version: `3.0.0-beta.1` publishes to `beta`, `3.0.0-rc.1` to `rc`, and `3.0.0` to `latest`.
+2. Merge that as a normal pull request.
+3. From a clean checkout of the branch you are releasing (`master` for 2.x, `v3` for 3.x), run `pnpm release` and pick the new version. This creates a `release/<version>` branch, bumps the version, promotes `## [Unreleased]` to it, refreshes the compare links, generates the missing reference definitions (asking GitHub whether each number is an issue or a pull request), commits, pushes the branch, and offers to open the pull request for you. It never writes to the branch you released from. No tag is created locally.
+4. Review the release pull request and merge it. The `release` job in [`cd.yaml`](./.github/workflows/cd.yaml) then tags the merge commit and starts the publish run for that tag, which builds, packs and publishes to npm using trusted publishing. The dist-tag follows the version: `3.0.0-beta.1` publishes to `beta`, `3.0.0-rc.1` to `rc`, and `3.0.0` to `latest`.
 
-`vp run changelog:check` validates the changelog on its own and runs in CI, so a reference link without a definition fails the build rather than the release.
+If a merge somehow produces no release run, the tag is all that is needed: pushing `<version>` by hand enters exactly the same publish path.
+
+Every push and pull request also runs the audit, check, test and build jobs in that workflow. `vp run changelog:check` is one of them: it fails on a reference link that no release will ever define, while reporting the ones still waiting under `## [Unreleased]`, which is where the definitions you left out get generated.
+
+> **3.0.0-beta.1 is the exception.** Its section and compare links were promoted by hand, and `package.json` already carries the version, so there is no release pull request to merge. Pushing the `3.0.0-beta.1` tag publishes it. Releases after it follow the steps above.
 
 Thank you! 💜

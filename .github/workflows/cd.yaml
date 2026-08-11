@@ -1,6 +1,6 @@
 name: CI / CD
 
-# Two things about this file are load-bearing for publishing:
+# Three things about this file are load-bearing for publishing:
 #
 # 1. The filename. npm allows a package exactly one trusted publisher, and
 #    easymde's is bound to `.github/workflows/cd.yaml` in this repository.
@@ -13,23 +13,36 @@ name: CI / CD
 #    `workflow_call`; the repeated setup lives in `.github/actions/setup`, a
 #    composite action, which runs inside the calling job and so leaves the OIDC
 #    claims untouched.
+# 3. Publishing only ever happens from a tag ref. npm derives the provenance
+#    attestation from `GITHUB_REF` and `GITHUB_SHA`, so publishing straight from
+#    the run that merged a release pull request would attest `refs/pull/<n>/merge`
+#    rather than the release tag. `release` therefore tags the merge commit and
+#    dispatches this same workflow at that tag: `workflow_dispatch` is one of the
+#    two events GitHub exempts from the `GITHUB_TOKEN` recursion guard, which is
+#    what lets a workflow hand work back to itself.
 
 on:
   push:
     branches: [master, v3]
     tags: ["*"]
+  # `types` replaces the default list rather than extending it, so the three
+  # default activity types have to be restated alongside `closed`.
   pull_request:
     branches: [master, v3]
+    types: [opened, synchronize, reopened, closed]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-  # Gates the rest: there is no point testing a tree that ships a vulnerable
-  # dependency. Reads the lockfile directly, so it skips the dependency install
-  # and keeps the gate off the critical path.
+  # `github.event.action` exists only for pull requests, and an absent value
+  # coerces to 0 while 'closed' coerces to NaN, so this guard is true for every
+  # push, tag and dispatch and false only when a pull request actually closes.
+  # Closing one runs `release` or nothing at all; the merge itself is checked by
+  # the push build of the base branch.
   audit:
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
@@ -39,10 +52,14 @@ jobs:
         with:
           install: "false"
 
-      - run: vp pm audit -- --prod
+      # Every dependency is inlined into `dist/index.mjs`, so there is no
+      # production subset to audit: the whole tree is what ships. `--level high`
+      # keeps an unfixable low-severity advisory in a build-time package from
+      # blocking unrelated work, and a registry outage is not a build failure.
+      - run: vp pm audit --level high -- --ignore-registry-errors
 
   check:
-    needs: audit
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
@@ -52,30 +69,35 @@ jobs:
       # Format, lint and type check.
       - run: vp check
 
-      # Reference links in the changelog must all resolve.
+      # Reference links in the changelog must all resolve. Entries still waiting
+      # under `## [Unreleased]` are reported but do not fail: their definitions
+      # are generated when the release is cut.
       - run: vp run changelog:check
 
   test:
-    needs: audit
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     strategy:
-      # Report every browser's result, not just the first to fail.
+      # Report every project's result, not just the first to fail.
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        project: [node, chromium, firefox, webkit]
 
     steps:
       - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup
         with:
-          browser: ${{ matrix.browser }}
+          # Empty for the Node project, which needs no browser binary. Written
+          # in this order because an empty string is falsy in an expression, so
+          # the usual `cond && '' || value` shape would fall through to `value`.
+          browser: ${{ matrix.project != 'node' && matrix.project || '' }}
 
-      - run: vp test --project ${{ matrix.browser }}
+      - run: vp test --project ${{ matrix.project }}
 
   build:
-    needs: audit
+    if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
     steps:
@@ -85,13 +107,92 @@ jobs:
       # Ensure the dist artifact builds cleanly (build script -> vp pack).
       - run: vp run build
 
+  # Cutting a release means merging a `release/*` pull request that `bumpp --pr`
+  # opened: it carries the version bump and the promoted changelog, so the merge
+  # commit is exactly what should be tagged.
+  release:
+    # The branch name is attacker-controlled, since anyone can fork this
+    # repository and name a branch `release/9.9.9`. Requiring the branch to live
+    # in this repository is what makes the prefix meaningful.
+    if: >-
+      github.event.action == 'closed' &&
+      github.event.pull_request.merged == true &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      startsWith(github.event.pull_request.head.ref, 'release/')
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # Create the release tag.
+      actions: write # Dispatch this workflow at that tag.
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # `github.sha` is the pre-merge test merge commit; what actually landed
+          # on the base branch is `merge_commit_sha`.
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+
+      - id: version
+        name: Read the version the release branch bumped to
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          VERSION="$(node -p 'require("./package.json").version')"
+
+          if [ "${HEAD_REF}" != "release/${VERSION}" ]; then
+              echo "Branch ${HEAD_REF} does not match package version ${VERSION}" >&2
+              exit 1
+          fi
+
+          echo "version=${VERSION}" >> "${GITHUB_OUTPUT}"
+
+      # Re-running this job after a failed publish has to be safe, so an
+      # identical tag is accepted and a conflicting one is refused rather than
+      # moved off whatever was already published from it.
+      - name: Tag the merge commit
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          TAG: ${{ steps.version.outputs.version }}
+        run: |
+          # Branch on the exit status, not on the output: `gh api` prints the
+          # error body to stdout without applying `--jq`, so a 404 for the tag
+          # that is about to be created still yields non-empty output. Should
+          # this read fail for any other reason, creating the tag answers 422
+          # and the step fails there instead of guessing.
+          if EXISTING="$(gh api "repos/${GH_REPO}/git/ref/tags/${TAG}" --jq .object.sha 2>/dev/null)"; then
+              if [ "${EXISTING}" != "${SHA}" ]; then
+                  echo "Tag ${TAG} already exists at ${EXISTING}, refusing to move it to ${SHA}" >&2
+                  exit 1
+              fi
+
+              echo "Tag ${TAG} already points at ${SHA}"
+          else
+              gh api "repos/${GH_REPO}/git/refs" \
+                  --field ref="refs/tags/${TAG}" \
+                  --field sha="${SHA}" > /dev/null
+              echo "Created tag ${TAG} at ${SHA}"
+          fi
+
+      # A tag pushed with `GITHUB_TOKEN` does not start a workflow run, so the
+      # publish path is entered explicitly. Dispatching at the tag is what gives
+      # the publish job a `refs/tags/...` ref to attest.
+      - name: Start the publish run for the tag
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.version.outputs.version }}
+        run: gh workflow run cd.yaml --ref "${TAG}"
+
   publish:
-    needs: [check, test, build]
-    # Everything above runs for branches and pull requests too; only a release
-    # tag or a manual dispatch gets as far as publishing. The event name is
-    # matched explicitly rather than relying on `github.ref_type`, which is not
-    # meaningfully defined for a `pull_request` ref.
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+    needs: [audit, check, test, build]
+    # Only a tag is ever published: by a push of one, or by the dispatch that
+    # `release` makes after tagging a merged release pull request. A dispatch
+    # against a branch runs the checks above and stops here.
+    if: >-
+      github.ref_type == 'tag' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
 
     permissions:
@@ -117,7 +218,7 @@ jobs:
         run: |
           VERSION="$(node -p 'require("./package.json").version')"
 
-          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "${VERSION}" ]; then
+          if [ "${GITHUB_REF_NAME}" != "${VERSION}" ]; then
               echo "Tag ${GITHUB_REF_NAME} does not match package version ${VERSION}" >&2
               exit 1
           fi

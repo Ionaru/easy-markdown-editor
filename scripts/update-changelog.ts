@@ -18,8 +18,9 @@ import { execFileSync } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import process from "node:process";
 
-import type { RefKind, Repository } from "./changelog/transform.ts";
+import type { MissingRefs, RefKind, Repository } from "./changelog/transform.ts";
 import {
+    auditRefs,
     ChangelogError,
     insertNumberDefinition,
     insertUserDefinition,
@@ -55,15 +56,24 @@ const readPackage = (): { version: string; repository: Repository } => {
     return { version, repository: parseRepository(url) };
 };
 
+/**
+ * An exported-but-empty `GITHUB_TOKEN` is common enough in CI wrappers that it
+ * has to fall through to the next candidate rather than shadow it, and an empty
+ * answer from `gh` has to stay `undefined` rather than become a `Bearer `
+ * header that GitHub answers with a 401.
+ */
 const resolveToken = (): string | undefined => {
-    const fromEnvironment = process.env["GITHUB_TOKEN"] ?? process.env["GH_TOKEN"];
-    if (fromEnvironment !== undefined && fromEnvironment !== "") return fromEnvironment;
+    for (const variable of ["GITHUB_TOKEN", "GH_TOKEN"]) {
+        const value = process.env[variable];
+        if (value !== undefined && value !== "") return value;
+    }
 
     try {
-        return execFileSync("gh", ["auth", "token"], {
+        const token = execFileSync("gh", ["auth", "token"], {
             encoding: "utf8",
             stdio: ["ignore", "pipe", "ignore"],
         }).trim();
+        return token === "" ? undefined : token;
     } catch {
         return undefined;
     }
@@ -105,19 +115,32 @@ const classify = async (
     }
 };
 
+const listRefs = (refs: MissingRefs): string =>
+    [
+        ...refs.numbers.map((number) => `[#${String(number)}]`),
+        ...refs.users.map((user) => `[@${user}]`),
+    ].join(", ");
+
+/**
+ * Entries are written with `[#123]` and `[@user]` shorthand and the matching
+ * definitions are generated at release time, so an undefined reference under
+ * `## [Unreleased]` is expected work rather than a fault. One a released
+ * section leans on is a fault: nothing will ever generate it.
+ */
 const check = (lines: readonly string[]): void => {
     validateStructure(lines);
 
-    const missing = missingRefs(lines);
-    if (missing.numbers.length > 0 || missing.users.length > 0) {
-        const items = [
-            ...missing.numbers.map((number) => `[#${String(number)}]`),
-            ...missing.users.map((user) => `[@${user}]`),
-        ];
-        throw new ChangelogError(`uses reference links with no definition: ${items.join(", ")}`);
+    const { pending, dangling } = auditRefs(lines);
+    if (dangling.numbers.length > 0 || dangling.users.length > 0) {
+        throw new ChangelogError(`uses reference links with no definition: ${listRefs(dangling)}`);
     }
 
     process.stdout.write(`${CHANGELOG_PATH} is well-formed\n`);
+    if (pending.numbers.length > 0 || pending.users.length > 0) {
+        process.stdout.write(
+            `${CHANGELOG_PATH}: ${listRefs(pending)} will be defined by the next release\n`,
+        );
+    }
 };
 
 const today = (): string => {
@@ -136,13 +159,18 @@ const release = async (lines: string[]): Promise<void> => {
     const missing = missingRefs(lines);
     const token = missing.numbers.length > 0 ? resolveToken() : undefined;
 
-    for (const number of missing.numbers) {
-        insertNumberDefinition(
-            lines,
+    // The lookups are independent, so they go out together rather than paying a
+    // round trip each while bumpp holds the release between the version write
+    // and the commit.
+    const classified = await Promise.all(
+        missing.numbers.map(async (number) => ({
             number,
-            await classify(number, repository, token),
-            repository,
-        );
+            kind: await classify(number, repository, token),
+        })),
+    );
+
+    for (const { number, kind } of classified) {
+        insertNumberDefinition(lines, number, kind, repository);
     }
     for (const user of missing.users) {
         insertUserDefinition(lines, user);

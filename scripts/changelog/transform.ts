@@ -15,10 +15,11 @@ export const USERS_ANCHOR = "<!-- Linked users -->";
 export const VERSIONS_ANCHOR = "<!-- Linked versions -->";
 
 const VERSION_HEADING = /^## \[([^\]]+)] - \d{4}-\d{2}-\d{2}$/;
-const USED_NUMBER = /\[#(\d+)](?!:)/g;
-const USED_USER = /\[@([\w-]+)](?!:)/g;
+const USED_NUMBER = /\[#(\d+)]/g;
+const USED_USER = /\[@([\w-]+)]/g;
 const DEFINED_NUMBER = /^\[#(\d+)]: (.+)$/;
 const DEFINED_USER = /^\[@([\w-]+)]: (.+)$/;
+const DEFINED_LABEL = /^\[([^\]]+)]: (.+)$/;
 
 /** A number is an issue or a pull request; GitHub shares one counter for both. */
 export type RefKind = "issues" | "pull";
@@ -34,14 +35,36 @@ export interface MissingRefs {
     users: string[];
 }
 
+/**
+ * References the entries use but never define, split by whether a release can
+ * still fix them: `pending` are used only under `## [Unreleased]`, where the
+ * next release generates their definitions, while `dangling` are used by an
+ * already-released section and so will never be generated at all.
+ */
+export interface RefAudit {
+    pending: MissingRefs;
+    dangling: MissingRefs;
+}
+
 /** Thrown for every recoverable problem so the caller decides how to report it. */
 export class ChangelogError extends Error {}
+
+/**
+ * The line ending the file mostly uses. Taking the majority rather than the
+ * first occurrence keeps one stray CRLF, pasted in from a Windows editor, from
+ * rewriting all of the other several hundred lines at release time.
+ */
+const dominantEol = (raw: string): string => {
+    const crlf = raw.split("\r\n").length - 1;
+    const lf = raw.split("\n").length - 1 - crlf;
+    return crlf > lf ? "\r\n" : "\n";
+};
 
 /** Splits into lines without the trailing empty element left by a final newline. */
 export const splitLines = (raw: string): { lines: string[]; eol: string } => {
     const lines = raw.split(/\r?\n/);
     if (lines.at(-1) === "") lines.pop();
-    return { lines, eol: raw.includes("\r\n") ? "\r\n" : "\n" };
+    return { lines, eol: dominantEol(raw) };
 };
 
 export const joinLines = (lines: readonly string[], eol: string): string => lines.join(eol) + eol;
@@ -68,54 +91,119 @@ export const findAnchor = (lines: readonly string[], anchor: string): number => 
     return index;
 };
 
+/** Whether a line ends the run of definitions that follows an anchor. */
+const closesBlock = (line: string | undefined): boolean =>
+    line === undefined || line === "" || line.startsWith("<!--");
+
 /**
  * Half-open range of the definition lines belonging to the block starting at
- * `anchorIndex`, i.e. everything up to the blank line that closes the block.
+ * `anchorIndex`: everything between the anchor's blank separator and whatever
+ * closes the block, which is a blank line, the anchor of the next block, or the
+ * end of the file. An empty block yields an empty range rather than running on
+ * into the block below it.
  */
 export const blockRange = (lines: readonly string[], anchorIndex: number): [number, number] => {
-    let start = anchorIndex + 1;
-    while (lines[start] === "") start += 1;
+    const start = lines[anchorIndex + 1] === "" ? anchorIndex + 2 : anchorIndex + 1;
 
     let end = start;
-    while (end < lines.length && lines[end] !== "") end += 1;
+    while (!closesBlock(lines[end])) end += 1;
 
     return [start, end];
 };
 
-const collectUsed = (text: string): { numbers: Set<number>; users: Set<string> } => ({
-    numbers: new Set([...text.matchAll(USED_NUMBER)].map(([, number]) => Number(number))),
-    users: new Set([...text.matchAll(USED_USER)].flatMap(([, user]) => user ?? [])),
-});
+interface Refs {
+    numbers: Set<number>;
+    users: Set<string>;
+}
 
-const collectDefined = (lines: readonly string[]): { numbers: Set<number>; users: Set<string> } => {
-    const numbers = new Set<number>();
-    const users = new Set<string>();
+/**
+ * Splits lines into the references they define and the ones they merely use. A
+ * line is a definition when it matches a definition pattern in full, so a
+ * `[#42]:` that happens to fall inside prose still counts as a usage instead of
+ * disappearing from both halves.
+ */
+const collect = (lines: readonly string[]): { used: Refs; defined: Refs } => {
+    const used: Refs = { numbers: new Set(), users: new Set() };
+    const defined: Refs = { numbers: new Set(), users: new Set() };
 
     for (const line of lines) {
         const number = DEFINED_NUMBER.exec(line);
-        if (number?.[1] !== undefined) numbers.add(Number(number[1]));
+        if (number?.[1] !== undefined) {
+            defined.numbers.add(Number(number[1]));
+            continue;
+        }
 
         const user = DEFINED_USER.exec(line);
-        if (user?.[1] !== undefined) users.add(user[1]);
+        if (user?.[1] !== undefined) {
+            defined.users.add(user[1]);
+            continue;
+        }
+
+        for (const [, value] of line.matchAll(USED_NUMBER)) {
+            if (value !== undefined) used.numbers.add(Number(value));
+        }
+        for (const [, value] of line.matchAll(USED_USER)) {
+            if (value !== undefined) used.users.add(value);
+        }
     }
 
-    return { numbers, users };
+    return { used, defined };
+};
+
+const undefinedRefs = (used: Refs, defined: Refs, ignore?: MissingRefs): MissingRefs => ({
+    numbers: [...used.numbers]
+        .filter((number) => !defined.numbers.has(number) && !ignore?.numbers.includes(number))
+        .sort((a, b) => a - b),
+    users: [...used.users]
+        .filter((user) => !defined.users.has(user) && !ignore?.users.includes(user))
+        .sort(),
+});
+
+/** Reference links used somewhere in `lines` that `lines` never defines. */
+export const missingRefs = (lines: readonly string[]): MissingRefs => {
+    const { used, defined } = collect(lines);
+    return undefinedRefs(used, defined);
+};
+
+/** Half-open range covering `## [Unreleased]` and everything under it. */
+export const unreleasedRange = (lines: readonly string[]): [number, number] => {
+    const start = findAnchor(lines, UNRELEASED_HEADING);
+    const next = lines.findIndex((line, index) => index > start && VERSION_HEADING.test(line));
+
+    return [start, next === -1 ? lines.length : next];
 };
 
 /**
- * Reference links used somewhere in the entries but never defined. A usage
- * (`[#42]`) is distinguished from a definition (`[#42]: …`) by the colon.
+ * Splits the undefined references by whether the next release will generate
+ * them. Definitions are collected from the whole file, since they all live
+ * below the released sections, but usages are attributed per section.
  */
-export const missingRefs = (lines: readonly string[]): MissingRefs => {
-    const used = collectUsed(lines.join("\n"));
-    const defined = collectDefined(lines);
+export const auditRefs = (lines: readonly string[]): RefAudit => {
+    const [start, end] = unreleasedRange(lines);
+    const { defined } = collect(lines);
 
-    return {
-        numbers: [...used.numbers]
-            .filter((number) => !defined.numbers.has(number))
-            .sort((a, b) => a - b),
-        users: [...used.users].filter((user) => !defined.users.has(user)).sort(),
-    };
+    const { used: unreleased } = collect(lines.slice(start, end));
+    const { used: released } = collect([...lines.slice(0, start), ...lines.slice(end)]);
+
+    // A reference used by a released section too is dangling rather than
+    // pending: promoting `## [Unreleased]` will not rescue it.
+    const dangling = undefinedRefs(released, defined);
+
+    return { pending: undefinedRefs(unreleased, defined, dangling), dangling };
+};
+
+/** Version headings, `[Unreleased]` included, that no compare link resolves. */
+const missingVersionLinks = (lines: readonly string[]): string[] => {
+    const defined = new Set(
+        lines.flatMap((line) => {
+            const label = DEFINED_LABEL.exec(line)?.[1];
+            return label === undefined ? [] : [label];
+        }),
+    );
+
+    const headings = lines.flatMap((line) => VERSION_HEADING.exec(line)?.[1] ?? []);
+
+    return ["Unreleased", ...headings].filter((version) => !defined.has(version));
 };
 
 /** Throws unless every structural marker this script relies on is present. */
@@ -129,6 +217,13 @@ export const validateStructure = (lines: readonly string[]): void => {
     ]) {
         findAnchor(lines, anchor);
     }
+
+    const undefinedVersions = missingVersionLinks(lines);
+    if (undefinedVersions.length > 0) {
+        throw new ChangelogError(
+            `has version headings with no compare link: ${undefinedVersions.join(", ")}`,
+        );
+    }
 };
 
 /**
@@ -136,11 +231,8 @@ export const validateStructure = (lines: readonly string[]): void => {
  * `## [Unreleased]` above it. Returns the version it now compares against.
  */
 export const promoteUnreleased = (lines: string[], version: string, date: string): string => {
-    const unreleasedIndex = findAnchor(lines, UNRELEASED_HEADING);
+    const [unreleasedIndex, previousIndex] = unreleasedRange(lines);
 
-    const previousIndex = lines.findIndex(
-        (line, index) => index > unreleasedIndex && VERSION_HEADING.test(line),
-    );
     const previousVersion = VERSION_HEADING.exec(lines[previousIndex] ?? "")?.[1];
     if (previousVersion === undefined) {
         throw new ChangelogError(
@@ -149,6 +241,9 @@ export const promoteUnreleased = (lines: string[], version: string, date: string
     }
     if (previousVersion === version) {
         throw new ChangelogError(`already has a "${version}" section`);
+    }
+    if (lines.slice(unreleasedIndex + 1, previousIndex).every((line) => line === "")) {
+        throw new ChangelogError(`has no entries under "${UNRELEASED_HEADING}" to release`);
     }
 
     lines.splice(unreleasedIndex, 1, UNRELEASED_HEADING, "", `## [${version}] - ${date}`);
@@ -177,6 +272,20 @@ export const updateVersionLinks = (
     );
 };
 
+/**
+ * Appends a definition to a block. A block that was empty has no closing blank
+ * line of its own to push down, so one is added and the anchor below it keeps
+ * its blank separator.
+ */
+const appendDefinition = (
+    lines: string[],
+    [start, end]: [number, number],
+    definition: string,
+): void => {
+    const closingBlank = start === end && lines[end] !== "" ? [""] : [];
+    lines.splice(end, 0, definition, ...closingBlank);
+};
+
 /** Adds an issue or pull-request definition to its block, kept descending by number. */
 export const insertNumberDefinition = (
     lines: string[],
@@ -185,10 +294,11 @@ export const insertNumberDefinition = (
     repository: Repository,
 ): void => {
     const definition = `[#${String(number)}]: ${repository.url}/${kind}/${String(number)}`;
-    const [start, end] = blockRange(
+    const range = blockRange(
         lines,
         findAnchor(lines, kind === "pull" ? PRS_ANCHOR : ISSUES_ANCHOR),
     );
+    const [start, end] = range;
 
     for (let index = start; index < end; index += 1) {
         const existing = DEFINED_NUMBER.exec(lines[index] ?? "");
@@ -198,7 +308,7 @@ export const insertNumberDefinition = (
         }
     }
 
-    lines.splice(end, 0, definition);
+    appendDefinition(lines, range, definition);
 };
 
 /**
@@ -206,6 +316,6 @@ export const insertNumberDefinition = (
  * rather than sorted, so new names are appended instead of merged into a sort.
  */
 export const insertUserDefinition = (lines: string[], user: string): void => {
-    const [, end] = blockRange(lines, findAnchor(lines, USERS_ANCHOR));
-    lines.splice(end, 0, `[@${user}]: https://github.com/${user}`);
+    const range = blockRange(lines, findAnchor(lines, USERS_ANCHOR));
+    appendDefinition(lines, range, `[@${user}]: https://github.com/${user}`);
 };

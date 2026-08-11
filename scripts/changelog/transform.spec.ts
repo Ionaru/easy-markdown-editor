@@ -1,7 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/no-shadow
 import { describe, expect, it } from "vite-plus/test";
 
 import {
+    auditRefs,
     blockRange,
     ChangelogError,
     findAnchor,
@@ -12,6 +12,7 @@ import {
     parseRepository,
     promoteUnreleased,
     splitLines,
+    unreleasedRange,
     updateVersionLinks,
     validateStructure,
 } from "./transform.ts";
@@ -76,6 +77,11 @@ describe("splitLines / joinLines", () => {
     it("keeps a deliberate blank final line", () => {
         expect(splitLines("a\n\n").lines).toStrictEqual(["a", ""]);
     });
+
+    it("follows the majority so one stray CRLF does not convert the file", () => {
+        expect(splitLines("a\r\nb\nc\nd\n").eol).toBe("\n");
+        expect(splitLines("a\nb\r\nc\r\nd\r\n").eol).toBe("\r\n");
+    });
 });
 
 describe("parseRepository", () => {
@@ -111,6 +117,15 @@ describe("blockRange", () => {
     it("stops at the end of the file", () => {
         expect(blockRange(["<!-- A -->", "", "one"], 0)).toStrictEqual([2, 3]);
     });
+
+    it("reports an empty range instead of running into the next block", () => {
+        expect(blockRange(["<!-- A -->", "", "", "<!-- B -->", "", "one", ""], 0)).toStrictEqual([
+            2, 2,
+        ]);
+        expect(blockRange(["<!-- A -->", "", "<!-- B -->", "", "one", ""], 0)).toStrictEqual([
+            2, 2,
+        ]);
+    });
 });
 
 describe("missingRefs", () => {
@@ -123,6 +138,52 @@ describe("missingRefs", () => {
             numbers: [],
             users: [],
         });
+    });
+
+    it("still sees a reference that prose happens to follow with a colon", () => {
+        expect(
+            missingRefs(["- Fixed [#42]: it broke in Safari (Thanks to [@bob]: nice)."]),
+        ).toStrictEqual({ numbers: [42], users: ["bob"] });
+    });
+});
+
+describe("auditRefs", () => {
+    it("treats references under Unreleased as pending, not dangling", () => {
+        expect(auditRefs(fixture())).toStrictEqual({
+            pending: { numbers: [42], users: ["someone"] },
+            dangling: { numbers: [], users: [] },
+        });
+    });
+
+    it("reports a reference a released section leaves undefined", () => {
+        const lines = fixture().filter(
+            (line) => line !== "[#7]: https://github.com/Ionaru/easy-markdown-editor/issues/7",
+        );
+
+        expect(auditRefs(lines).dangling).toStrictEqual({ numbers: [7], users: [] });
+    });
+
+    it("counts a reference used by both sections as dangling only", () => {
+        const lines = fixture().map((line) =>
+            line === "- A thing (Thanks to [@someone], [#42])."
+                ? "- A thing (Thanks to [@someone], [#42], [#404])."
+                : line.replace("- A bug ([#7]).", "- A bug ([#7], [#404])."),
+        );
+
+        expect(auditRefs(lines)).toStrictEqual({
+            pending: { numbers: [42], users: ["someone"] },
+            dangling: { numbers: [404], users: [] },
+        });
+    });
+});
+
+describe("unreleasedRange", () => {
+    it("stops at the first released version heading", () => {
+        const lines = fixture();
+        const [start, end] = unreleasedRange(lines);
+
+        expect(lines[start]).toBe("## [Unreleased]");
+        expect(lines[end]).toBe("## [2.21.0] - 2026-05-03");
     });
 });
 
@@ -137,6 +198,12 @@ describe("validateStructure", () => {
         expect(() => {
             validateStructure(fixture().filter((line) => line !== "## [Unreleased]"));
         }).toThrow(ChangelogError);
+    });
+
+    it("rejects a version heading whose compare link is missing", () => {
+        expect(() => {
+            validateStructure(fixture().filter((line) => !line.startsWith("[2.21.0]: ")));
+        }).toThrow(/no compare link: 2\.21\.0/);
     });
 });
 
@@ -162,6 +229,11 @@ describe("promoteUnreleased", () => {
         expect(() => promoteUnreleased(lines, "1.0.0", "2026-08-09")).toThrow(
             /no released version/,
         );
+    });
+
+    it("refuses to release an empty Unreleased section", () => {
+        const lines = ["# Changelog", "", "## [Unreleased]", "", "## [2.21.0] - 2026-05-03", ""];
+        expect(() => promoteUnreleased(lines, "3.0.0", "2026-08-09")).toThrow(/no entries/);
     });
 });
 
@@ -217,6 +289,19 @@ describe("insertNumberDefinition", () => {
             `[#7]: ${REPOSITORY.url}/issues/7`,
         ]);
         expect(definitionsIn(lines, "<!-- Linked PRs -->")).toHaveLength(2);
+    });
+
+    it("fills an empty block without disturbing the one below it", () => {
+        const lines = fixture().filter((line) => !line.startsWith("[#7]: "));
+        insertNumberDefinition(lines, 500, "issues", REPOSITORY);
+
+        expect(definitionsIn(lines, "<!-- Linked issues -->")).toStrictEqual([
+            `[#500]: ${REPOSITORY.url}/issues/500`,
+        ]);
+        expect(definitionsIn(lines, "<!-- Linked PRs -->")).toStrictEqual([
+            `[#631]: ${REPOSITORY.url}/pull/631`,
+            `[#19]: ${REPOSITORY.url}/pull/19`,
+        ]);
     });
 });
 

@@ -40,12 +40,40 @@ export default defineConfig({
         },
     },
     test: {
-        browser: {
-            enabled: true,
-            provider: playwright(),
-            headless: true,
-            instances: [{ browser: "chromium" }, { browser: "firefox" }, { browser: "webkit" }],
-        },
+        // Splitting these keeps the release tooling's unit tests, which touch no
+        // DOM at all, out of the browser matrix instead of running them once per
+        // browser. Only `projects` is consulted once it is set, so the browser
+        // configuration has to live inside its project rather than out here.
+        projects: [
+            {
+                extends: true,
+                test: {
+                    name: "node",
+                    environment: "node",
+                    include: ["scripts/**/*.spec.ts"],
+                },
+            },
+            {
+                extends: true,
+                test: {
+                    name: "browser",
+                    include: ["src/**/*.spec.ts"],
+                    browser: {
+                        enabled: true,
+                        provider: playwright(),
+                        headless: true,
+                        // Named explicitly: an instance of a project that has a
+                        // name of its own would otherwise be "browser (chromium)",
+                        // and CI selects these by the bare browser name.
+                        instances: [
+                            { browser: "chromium", name: "chromium" },
+                            { browser: "firefox", name: "firefox" },
+                            { browser: "webkit", name: "webkit" },
+                        ],
+                    },
+                },
+            },
+        ],
     },
     lint: {
         options: {

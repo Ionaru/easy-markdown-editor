@@ -20,7 +20,7 @@ overrides:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@codemirror/commands':
         specifier: ^6.10.4
         version: 6.10.4
@@ -48,16 +48,6 @@ importers:
       '@lezer/markdown':
         specifier: ^1.7.2
         version: 1.7.2
-      dompurify:
-        specifier: ^3.4.13
-        version: 3.4.13
-      escape-string-regexp:
-        specifier: ^5.0.0
-        version: 5.0.0
-      marked:
-        specifier: ^18.0.9
-        version: 18.0.9
-    devDependencies:
       '@tsdown/css':
         specifier: ^0.22.14
         version: 0.22.14(jiti@2.7.0)(postcss@8.5.26)(sass-embedded@1.100.0)(sass@1.100.0)(tsdown@0.22.14)(yaml@2.9.0)
@@ -70,6 +60,15 @@ importers:
       bumpp:
         specifier: ^12.2.0
         version: 12.2.0
+      dompurify:
+        specifier: ^3.4.13
+        version: 3.4.13
+      escape-string-regexp:
+        specifier: ^5.0.0
+        version: 5.0.0
+      marked:
+        specifier: ^18.0.9
+        version: 18.0.9
       playwright:
         specifier: ^1.62.1
         version: 1.62.1
