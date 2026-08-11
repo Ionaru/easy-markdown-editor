@@ -41,6 +41,9 @@ jobs:
   # push, tag and dispatch and false only when a pull request actually closes.
   # Closing one runs `release` or nothing at all; the merge itself is checked by
   # the push build of the base branch.
+  # Gates everything below: there is no point checking, testing, building or
+  # publishing a tree that ships a vulnerable dependency. Reads the lockfile
+  # directly, so it skips the dependency install and stays short.
   audit:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
@@ -53,12 +56,14 @@ jobs:
           install: "false"
 
       # Every dependency is inlined into `dist/index.mjs`, so there is no
-      # production subset to audit: the whole tree is what ships. `--level high`
-      # keeps an unfixable low-severity advisory in a build-time package from
-      # blocking unrelated work, and a registry outage is not a build failure.
+      # production subset to audit: the whole tree is what ships. Since this
+      # gates the whole pipeline, `--level high` is what keeps an unfixable
+      # low-severity advisory in a build-time package from blocking all work,
+      # and a registry outage is not a build failure.
       - run: vp pm audit --level high -- --ignore-registry-errors
 
   check:
+    needs: audit
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
@@ -75,6 +80,7 @@ jobs:
       - run: vp run changelog:check
 
   test:
+    needs: audit
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
@@ -97,6 +103,7 @@ jobs:
       - run: vp test --project ${{ matrix.project }}
 
   build:
+    needs: audit
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
 
