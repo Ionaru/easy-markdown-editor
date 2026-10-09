@@ -11,29 +11,49 @@ export type MarkerConfig =
     | { target: "ol"; delim: OlDelimiter }
     | { target: "checklist" };
 
-const CHECKLIST_RE = /^([*\-+]|\d{1,9}[.)]) \[[\sxX]\] /;
-const ORDERED_RE = /^(\d{1,9})([.)]) /;
-const UL_RE = /^[*\-+] /;
+// Each pattern allows leading indentation so nested list items are detected.
+const CHECKLIST_RE = /^([ \t]*)([*\-+]|\d{1,9}[.)]) \[[\sxX]\] /;
+const ORDERED_RE = /^([ \t]*)(\d{1,9})([.)]) /;
+const UL_RE = /^([ \t]*)[*\-+] /;
 
 interface LineMatch {
     type: ListType;
+    /** Length of the leading indentation, which is preserved on toggle. */
+    indentLength: number;
+    /** Length from the start of the line to the end of the marker. */
     markerLength: number;
+    /** Length of the host list marker hosting a checklist, after the indent. */
     hostPrefixLength: number;
 }
 
 const detectLine = (text: string): LineMatch | null => {
     const checklist = CHECKLIST_RE.exec(text);
-    if (checklist?.[1]) {
+    if (checklist?.[2]) {
         return {
             type: "checklist",
+            indentLength: checklist[1]?.length ?? 0,
             markerLength: checklist[0].length,
-            hostPrefixLength: checklist[1].length + 1,
+            hostPrefixLength: checklist[2].length + 1,
         };
     }
     const ordered = ORDERED_RE.exec(text);
-    if (ordered) return { type: "ol", markerLength: ordered[0].length, hostPrefixLength: 0 };
+    if (ordered) {
+        return {
+            type: "ol",
+            indentLength: ordered[1]?.length ?? 0,
+            markerLength: ordered[0].length,
+            hostPrefixLength: 0,
+        };
+    }
     const unordered = UL_RE.exec(text);
-    if (unordered) return { type: "ul", markerLength: unordered[0].length, hostPrefixLength: 0 };
+    if (unordered) {
+        return {
+            type: "ul",
+            indentLength: unordered[1]?.length ?? 0,
+            markerLength: unordered[0].length,
+            hostPrefixLength: 0,
+        };
+    }
     return null;
 };
 
@@ -76,14 +96,14 @@ export const toggleList = (editor: EditorView, config: MarkerConfig): void => {
     const firstLine = entries[0]?.line;
     if (!allTarget && config.target === "ol" && firstLine && firstLine.number > 1) {
         const prevMatch = ORDERED_RE.exec(state.doc.line(firstLine.number - 1).text);
-        if (prevMatch) start = Number(prevMatch[1]) + 1;
+        if (prevMatch) start = Number(prevMatch[2]) + 1;
     }
 
     const changeSpec = entries.map(({ line, match }, i) => {
         const stripping = allTarget && match;
         const skip = stripping && match.type === "checklist" ? match.hostPrefixLength : 0;
         return {
-            from: line.from + skip,
+            from: line.from + (match?.indentLength ?? 0) + skip,
             to: line.from + (match?.markerLength ?? 0),
             insert: stripping ? "" : markerFor(config, start + i),
         };

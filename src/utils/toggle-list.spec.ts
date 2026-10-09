@@ -332,3 +332,53 @@ describe("toggleList — orderedListDelimiter option", () => {
         expect(editor.state.doc.toString()).toBe("1. foo");
     });
 });
+
+describe("indented list items", () => {
+    it.each<[string, ListType]>([
+        ["\t- [ ] task", "checklist"],
+        ["  * [x] task", "checklist"],
+        ["    1. [ ] task", "checklist"],
+        ["\t* foo", "ul"],
+        ["  - foo", "ul"],
+        ["\t1. foo", "ol"],
+        ["   2) foo", "ol"],
+    ])("checkList detects %j as %s", (document, target) => {
+        expect.assertions(1);
+
+        expect(checkList(getEditor(document, { anchor: 0 }), target)).toBe(true);
+    });
+
+    it.each<[string, ListType, string]>([
+        ["\t- [ ] task", "checklist", "\t- task"],
+        ["  * foo", "ul", "  foo"],
+        ["\t1. foo", "ol", "\tfoo"],
+    ])("toggles %j off with target=%s, keeping the indent", (initial, target, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(initial, { anchor: initial.length });
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+
+    it.each<[string, ListType, string]>([
+        ["\t- [ ] task", "ul", "\t* task"],
+        ["  * foo", "checklist", "  - [ ] foo"],
+        ["\t- foo", "ol", "\t1. foo"],
+        ["    1. foo", "ul", "    * foo"],
+    ])("rewrites %j to target=%s, keeping the indent", (initial, target, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(initial, { anchor: initial.length });
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+
+    it("continues numbering after an indented ordered item", () => {
+        expect.assertions(1);
+
+        const document = "  4. existing\nfoo";
+        const editor = getEditor(document, { anchor: document.length });
+        toggleList(editor, configFor("ol"));
+        expect(editor.state.doc.toString()).toBe("  4. existing\n5. foo");
+    });
+});
