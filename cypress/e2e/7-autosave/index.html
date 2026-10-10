@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Autosave status</title>
+    <link rel="stylesheet" href="../../../dist/easymde.min.css">
+    <script src="../../../dist/easymde.min.js"></script>
+</head>
+<body>
+    <textarea id="first"></textarea>
+    <textarea id="second"></textarea>
+    <textarea id="disabled"></textarea>
+    <textarea id="without-status"></textarea>
+    <script>
+        localStorage.clear();
+        function editor(id, autosave, status) {
+            return new EasyMDE({
+                element: document.getElementById(id),
+                autoDownloadFontAwesome: false,
+                spellChecker: false,
+                status: status || ['autosave'],
+                autosave: autosave,
+            });
+        }
+        window.editors = {
+            first: editor('first', { enabled: true, uniqueId: 'first', text: 'First saved: ' }),
+            second: editor('second', { enabled: true, uniqueId: 'second', text: 'Second saved: ' }),
+            disabled: editor('disabled', { enabled: false, uniqueId: 'disabled' }),
+            withoutStatus: editor('without-status', { enabled: true, uniqueId: 'without-status' }, ['lines']),
+        };
+    </script>
+</body>
+</html>
