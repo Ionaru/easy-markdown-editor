@@ -2392,7 +2392,7 @@ EasyMDE.prototype.autosave = function () {
             localStorage.removeItem('smde_' + this.options.autosave.uniqueId);
         }
 
-        var el = document.getElementById('autosaved');
+        var el = document.getElementById('autosaved-' + this.options.autosave.uniqueId);
         if (el != null && el != undefined && el != '') {
             var d = new Date();
             var dd = new Intl.DateTimeFormat([this.options.autosave.timeFormat.locale, 'en-US'], this.options.autosave.timeFormat.format).format(d);
@@ -2814,7 +2814,7 @@ EasyMDE.prototype.createStatusbar = function (status) {
             } else if (name === 'autosave') {
                 defaultValue = function (el) {
                     if (options.autosave != undefined && options.autosave.enabled === true) {
-                        el.setAttribute('id', 'autosaved');
+                        el.setAttribute('id', 'autosaved-' + options.autosave.uniqueId);
                     }
                 };
             } else if (name === 'upload-image') {
