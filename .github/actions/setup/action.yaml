@@ -15,14 +15,15 @@ runs:
   using: composite
 
   steps:
-    - uses: voidzero-dev/setup-vp@v1
+    # The dependency cache follows `install`: a job that installs nothing would
+    # still save whatever store it restored, and after a lockfile change that is
+    # the previous lockfile's store filed under the new key, which the installing
+    # jobs then hit exactly and never correct.
+    - uses: voidzero-dev/setup-vp@v1.22.0
       with:
         node-version: "24"
-        cache: true
-
-    - if: inputs.install == 'true'
-      run: vp install
-      shell: bash
+        cache: ${{ inputs.install }}
+        run-install: ${{ inputs.install }}
 
     # Browser-mode tests run in real browsers via the Playwright provider, so the
     # browser binary and its system dependencies must be present.

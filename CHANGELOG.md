@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
+### Fixed
+
+- Security issues in the bundled `dompurify` dependency.
+
 ## [3.0.0-beta.1] - 2026-08-09
 
 ### BREAKING CHANGES

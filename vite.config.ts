@@ -6,7 +6,7 @@ export default defineConfig({
         {
             target: ["chrome147", "firefox150", "safari26"],
             dts: {
-                tsgo: true,
+                generator: "tsgo",
             },
             sourcemap: true,
             exports: true,

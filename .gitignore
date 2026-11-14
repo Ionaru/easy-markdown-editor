@@ -18,6 +18,7 @@ coverage/
 .playwright-mcp/
 __screenshots__/
 .vitest-attachments
+.vitest/
 
 CLAUDE.md
 .claude/
