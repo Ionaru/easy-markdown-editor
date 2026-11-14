@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 ### Fixed
 
+- Security issues in the bundled `dompurify` dependency.
 - Toolbar list buttons (task, unordered and ordered) not detecting indented list items, which inserted a second marker at the start of the line ([#635]). Indentation is now kept, and nested lines are numbered per level.
 
 ## [3.0.0-beta.1] - 2026-08-09

@@ -196,8 +196,8 @@ class HelloPlugin implements IEasyMDEPlugin {
 ### 6.2 CodeMirror: extra keymap snippet
 
 ```ts
-import { keymap } from "@codemirror/view";
 import { Extension } from "@codemirror/state";
+import { keymap } from "@codemirror/view";
 
 const bang: Extension = keymap.of([{ key: "Ctrl-b", run: () => true }]);
 // Pass `bang` via future `codemirrorExtensions` option.

@@ -40,6 +40,7 @@ const EasyMDE = require("easymde"); // or: import EasyMDE from "easymde";
 
 ```ts
 import { EasyMDE } from "easymde";
+
 import "easymde/style.css";
 
 const textarea = document.querySelector<HTMLTextAreaElement>("textarea");
