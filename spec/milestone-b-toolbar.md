@@ -121,7 +121,10 @@ Update `defaultToolbar` to wire the action and active state.
 - When adding: number the lines starting from `1` (or continue from the preceding list item if the selection is inside an existing list).
 - When removing: strip the `N. ` / `N) ` prefix from all lines.
 - Detection regex: `^(\d{1,9})([.)]) ` — 1–9 digits per CommonMark §5.2, either delimiter.
-- "Inside an existing list" means **the immediately preceding line carries an ordered marker (either delimiter)**; blank-line-separated runs start a fresh `1` per CommonMark §5.4.
+- "Inside an existing list" means **the immediately preceding line carries an ordered marker (either delimiter) at the same indent column as the first selected line**; blank-line-separated runs start a fresh `1` per CommonMark §5.4.
+- Numbering is per indent level: a deeper line opens a nested level counting from `1`, a line at the same column continues its level, and a shallower line closes the deeper levels (`a`, `\tb`, `\tc`, `d` becomes `1. a`, `\t1. b`, `\t2. c`, `2. d`).
+
+**Indentation** ([#635](https://github.com/Ionaru/easy-markdown-editor/issues/635)). All three list buttons (unordered, ordered, task) detect their markers after any leading indentation of spaces and tabs, so nested items toggle like top-level ones. Every operation keeps the indent: stripping and swapping act on the marker after it, and a bare indented line gets its marker after the indent (`\tfoo` becomes `\t* foo`). Indent columns are compared with tabs expanded to `state.tabSize`. Only spaces and tabs count as indentation; a nested item cannot be told apart from an indented code block by a line regex, so 4+ columns of indent are treated as nesting.
 
 Active state for both: `checkLine` (or `checkList` for the unified utility) with the appropriate prefix; the OL active check returns `true` for either delimiter.
 
@@ -303,7 +306,7 @@ Image upload (paste / drop / file dialog) is a separate feature tracked in Miles
 
 Wire into `defaultToolbar` (V2 includes a task-list control in its default set).
 
-**Detection regex.** `^(?:[*\-+]|\d{1,9}[.)]) \[[\sxX]\] ` — matches a task marker hosted on **any** list-item kind (bullet `*`/`-`/`+` or ordered `N.`/`N)`), with any whitespace character (space or tab) inside the brackets.
+**Detection regex.** `^(?:[*\-+]|\d{1,9}[.)]) \[[\sxX]\] `, applied after any leading indentation (see B4) — matches a task marker hosted on **any** list-item kind (bullet `*`/`-`/`+` or ordered `N.`/`N)`), with any whitespace character (space or tab) inside the brackets.
 
 **Emission.** New items always emit `- [ ] ` (the canonical bullet + unchecked form). Pre-existing host markers are preserved on swap (e.g. `1. foo` → toggle checklist → `1. [ ] foo` would be valid GFM, but the current swap rewrites the whole marker to `- [ ] foo` — see open question below).
 
