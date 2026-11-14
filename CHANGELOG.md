@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 ### Fixed
 
 - Security issues in the bundled `dompurify` dependency.
+- Toolbar list buttons (task, unordered and ordered) not detecting indented list items, which inserted a second marker at the start of the line ([#635]). Indentation is now kept, and nested lines are numbered per level.
 
 ## [3.0.0-beta.1] - 2026-08-09
 
@@ -407,6 +408,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked issues -->
 
+[#635]: https://github.com/Ionaru/easy-markdown-editor/issues/635
 [#611]: https://github.com/Ionaru/easy-markdown-editor/issues/611
 [#514]: https://github.com/Ionaru/easy-markdown-editor/issues/514
 [#493]: https://github.com/Ionaru/easy-markdown-editor/issues/493

@@ -332,3 +332,183 @@ describe("toggleList — orderedListDelimiter option", () => {
         expect(editor.state.doc.toString()).toBe("1. foo");
     });
 });
+
+const whole = (document: string) => ({ anchor: 0, head: document.length });
+
+describe("checkList with indentation (B1)", () => {
+    it.each<[string, ListType, boolean]>([
+        ["\t- [ ] task", "checklist", true],
+        ["\t- [ ] task", "ul", false],
+        ["  * foo", "ul", true],
+        ["    1. foo", "ol", true],
+        ["\t\t3) foo", "ol", true],
+        [" \t+ [x] foo", "checklist", true],
+        ["\t1. [X] foo", "checklist", true],
+        ["\t1. [X] foo", "ol", false],
+        ["\tfoo", "ul", false],
+        ["\tfoo", "ol", false],
+        ["\tfoo", "checklist", false],
+        ["\t1234567890. foo", "ol", false],
+        [" - foo", "ul", false],
+    ])("document %j target=%s gives %s", (document, target, expected) => {
+        expect.assertions(1);
+
+        expect(checkList(getEditor(document, { anchor: 0 }), target)).toBe(expected);
+    });
+
+    it("returns true when every selected line is an indented or unindented checklist", () => {
+        expect.assertions(1);
+
+        const document = "- [ ] a\n\t- [x] b\n\t\t* [ ] c";
+        expect(checkList(getEditor(document, whole(document)), "checklist")).toBe(true);
+    });
+
+    it("returns false when a selected indented line is not a checklist", () => {
+        expect.assertions(1);
+
+        const document = "\t- [ ] a\n\t* b";
+        expect(checkList(getEditor(document, whole(document)), "checklist")).toBe(false);
+    });
+});
+
+describe("toggleList with indentation: toggle off (B2)", () => {
+    it.each<[string, ListType, string]>([
+        ["\t* foo", "ul", "\tfoo"],
+        ["  1. foo", "ol", "  foo"],
+        ["    3) foo", "ol", "    foo"],
+        ["\t- [ ] foo", "checklist", "\t- foo"],
+        ["\t1. [x] foo", "checklist", "\t1. foo"],
+    ])("strips %j when target=%s", (initial, target, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(initial, { anchor: 0 });
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+
+    it("strips checklist markers across mixed indentation", () => {
+        expect.assertions(1);
+
+        const document = "- [ ] a\n\t- [x] b";
+        const editor = getEditor(document, whole(document));
+        toggleList(editor, configFor("checklist"));
+        expect(editor.state.doc.toString()).toBe("- a\n\t- b");
+    });
+});
+
+describe("toggleList with indentation: swap (B3)", () => {
+    it.each<[string, ListType, string]>([
+        ["\t* foo", "ol", "\t1. foo"],
+        ["\t- [ ] foo", "ul", "\t* foo"],
+        ["  1. foo", "checklist", "  - [ ] foo"],
+        ["\t- foo", "checklist", "\t- [ ] foo"],
+    ])("rewrites %j to target=%s", (initial, target, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(initial, { anchor: 0 });
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+});
+
+describe("toggleList with indentation: bare lines (B4)", () => {
+    it.each<[string, ListType, string]>([
+        ["\tfoo", "ul", "\t* foo"],
+        ["\tfoo", "ol", "\t1. foo"],
+        ["\tfoo", "checklist", "\t- [ ] foo"],
+        ["  foo", "checklist", "  - [ ] foo"],
+    ])("puts the marker of %j after the indent for target=%s", (initial, target, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(initial, { anchor: 0 });
+        toggleList(editor, configFor(target));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+
+    it("round-trips an indented bare line with ul", () => {
+        expect.assertions(2);
+
+        const editor = getEditor("\tfoo", { anchor: 0 });
+        toggleList(editor, configFor("ul"));
+        expect(editor.state.doc.toString()).toBe("\t* foo");
+        toggleList(editor, configFor("ul"));
+        expect(editor.state.doc.toString()).toBe("\tfoo");
+    });
+});
+
+describe("toggleList with indentation: cursor mapping (B5)", () => {
+    it.each<[string, number, ListType, string, number]>([
+        ["\t- [ ] foo", 7, "checklist", "\t- foo", 3],
+        ["\t1. foo", 4, "checklist", "\t- [ ] foo", 7],
+        ["\t", 1, "ul", "\t* ", 3],
+    ])(
+        "%j with cursor %s and target=%s",
+        (initial, anchor, target, expectedDoc, expectedCursor) => {
+            expect.assertions(2);
+
+            const editor = getEditor(initial, { anchor });
+            toggleList(editor, configFor(target));
+            expect(editor.state.doc.toString()).toBe(expectedDoc);
+            expect(editor.state.selection.main.from).toBe(expectedCursor);
+        },
+    );
+});
+
+describe("toggleList with indentation: ol numbering per indent level (B6)", () => {
+    it.each<[string, string]>([
+        ["a\n\tb\n\tc\nd", "1. a\n\t1. b\n\t2. c\n2. d"],
+        ["a\n\tb\nc\n\td", "1. a\n\t1. b\n2. c\n\t1. d"],
+        ["a\n    b\n\tc", "1. a\n    1. b\n\t2. c"],
+        ["a\n\tb\n \tc", "1. a\n\t1. b\n \t2. c"],
+        ["\ta\n  b\nc", "\t1. a\n  1. b\n1. c"],
+        ["* a\n\t* b\n\t* c\n* d", "1. a\n\t1. b\n\t2. c\n2. d"],
+        ["1. a\n\t* b\n\t* c\n3. d", "1. a\n\t1. b\n\t2. c\n2. d"],
+    ])("numbers %j as %j", (document, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(document, whole(document));
+        toggleList(editor, configFor("ol"));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+
+    it("uses the configured delimiter for nested levels", () => {
+        expect.assertions(1);
+
+        const document = "a\n\tb";
+        const editor = getEditor(document, whole(document));
+        toggleList(editor, configFor("ol", ")"));
+        expect(editor.state.doc.toString()).toBe("1) a\n\t1) b");
+    });
+});
+
+describe("toggleList with indentation: ol continuation (B7)", () => {
+    it.each<[string, { anchor: number; head?: number }, OlDelimiter, string]>([
+        ["4. existing\na\nb", { anchor: 13, head: 15 }, ".", "4. existing\n5. a\n6. b"],
+        ["\t4. existing\n\ta", { anchor: 15 }, ".", "\t4. existing\n\t5. a"],
+        ["    2. x\n\ty", { anchor: 11 }, ".", "    2. x\n\t3. y"],
+        ["\t2. [ ] x\n\ty", { anchor: 12 }, ".", "\t2. [ ] x\n\t3. y"],
+        ["1. a\n\tb", { anchor: 7 }, ".", "1. a\n\t1. b"],
+        ["\t3. x\ny", { anchor: 7 }, ".", "\t3. x\n1. y"],
+        ["4. x\na\n\tb", { anchor: 5, head: 9 }, ".", "4. x\n5. a\n\t1. b"],
+        ["3) x\n\ty", { anchor: 7 }, ")", "3) x\n\t1) y"],
+    ])("numbers %j with selection %j", (document, selection, delim, expected) => {
+        expect.assertions(1);
+
+        const editor = getEditor(document, selection);
+        toggleList(editor, configFor("ol", delim));
+        expect(editor.state.doc.toString()).toBe(expected);
+    });
+});
+
+describe("toggleList with indentation: reported scenario for issue 635 (B8)", () => {
+    it("detects, toggles off and re-adds the task marker on an indented task item", () => {
+        expect.assertions(3);
+
+        const editor = getEditor("\t- [ ] task", { anchor: 11 });
+        expect(checkList(editor, "checklist")).toBe(true);
+        toggleList(editor, configFor("checklist"));
+        expect(editor.state.doc.toString()).toBe("\t- task");
+        toggleList(editor, configFor("checklist"));
+        expect(editor.state.doc.toString()).toBe("\t- [ ] task");
+    });
+});
