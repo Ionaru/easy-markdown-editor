@@ -12,6 +12,7 @@ npm install easymde@beta
 
 ```ts
 import { EasyMDE } from "easymde";
+
 import "easymde/style.css";
 
 const textarea = document.querySelector<HTMLTextAreaElement>("textarea");
@@ -184,8 +185,8 @@ A custom toolbar entry implements `IToolbarButtonOptions`:
 | `active` | `boolean \| ((editor, update) => boolean \| Promise<boolean>)` | Presence makes it a toggle button: the return value drives the `.enabled` class and `aria-pressed`.                                                                                     |
 
 ```ts
-import { registerIcons } from "easymde";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { registerIcons } from "easymde";
 
 registerIcons(faStar);
 
