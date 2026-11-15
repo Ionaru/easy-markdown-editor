@@ -498,3 +498,131 @@ describe("empty delimiter pairs", () => {
         expect(editor.state.selection.main.to).toBe(expectedCursor);
     });
 });
+
+describe("nesting inside an empty pair of another style", () => {
+    it.each<[string, string, number, string, string, number]>([
+        ["italic in bold pair", "****", 2, "*", "******", 3],
+        ["strikethrough in bold pair", "****", 2, "~~", "**~~~~**", 4],
+        ["bold in strikethrough pair", "~~~~", 2, "**", "~~****~~", 4],
+        ["italic in strikethrough pair", "~~~~", 2, "*", "~~**~~", 3],
+        ["bold in italic pair", "**", 1, "**", "******", 3],
+        ["italic in bold pair in text", "a **** b", 4, "*", "a ****** b", 5],
+        ["italic in bold pair on its own line", "foo\n****\nbar", 6, "*", "foo\n******\nbar", 7],
+        ["italic in underscore pair", "____", 2, "*", "__**__", 3],
+        ["bold in code pair", "``", 1, "**", "`****`", 3],
+        ["strikethrough in bold pair in parentheses", "(****)", 3, "~~", "(**~~~~**)", 5],
+        ["italic in strikethrough pair nested in bold", "**~~~~**", 4, "*", "**~~**~~**", 5],
+    ])(
+        "must insert the new pair at the cursor (%s)",
+        (_name, document, anchor, characters, expectedDoc, expectedCursor) => {
+            expect.assertions(3);
+
+            const editor = getEditor(document, { anchor });
+            toggleBlock(editor, characters);
+            expect(editor.state.doc.toString()).toBe(expectedDoc);
+            expect(editor.state.selection.main.from).toBe(expectedCursor);
+            expect(editor.state.selection.main.to).toBe(expectedCursor);
+        },
+    );
+
+    it("must put typed text between the new markers", () => {
+        expect.assertions(1);
+
+        const editor = getEditor("****", { anchor: 2 });
+        toggleBlock(editor, "*");
+        editor.dispatch(editor.state.replaceSelection("x"));
+        expect(editor.state.doc.toString()).toBe("***x***");
+    });
+
+    it.each<[string, number, string, string, BlockMatch | null]>([
+        ["****", 2, "*", "*", { from: 2, to: 4, content: "" }],
+        ["****", 2, "*", "**", { from: 1, to: 5, content: "" }],
+        ["****", 2, "~~", "~~", { from: 2, to: 6, content: "" }],
+        ["****", 2, "~~", "**", { from: 0, to: 8, content: "~~~~" }],
+        ["****", 2, "~~", "*", null],
+        ["~~~~", 2, "**", "**", { from: 2, to: 6, content: "" }],
+        ["~~~~", 2, "**", "~~", { from: 0, to: 8, content: "****" }],
+        ["~~~~", 2, "**", "*", null],
+        ["~~~~", 2, "*", "*", { from: 2, to: 4, content: "" }],
+        ["a **** b", 4, "*", "*", { from: 4, to: 6, content: "" }],
+        ["____", 2, "*", "*", { from: 2, to: 4, content: "" }],
+        ["(****)", 3, "~~", "~~", { from: 3, to: 7, content: "" }],
+    ])(
+        "must read the new style as active afterwards (%s, cursor %i, toggled %s, checked %s)",
+        (document, anchor, toggled, checked, expected) => {
+            expect.assertions(1);
+
+            const editor = getEditor(document, { anchor });
+            toggleBlock(editor, toggled);
+            expect(checkBlock(editor, checked)).toEqual(expected);
+        },
+    );
+
+    it.each<[string, number, string]>([
+        ["****", 2, "*"],
+        ["****", 2, "~~"],
+        ["~~~~", 2, "**"],
+        ["**", 1, "**"],
+    ])(
+        "must remove only the new pair when toggled twice (%s, cursor %i, %s)",
+        (document, anchor, characters) => {
+            expect.assertions(3);
+
+            const editor = getEditor(document, { anchor });
+            toggleBlock(editor, characters);
+            toggleBlock(editor, characters);
+            expect(editor.state.doc.toString()).toBe(document);
+            expect(editor.state.selection.main.from).toBe(anchor);
+            expect(editor.state.selection.main.to).toBe(anchor);
+        },
+    );
+
+    it("must nest inside an empty pair of punctuation that is not a style", () => {
+        expect.assertions(3);
+
+        const editor = getEditor('""', { anchor: 1 });
+        toggleBlock(editor, "**");
+        expect(editor.state.doc.toString()).toBe('"****"');
+        expect(editor.state.selection.main.from).toBe(3);
+        expect(editor.state.selection.main.to).toBe(3);
+    });
+
+    it.each<[string, string, number, number | undefined, string, string, number, number]>([
+        ["letters touch the run", "a****b", 3, undefined, "~~", "~~a****b~~", 0, 10],
+        [
+            "letters touch the run in bold text",
+            "**foo****bar**",
+            7,
+            undefined,
+            "~~",
+            "~~**foo****bar**~~",
+            0,
+            18,
+        ],
+        [
+            "letter right of the run",
+            "Some text **foo** more text",
+            11,
+            undefined,
+            "~~",
+            "Some text ~~**foo**~~ more text",
+            10,
+            21,
+        ],
+        ["different brackets", "()", 1, undefined, "**", "**()**", 0, 6],
+        ["selection not collapsed", "****", 1, 3, "~~", "~~****~~", 0, 8],
+        ["nothing after the cursor", "\u{1F600}", 2, undefined, "**", "**\u{1F600}**", 0, 6],
+        ["letters at the cursor", "Word", 2, undefined, "*", "*Word*", 0, 6],
+    ])(
+        "must keep wrapping when the rule does not apply (%s)",
+        (_name, document, anchor, head, characters, expectedDoc, expectedFrom, expectedTo) => {
+            expect.assertions(3);
+
+            const editor = getEditor(document, { anchor, head });
+            toggleBlock(editor, characters);
+            expect(editor.state.doc.toString()).toBe(expectedDoc);
+            expect(editor.state.selection.main.from).toBe(expectedFrom);
+            expect(editor.state.selection.main.to).toBe(expectedTo);
+        },
+    );
+});

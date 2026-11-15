@@ -30,6 +30,13 @@ export const toggleBlock = (editor: EditorView, characters: string) => {
                     range: EditorSelection.range(match.from, match.to - offset),
                 };
             }
+            if (isInsideEmptyPair(state)) {
+                const cursor = state.selection.main.from;
+                return {
+                    changes: [{ from: cursor, insert: characters + characters }],
+                    range: EditorSelection.cursor(cursor + characters.length),
+                };
+            }
             const { from, to } = expandSelection(state, characters, true);
             const text = state.sliceDoc(from, to);
             const range =
@@ -77,6 +84,31 @@ const findEmptyPair = (state: EditorState, characters: string): BlockMatch | nul
     if (isWordCharacter(state.sliceDoc(end, end + 1))) return null;
 
     return { from: start, to: end, content: "" };
+};
+
+/**
+ * Detects a collapsed cursor in the middle of a mirrored run of punctuation (`**|**`, `"|"`) that no
+ * letter or digit touches. There is no word to wrap there, so a new pair belongs at the cursor.
+ */
+const isInsideEmptyPair = (state: EditorState): boolean => {
+    const { from: cursor, to } = state.selection.main;
+    if (cursor !== to) return false;
+
+    const length = state.doc.length;
+    let depth = 0;
+    while (cursor - depth - 1 >= 0 && cursor + depth + 1 <= length) {
+        const before = state.sliceDoc(cursor - depth - 1, cursor - depth);
+        const after = state.sliceDoc(cursor + depth, cursor + depth + 1);
+        if (before !== after || /\s/.test(before) || isWordCharacter(before)) break;
+        depth++;
+    }
+    if (depth === 0) return false;
+
+    const left = cursor - depth - 1;
+    const right = cursor + depth;
+    if (left >= 0 && isWordCharacter(state.sliceDoc(left, left + 1))) return false;
+    if (right < length && isWordCharacter(state.sliceDoc(right, right + 1))) return false;
+    return true;
 };
 
 const findBlock = (state: EditorState, characters: string, minimal: boolean): BlockMatch | null => {
