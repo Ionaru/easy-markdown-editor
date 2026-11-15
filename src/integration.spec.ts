@@ -182,5 +182,53 @@ describe("editor integration", () => {
             expect(pressed("bold")).toBe("false");
             expect(pressed("italic")).toBe("false");
         });
+
+        it.each<[string, readonly string[], string, number, string, string, string]>([
+            ["bold then italic", ["bold", "italic"], "******", 3, "true", "true", "false"],
+            [
+                "bold then strikethrough",
+                ["bold", "strikethrough"],
+                "**~~~~**",
+                4,
+                "true",
+                "false",
+                "true",
+            ],
+            [
+                "strikethrough then bold",
+                ["strikethrough", "bold"],
+                "~~****~~",
+                4,
+                "true",
+                "false",
+                "true",
+            ],
+        ])(
+            "nests the second style inside the empty pair of the first (%s)",
+            async (_name, clicks, expectedValue, expectedCursor, bold, italic, strikethrough) => {
+                expect.assertions(5);
+                const editor = mountEditor("", document.body, { toolbar });
+
+                for (const name of clicks) {
+                    query<HTMLButtonElement>(
+                        document.body,
+                        `.easymde-toolbar button.${name}`,
+                    ).click();
+                    await settle(() => pressed(name) === "true");
+                }
+                await settle(
+                    () =>
+                        pressed("bold") === bold &&
+                        pressed("italic") === italic &&
+                        pressed("strikethrough") === strikethrough,
+                );
+
+                expect(editor.value).toBe(expectedValue);
+                expect(editor.codemirror.state.selection.main.from).toBe(expectedCursor);
+                expect(pressed("bold")).toBe(bold);
+                expect(pressed("italic")).toBe(italic);
+                expect(pressed("strikethrough")).toBe(strikethrough);
+            },
+        );
     });
 });
