@@ -46,11 +46,46 @@ export const toggleBlock = (editor: EditorView, characters: string) => {
     editor.focus();
 };
 
-const findBlock = (state: EditorState, characters: string, minimal: boolean): BlockMatch | null => {
+const matchWindow = (
+    state: EditorState,
+    characters: string,
+    minimal: boolean,
+): BlockMatch | null => {
     const { from, to } = expandSelection(state, characters, minimal);
     const escaped = escapeStringRegexp(characters);
     const match = new RegExp(`^${escaped}(.*)${escaped}$`, "s").exec(state.sliceDoc(from, to));
     if (!match) return null;
+    return { from, to, content: match[1] ?? "" };
+};
+
+const isWordCharacter = (char: string): boolean => /[\p{L}\p{N}]/u.test(char);
+
+/**
+ * Detects an empty pair of delimiters with the cursor exactly in the middle. The expansion in
+ * `expandSelection` needs content between the delimiters, so it can't settle on an empty pair.
+ */
+const findEmptyPair = (state: EditorState, characters: string): BlockMatch | null => {
+    const { from: cursor, to } = state.selection.main;
+    if (cursor !== to) return null;
+
+    const start = cursor - characters.length;
+    const end = cursor + characters.length;
+    if (start < 0 || end > state.doc.length) return null;
+    if (state.sliceDoc(start, cursor) !== characters || state.sliceDoc(cursor, end) !== characters)
+        return null;
+    if (isWordCharacter(state.sliceDoc(Math.max(0, start - 1), start))) return null;
+    if (isWordCharacter(state.sliceDoc(end, end + 1))) return null;
+
+    return { from: start, to: end, content: "" };
+};
+
+const findBlock = (state: EditorState, characters: string, minimal: boolean): BlockMatch | null => {
+    const expanded = matchWindow(state, characters, minimal);
+    const candidate =
+        expanded && expanded.content !== ""
+            ? expanded
+            : (findEmptyPair(state, characters) ?? expanded);
+    if (!candidate) return null;
 
     if (characters.length === 1) {
         const double = findBlock(state, characters.repeat(2), minimal);
@@ -58,7 +93,7 @@ const findBlock = (state: EditorState, characters: string, minimal: boolean): Bl
         if (double && !triple) return null;
     }
 
-    return { from, to, content: match[1] ?? "" };
+    return candidate;
 };
 
 const isBoundary = (char: string, minimal: boolean): boolean =>

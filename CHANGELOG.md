@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org).
 
 - Security issues in the bundled `dompurify` dependency.
 - Toolbar list buttons (task, unordered and ordered) not detecting indented list items, which inserted a second marker at the start of the line ([#635]). Indentation is now kept, and nested lines are numbered per level.
+- Toolbar showing the wrong state for an empty bold or strikethrough pair, such as the `****` left by clicking Bold with nothing selected: Italic showed as active instead of Bold ([#646]). Clicking the button again now removes the empty pair instead of adding another one.
 
 ## [3.0.0-beta.1] - 2026-08-09
 
@@ -408,6 +409,7 @@ Project forked from [SimpleMDE](https://github.com/sparksuite/simplemde-markdown
 
 <!-- Linked issues -->
 
+[#646]: https://github.com/Ionaru/easy-markdown-editor/issues/646
 [#635]: https://github.com/Ionaru/easy-markdown-editor/issues/635
 [#611]: https://github.com/Ionaru/easy-markdown-editor/issues/611
 [#514]: https://github.com/Ionaru/easy-markdown-editor/issues/514
