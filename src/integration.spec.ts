@@ -2,6 +2,7 @@ import { runScopeHandlers } from "@codemirror/view";
 import { afterEach, describe, expect, it } from "vite-plus/test";
 
 import { EasyMDE } from "./easymde.js";
+import type { InputOptions } from "./options.js";
 
 /**
  * End-to-end style tests that drive a fully-assembled editor (real default
@@ -39,10 +40,14 @@ const query = <T extends Element>(root: ParentNode, selector: string): T => {
 // Mount an editor with the real default toolbar (the shared test-utils helpers
 // default to toolbar:false). Optionally seed a value with a full-document
 // selection so formatting actions have something to wrap.
-const mountEditor = (value = "", parent: ParentNode = document.body): EasyMDE => {
+const mountEditor = (
+    value = "",
+    parent: ParentNode = document.body,
+    options: Pick<InputOptions, "toolbar"> = {},
+): EasyMDE => {
     const textArea = document.createElement("textarea");
     parent.append(textArea);
-    const editor = new EasyMDE({ element: textArea, trimInitialValue: false });
+    const editor = new EasyMDE({ element: textArea, trimInitialValue: false, ...options });
     if (value) {
         editor.value = value;
         editor.codemirror.dispatch({ selection: { anchor: 0, head: editor.value.length } });
@@ -126,5 +131,56 @@ describe("editor integration", () => {
         form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
 
         expect(query<HTMLTextAreaElement>(form, "textarea").value).toBe("submitted content");
+    });
+
+    describe("toolbar state for an empty delimiter pair", () => {
+        const pressed = (name: string): string | null =>
+            query<HTMLButtonElement>(document.body, `.easymde-toolbar button.${name}`).getAttribute(
+                "aria-pressed",
+            );
+        const toolbar = ["bold", "italic", "strikethrough"] as const;
+
+        it("marks only bold as pressed after bold is clicked on an empty document", async () => {
+            expect.assertions(4);
+            const editor = mountEditor("", document.body, { toolbar });
+
+            query<HTMLButtonElement>(document.body, ".easymde-toolbar button.bold").click();
+            await settle(() => pressed("bold") === "true");
+
+            expect(editor.value).toBe("****");
+            expect(pressed("bold")).toBe("true");
+            expect(pressed("italic")).toBe("false");
+            expect(pressed("strikethrough")).toBe("false");
+        });
+
+        it("removes the empty bold pair and unpresses bold when bold is clicked twice", async () => {
+            expect.assertions(2);
+            const editor = mountEditor("", document.body, { toolbar });
+
+            const bold = query<HTMLButtonElement>(document.body, ".easymde-toolbar button.bold");
+            bold.click();
+            await settle(() => pressed("bold") === "true");
+            bold.click();
+            await settle(() => editor.value === "" && pressed("bold") === "false");
+
+            expect(editor.value).toBe("");
+            expect(pressed("bold")).toBe("false");
+        });
+
+        it("marks only strikethrough as pressed after it is clicked on an empty document", async () => {
+            expect.assertions(4);
+            const editor = mountEditor("", document.body, { toolbar });
+
+            query<HTMLButtonElement>(
+                document.body,
+                ".easymde-toolbar button.strikethrough",
+            ).click();
+            await settle(() => pressed("strikethrough") === "true");
+
+            expect(editor.value).toBe("~~~~");
+            expect(pressed("strikethrough")).toBe("true");
+            expect(pressed("bold")).toBe("false");
+            expect(pressed("italic")).toBe("false");
+        });
     });
 });

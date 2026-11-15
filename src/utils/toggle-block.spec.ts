@@ -4,7 +4,7 @@ import { EditorView } from "@codemirror/view";
 // eslint-disable-next-line @typescript-eslint/no-shadow
 import { describe, expect, it } from "vite-plus/test";
 
-import { checkBlock, toggleBlock } from "./toggle-block.js";
+import { type BlockMatch, checkBlock, toggleBlock } from "./toggle-block.js";
 
 const getEditor = (document: string, selection?: { anchor: number; head?: number }) =>
     new EditorView({
@@ -391,5 +391,110 @@ describe("toggleBlock", () => {
         expect(editor.state.doc.toString()).toBe("*Word*");
         expect(editor.state.selection.main.from).toBe(0);
         expect(editor.state.selection.main.to).toBe(6);
+    });
+});
+
+describe("empty delimiter pairs", () => {
+    it.each<[string, string, number, string, BlockMatch | null]>([
+        ["bold pair", "****", 2, "**", { from: 0, to: 4, content: "" }],
+        ["bold pair is not italic", "****", 2, "*", null],
+        ["strikethrough pair", "~~~~", 2, "~~", { from: 0, to: 4, content: "" }],
+        ["underscore bold pair", "____", 2, "__", { from: 0, to: 4, content: "" }],
+        ["underscore bold pair is not italic", "____", 2, "_", null],
+        ["bold pair in text", "a **** b", 4, "**", { from: 2, to: 6, content: "" }],
+        ["bold pair in text is not italic", "a **** b", 4, "*", null],
+        ["strikethrough pair in text", "a ~~~~ b", 4, "~~", { from: 2, to: 6, content: "" }],
+        ["italic pair after trailing space", "hello **", 7, "*", { from: 6, to: 8, content: "" }],
+        ["code pair in text", "a `` b", 3, "`", { from: 2, to: 4, content: "" }],
+        ["bold pair on its own line", "foo\n****\nbar", 6, "**", { from: 4, to: 8, content: "" }],
+        ["bold pair in parentheses", "(****)", 3, "**", { from: 1, to: 5, content: "" }],
+        ["bold pair in parentheses is not italic", "(****)", 3, "*", null],
+        ["stacked italic pair", "******", 3, "*", { from: 2, to: 4, content: "" }],
+        ["stacked bold pair", "******", 3, "**", { from: 1, to: 5, content: "" }],
+        ["strikethrough nested in bold", "**~~~~**", 4, "~~", { from: 2, to: 6, content: "" }],
+    ])("must detect the empty pair (%s)", (_name, document, anchor, characters, expected) => {
+        expect.assertions(1);
+
+        const result = checkBlock(getEditor(document, { anchor }), characters);
+        expect(result).toEqual(expected);
+    });
+
+    it.each<[string, string, number, string]>([
+        ["letter before and after", "a****b", 3, "**"],
+        ["accented letters before and after", "é****é", 3, "**"],
+        ["digits before and after", "1~~~~2", 3, "~~"],
+        ["cursor between the opening stars of bold text", "Some text **foo** more text", 11, "*"],
+        ["cursor between the stars of a closing bold marker", "foo**", 4, "*"],
+    ])("must not detect an empty pair with %s", (_name, document, anchor, characters) => {
+        expect.assertions(1);
+
+        const result = checkBlock(getEditor(document, { anchor }), characters);
+        expect(result).toBeNull();
+    });
+
+    it.each<[string, string, number, string, BlockMatch]>([
+        ["italic", "*foo**bar*", 5, "*", { from: 0, to: 5, content: "foo" }],
+        ["bold", "**foo****bar**", 7, "**", { from: 0, to: 7, content: "foo" }],
+    ])(
+        "must prefer a non-empty %s match over an empty pair at the cursor",
+        (_name, document, anchor, characters, expected) => {
+            expect.assertions(1);
+
+            const result = checkBlock(getEditor(document, { anchor }), characters);
+            expect(result).toEqual(expected);
+        },
+    );
+
+    it.each<[string, string, string]>([
+        ["strikethrough", "~~~~", "~~"],
+        ["bold", "****", "**"],
+    ])(
+        "must not use the empty-pair rule for a non-empty %s selection",
+        (_name, document, characters) => {
+            expect.assertions(1);
+
+            const result = checkBlock(getEditor(document, { anchor: 1, head: 3 }), characters);
+            expect(result).toBeNull();
+        },
+    );
+
+    it.each(["**", "~~"])("must remove an empty %s pair when toggled twice", (characters) => {
+        expect.assertions(5);
+
+        const editor = getEditor("", { anchor: 0 });
+        toggleBlock(editor, characters);
+        expect(editor.state.doc.toString()).toBe(characters.repeat(2));
+        expect(editor.state.selection.main.from).toBe(characters.length);
+        toggleBlock(editor, characters);
+        expect(editor.state.doc.toString()).toBe("");
+        expect(editor.state.selection.main.from).toBe(0);
+        expect(editor.state.selection.main.to).toBe(0);
+    });
+
+    it.each([
+        ["**", "a **** b"],
+        ["~~", "a ~~~~ b"],
+    ])("must remove an empty %s pair in the middle of text", (characters, document) => {
+        expect.assertions(3);
+
+        const editor = getEditor(document, { anchor: 4 });
+        toggleBlock(editor, characters);
+        expect(editor.state.doc.toString()).toBe("a  b");
+        expect(editor.state.selection.main.from).toBe(2);
+        expect(editor.state.selection.main.to).toBe(2);
+    });
+
+    it.each<[string, string, number, string, string, number]>([
+        ["italic pair from stacked stars", "******", 3, "*", "****", 2],
+        ["bold pair from stacked stars", "******", 3, "**", "**", 1],
+        ["strikethrough pair nested in bold", "**~~~~**", 4, "~~", "****", 2],
+    ])("must remove the %s", (_name, document, anchor, characters, expectedDoc, expectedCursor) => {
+        expect.assertions(3);
+
+        const editor = getEditor(document, { anchor });
+        toggleBlock(editor, characters);
+        expect(editor.state.doc.toString()).toBe(expectedDoc);
+        expect(editor.state.selection.main.from).toBe(expectedCursor);
+        expect(editor.state.selection.main.to).toBe(expectedCursor);
     });
 });
