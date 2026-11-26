@@ -2426,6 +2426,10 @@ EasyMDE.prototype.clearAutosavedValue = function () {
 EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
     var self = this;
     var imageInput = this.gui.toolbar.getElementsByClassName('imageInput')[0];
+    // A previous browse window may have been cancelled, which leaves its listener attached.
+    if (this._imageInputOnChange) {
+        imageInput.removeEventListener('change', this._imageInputOnChange);
+    }
     imageInput.click(); //dispatchEvent(new MouseEvent('click'));  // replaced with click() for IE11 compatibility.
     function onChange(event) {
         if (self.options.imageUploadFunction) {
@@ -2434,8 +2438,10 @@ EasyMDE.prototype.openBrowseFileWindow = function (onSuccess, onError) {
             self.uploadImages(event.target.files, onSuccess, onError);
         }
         imageInput.removeEventListener('change', onChange);
+        self._imageInputOnChange = null;
     }
 
+    this._imageInputOnChange = onChange;
     imageInput.addEventListener('change', onChange);
 };
 
